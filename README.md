@@ -1,4 +1,4 @@
-# manage-system #
+# K2#
 基于Vue.js 2.x系列 + Element UI 的K2流程挖掘平台解决方案。
 
 
