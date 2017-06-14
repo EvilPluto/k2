@@ -1,0 +1,14 @@
+[
+	{
+       "id":"1",
+       "gradeName":"grade 1",
+       "numClassPerDay":"1",
+       "numClass":"1"
+    },
+    {
+       "id":"2",
+       "gradeName":"grade 2",
+       "numClassPerDay":"2",
+       "numClass":"2"
+    }
+]

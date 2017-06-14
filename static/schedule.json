@@ -1,0 +1,52 @@
+
+{
+	{
+		singleWeek:[
+		[],[]
+		],
+		grade{
+			gradeName:string,
+			id:int,
+			numClassPerDay:int,
+			numClass:int
+		},
+		course:{
+			courseName:string,
+			id:int
+			groupId:int,
+		},
+		teacher:{
+			id:int,
+			groupId:int,
+			subjectId:int,
+			teacherName:int
+		}
+	}
+
+	{
+		doubleWeek:[
+		[],[]
+		],
+		grade{
+			gradeName:string,
+			id:int,
+			numClassPerDay:int,
+			numClass:int
+		},
+		course:{
+			courseName:string,
+			id:int
+			groupId:int,
+		},
+		teacher:{
+			id:int,
+			groupId:int,
+			subjectId:int,
+			teacherName:int
+		}
+	}
+
+	{
+		isDoubleWeek:boolean
+	}
+}
