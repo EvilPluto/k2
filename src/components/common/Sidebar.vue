@@ -29,7 +29,22 @@
                         icon: 'el-icon-setting',
                         index: 'readme',
                         title: '简要'
-                    }
+                    },
+                    {
+                        icon: 'el-icon-setting',
+                        index: '1',
+                        title: '个人信息管理',
+                        subs: [
+                            {
+                                index: 'change-nick',
+                                title: '修改昵称'
+                            },
+                            {
+                                index: 'change-password',
+                                title: '修改密码'
+                            }
+                        ]
+                    },
                 ]
             }
         },

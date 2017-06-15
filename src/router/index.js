@@ -16,12 +16,20 @@ export default new Router({
                 {
                     path: '/',
                     component: resolve => require(['../components/page/Readme.vue'], resolve)
+                },
+                {
+                    path: '/change-nick',
+                    component: resolve => require(['../components/page/changeNick.vue'],resolve)
+                },
+                {
+                    path: '/change-password',
+                    component: resolve => require(['../components/page/changePassword.vue'],resolve)
                 }
             ]
         },
         {
             path: '/login',
             component: resolve => require(['../components/page/Login.vue'], resolve)
-        },
+        }
     ]
 })
