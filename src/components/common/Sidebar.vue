@@ -29,6 +29,11 @@
                         icon: 'el-icon-setting',
                         index: 'readme',
                         title: '简要'
+                    },
+                    {
+                        icon: 'el-icon-menu',
+                        index: 'administrator',
+                        title: '用户管理'
                     }
                 ]
             }

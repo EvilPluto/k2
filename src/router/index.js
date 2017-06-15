@@ -16,6 +16,10 @@ export default new Router({
                 {
                     path: '/',
                     component: resolve => require(['../components/page/Readme.vue'], resolve)
+                },
+                {
+                    path: '/administrator',
+                    component: resolve => require(['../components/page/Administrator.vue'], resolve)
                 }
             ]
         },

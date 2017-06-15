@@ -11,12 +11,20 @@
                         <el-form-item prop="password">
                             <el-input type="password" placeholder="密码" v-model="login.password"></el-input>
                         </el-form-item>
-                        <el-form :model="login" :rules="loginRules" ref="login" label-width="0px" :inline="true">
+                        <el-form :model="login" :rules="loginRules" ref="login" label-width="0px">
                             <el-form-item prop="verCode">
-                                <el-input placeholder="验证码" v-model="login.verCode" @keyup.enter.native="loginForm('login')"></el-input>
-                            </el-form-item>
-                            <el-form-item>
-                                <img :src="imgUrl" alt="验证码" />
+                                <el-popover
+                                    ref="a"
+                                    placement="right-end"
+                                    trigger="hover">
+                                        <img :src="imgUrl" alt="验证码图片" width="200px">
+                                </el-popover>
+                                <el-input 
+                                    v-popover:a
+                                    placeholder="验证码" 
+                                    v-model="login.verCode" 
+                                    @keyup.enter.native="loginForm('login')">
+                                </el-input>
                             </el-form-item>
                         </el-form>
                         <div class="login-btn">
@@ -43,12 +51,20 @@
                         <el-form-item prop="repassword">
                             <el-input type="password" placeholder="确认密码" v-model="register.repassword"></el-input>
                         </el-form-item>
-                        <el-form :model="register" :rules="registerRules" ref="register" label-width="0px" :inline="true">
+                        <el-form :model="register" :rules="registerRules" ref="register" label-width="0px">
                             <el-form-item prop="verCode">
-                                <el-input placeholder="验证码" v-model="register.verCode" @keyup.enter.native="registerForm('ruleForm')"></el-input>
-                            </el-form-item>
-                            <el-form-item>
-                                <img :src="imgUrl" alt="验证码" />
+                                <el-popover
+                                    ref="b"
+                                    placement="right-end"
+                                    trigger="hover">
+                                        <img :src="imgUrl" alt="验证码图片" width="200px">
+                                </el-popover>
+                                <el-input 
+                                    v-popover:b
+                                    placeholder="验证码" 
+                                    v-model="login.verCode" 
+                                    @keyup.enter.native="loginForm('login')">
+                                </el-input>
                             </el-form-item>
                         </el-form>
                         <div class="login-btn">
@@ -182,16 +198,15 @@
         text-decoration: underline;        
     }
     #help {
+        text-decoration: underline;
         cursor: help;
     }
-    span {
-        text-decoration: underline;
-    }
     img {
+        float: right;
         height: 34px;
-        width: 104px;
+        width: 100%;
         font-size: inherit;
-        display: block;
+        display: inline-block;
         border-radius: 4px;
         border: 1px solid #bfcbd9;
     }
