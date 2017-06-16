@@ -2,13 +2,13 @@
     <div class="header">
         <div class="logo">K2流程挖掘平台</div>
         <div class="user-info">
-            <el-dropdown trigger="click" @command="handleCommand">
+            <el-dropdown trigger="hover" @command="handleCommand">
                 <span class="el-dropdown-link">
-                    <img class="user-logo" src="../../../static/img/img.jpg">
-                    {{username}}
+                    <!-- <img class="user-logo" src="../../../static/img/img.jpg"> -->
+                    {{ username }}
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item command="loginout">退出</el-dropdown-item>
+                    <el-dropdown-item command="loginout">注销</el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>
         </div>

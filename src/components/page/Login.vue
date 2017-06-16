@@ -82,14 +82,14 @@
             <p>&copy 2017 K2流程挖掘平台 &nbsp &nbsp &nbsp 如有问题，请联系管理员<span id="help">10086@qq.com</span></p>
         </div>
     </div>
-</template>
+</template>`
 
 <script>
     export default {
         data: function(){
             return {
                 activePane: 'login',
-                imgUrl: '../../logo.png',
+                imgUrl: '../../assets/logo.png',
                 login: {
                     username: '',
                     password: '',
