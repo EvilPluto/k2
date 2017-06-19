@@ -19,7 +19,7 @@
                 </el-form-item>
             </el-form>
             <div class="submit-btn">
-                <el-button type = "primary" :disabled="checkAllow()" @click="submitForm('ruleForm')">确认</el-button>
+                <el-button type = "primary" :disabled="check1||check2||check3" @click="submitForm('ruleForm')">确认</el-button>
             </div>
         </div>       
     </div>
@@ -29,25 +29,53 @@
     
     export default {
         data: function(){
-            var checkPassword = (rule,value,callback) => {
+            //这里存在重用性问题 框架提供的自定义规则无法修改？
+            var checkOldPassword = (rule,value,callback) => {
                 var vm = this.$data;
                 if(!value){
-                    vm.allowSubmit = true;
+                    vm.check1 = true;
                     return callback(new Error('密码不能为空'));
                 }
                 else if(value.gblen() < 4 || value.gblen() > 16){
-                    vm.allowSubmit = true;
+                    vm.check1 = true;
                     return callback(new Error('密码长度为4 - 16个字符'));
                 }
                 else{
-                    vm.allowSubmit = false;
+                    vm.check1 = false;
+                }
+            };
+            var checkNewPassword = (rule,value,callback) => {
+                var vm = this.$data;
+                if(!value){
+                    vm.check2 = true;
+                    return callback(new Error('密码不能为空'));
+                }
+                else if(value.gblen() < 4 || value.gblen() > 16){
+                    vm.check2 = true;
+                    return callback(new Error('密码长度为4 - 16个字符'));
+                }
+                else{
+                    vm.check2 = false;
+                }
+            };
+            var checkPassword = (rule,value,callback) => {
+                var vm = this.$data;
+                if(!value){
+                    vm.check3 = true;
+                    return callback(new Error('密码不能为空'));
+                }
+                else if(value.gblen() < 4 || value.gblen() > 16){
+                    vm.check3 = true;
+                    return callback(new Error('密码长度为4 - 16个字符'));
+                }
+                else{
+                    vm.check3 = false;
                 }
             };
             return {
                 check1:true,
                 check2:true,
                 check3:true,
-                allowSubmit: true,
                 ruleForm: {
                     oldPassword:'',
                     newPassword:'',
@@ -60,10 +88,10 @@
 
                     // ]
                     oldPassword:[
-                        { validator: checkPassword, trigger:'change'}
+                        { validator: checkOldPassword, trigger:'change'}
                     ],
-                    newPassword:[],
-                    checkNewPassword:[]
+                    newPassword:[ { validator: checkNewPassword, trigger:'change'}],
+                    checkNewPassword:[{ validator: checkPassword, trigger:'change'}]
                 }
             }
         },
@@ -81,7 +109,7 @@
     }
 </script>
 
-<style scoped>
+<style>
 .crumbs{
     text-decoration: none;
 }
