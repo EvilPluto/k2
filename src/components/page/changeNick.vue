@@ -2,37 +2,91 @@
     <div>
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-date"></i> 课表</el-breadcrumb-item>
-                <el-breadcrumb-item>课表导入</el-breadcrumb-item>
+                <el-breadcrumb-item><i class="el-icon-date"></i> 个人信息管理</el-breadcrumb-item>
+                <el-breadcrumb-item>修改昵称</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
-        <div class="content-title">
-            请选择需要导入的课表文件
-        </div>
-        <el-upload
-            class="upload-demo"
-            drag
-            action="http://192.168.1.174:8080/timetable/uploadTimeTable"
-            multiple>
-            <i class="el-icon-upload"></i>
-            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-            <div class="el-upload__tip" slot="tip">只能上传excel文件，且不超过1MB</div>
-        </el-upload>
+        <div class="form-box">
+            <el-form label-position="right" label-width="80px" :model = "ruleForm" :rules="rules" ref="ruleForm">
+                <el-form-item label = "新昵称" prop="name">
+                    <el-input ref = "abc" v-model="ruleForm.name" @keyup=""></el-input>   
+                </el-form-item>
+            </el-form>
+            <div class="submit-btn">
+                <el-button type = "primary" :disabled="allowSubmit  " @click="submitForm('ruleForm')">确认</el-button>
+            </div>
+        </div>       
     </div>
 </template>
 
 <script>
+    String.prototype.gblen = function() {  
+      var len = 0;  
+      for (var i=0; i<this.length; i++) {  
+        if (this.charCodeAt(i)>127 || this.charCodeAt(i)==94) {  
+           len += 2;  
+         } else {  
+           len ++;  
+         }  
+       }  
+      return len;  
+    }
     export default {
         data: function(){
+            var checkNick = (rule,value,callback) => {
+                var vm = this.$data;
+                if(!value){
+                    vm.allowSubmit = true;
+                    return callback(new Error('昵称不能为空'));
+                }
+                else if(value.gblen() < 4 || value.gblen() > 15){
+                    vm.allowSubmit = true;
+                    return callback(new Error('长度为4 - 15个字符'));
+                }
+                else{
+                    vm.allowSubmit = false;
+                }
+            };
             return {
-                fileList: []
+                allowSubmit:true,
+                ruleForm: {
+                    name:''
+                },
+                rules:{
+                    // name:[
+                    //     { required:true, message: '昵称不能为空',trigger:'blur'},
+                    //     {min:4, max:5,message:'长度为4 - 15个字符',trigger:'blur'}
+
+                    // ]
+                    name:[
+                        { validator: checkNick, trigger:'change'}
+                    ]
+                }
             }
         },
         methods:{
+            submitForm:function(){
+                var vm = this;
+                console.log(vm.$refs.abc.han)
+            }
         }
     }
 </script>
 
 <style scoped>
-
+.crumbs{
+    text-decoration: none;
+}
+.form-box{
+    width:300px;
+    margin-top:50px;
+    margin-left:20px;
+}
+.submit-btn{
+    width:220px;
+    margin-left:80px;
+}
+.submit-btn button{
+    width:100%;
+}
 </style>

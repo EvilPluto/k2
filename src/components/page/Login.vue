@@ -189,7 +189,7 @@
     }
     img {
         height: 34px;
-        width: 104px;
+        width: 100%;
         font-size: inherit;
         display: block;
         border-radius: 4px;
