@@ -17,7 +17,7 @@
                                     ref="a"
                                     placement="right-end"
                                     trigger="hover">
-                                        <img :src="imgUrl" alt="验证码图片" width="200px">
+                                        <img :src="imgUrl" alt="验证码图片" width="200px" @click="updateVerCode">
                                 </el-popover>
                                 <el-input 
                                     v-popover:a
@@ -57,13 +57,13 @@
                                     ref="b"
                                     placement="right-end"
                                     trigger="hover">
-                                        <img :src="imgUrl" alt="验证码图片" width="200px">
+                                        <img :src="imgUrl" alt="验证码图片" width="200px" @click="updateVerCode">
                                 </el-popover>
                                 <el-input 
                                     v-popover:b
                                     placeholder="验证码" 
-                                    v-model="login.verCode" 
-                                    @keyup.enter.native="loginForm('login')">
+                                    v-model="register.verCode" 
+                                    @keyup.enter.native="registerForm('register')">
                                 </el-input>
                             </el-form-item>
                         </el-form>
@@ -87,9 +87,48 @@
 <script>
     export default {
         data: function(){
+            var checkPwd = (rule, value, callback) => {
+                // console.log(value, this.register.password);
+                if (value === '') {
+                    console.log(value, this.register.password);
+                    callback(new Error('请再次输入密码!'));
+                } else if (value !== this.register.password) {
+                    console.log(value, this.register.password);
+                    callback(new Error('两次密码不相同!'));
+                } else {
+                    console.log(value, this.register.password);
+                    callback();
+                }
+            };
+
+            var checkWord = (rule, value, callback) => {
+                var reg = /^[a-zA-Z0-9]+$/;
+                if (value.match(reg)) {
+                    callback();
+                } else {
+                    callback(new Error('密码仅可由数字与字母组成'));
+                }
+            };
+
+            var checkName = (rule, value, callback) => {
+                // console.log(value.gblen());
+                var reg = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？\\\\]");
+                if (value.indexOf(" ") >= 0) {
+                    callback(new Error('请不要包含空格'));
+                } else if (value.match(reg)) {
+                    callback(new Error('请不要输入特殊字符'));
+                } else if (value.gblen() <= 4 || value.gblen >= 16) {
+                    callback(new Error('请输入4-16位字符'));
+                } else {
+                    callback();
+                }
+            };
+
             return {
                 activePane: 'login',
-                imgUrl: '../../assets/logo.png',
+                hostUrl: 'http://localhost:8888/processmining', // IP
+                imgUrl: 'http://localhost:8888/processmining/checkcode',
+                // hostUrl: '',
                 login: {
                     username: '',
                     password: '',
@@ -115,17 +154,21 @@
                 },
                 registerRules: {
                     username: [
-                        { required: true, message: '请输入用户名', trigger: 'blur' }
+                        { required: true, message: '请输入用户名', trigger: 'blur' },
+                        { type: "email", message: '请输入正确的Email格式', trigger: 'change' }
                     ],
                     nickname: [
-                        { required: true, message: '请输入昵称', trigger: 'blur' }
+                        { required: true, message: '请输入昵称', trigger: 'blur' },
+                        { validator: checkName, trigger: 'change' }
                     ],
                     password: [
                         { required: true, message: '请输入密码', trigger: 'blur' },
-                        { min: 6, max: 20, message: '长度在6-20之间', trigger: 'blur' }
+                        { validator: checkWord, trigger: 'change' },
+                        { min: 6, max: 16, message: '长度在6-16之间', trigger: 'change' }
                     ],
                     repassword: [
-                        { required: true, message: '请确认密码', trigger: 'blur' }
+                        // { required: true, message: '请确认密码', trigger: 'blur' },
+                        { validator: checkPwd, trigger: 'change' }
                     ],
                     verCode: [
                         { required: true, message: '请输入验证码', trigger: 'blur'}
@@ -133,40 +176,151 @@
                 }
             }
         },
+        created() {
+            this.getVerCode();
+        },
         methods: {
+            changeUrl() {
+                var url = this.imgUrl;
+
+                var timeStamp = (new Date()).valueOf();
+                url = url.substring(0, 45);
+                if ((url.indexOf('&') >= 0)) {
+                    url = url + 'xtamp=' + timeStamp;
+                } else {
+                    url = url + '?timestamp=' + timeStamp;
+                }
+
+                return url;
+            },
+
             loginForm(formName) {
                 const self = this;
+
                 self.$refs[formName].validate((valid) => {
                     if (valid) {
-                        localStorage.setItem('ms_username',self.login.username);
-                        self.$router.push('/readme');
+                       this.$axios({
+                            url: '/user/login',
+                            method: 'post',
+                            baseURL: this.hostUrl,
+
+                            data: {
+                                email: this.login.username,
+                                password: this.login.password,
+                                checkcode: this.login.verCode
+                            }
+                        })
+                        .then((response) => {
+                            if (response.data.code === 200) {
+                                if (response.data.type === 0) {
+                                    localStorage.setItem('ms_username',self.login.username);
+                                    self.$router.push('/user/');
+                                } else {
+                                    localStorage.setItem('ms_username',self.login.username);
+                                    self.$router.push('/admin/');
+                                }
+                            } else {
+                                console.log(response);
+                                console.log('code', response.data.code);
+                            }
+                        })
+                        .catch((error) => {
+                            console.log("【Error】:", error);
+                        });
                     } else {
                         console.log('error login!!');
                         return false;
                     }
                 });
             },
-            registerForm(formName) {
-                const h = this.$createElement;
 
-                this.$notify({
-                    title: '注册信息',
-                    message: h
-                        ('pre',
-                        { style: 'color: teal' },
-                        '\n邮箱: ' + this.register.username +
-                        '\n昵称: ' + this.register.nickname +
-                        '\n密码: ' + this.register.repassword
-                        )
-                });
+            registerForm(formName) {   
+                const self = this;
+
+                self.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        // 弹出注册详情
+                        const h = this.$createElement;
+
+                        this.$notify({
+                            title: '注册信息',
+                            message: h
+                                ('pre',
+                                { style: 'color: teal' },
+                                '\n邮箱: ' + this.register.username +
+                                '\n昵称: ' + this.register.nickname +
+                                '\n密码: ' + this.register.repassword
+                                )
+                        });
+
+                        // 网络请求
+                        this.$axios({
+                            url: '/user/register',
+                            method: 'post',
+                            baseURL: this.hostUrl,
+
+                            data: {
+                                email: this.register.username,
+                                password: this.register.password,
+                                checkcode: this.register.verCode,
+                                nickname: this.register.nickname
+                            }
+                        })
+                        .then((response) => {
+                            if (response.data.code === 200) {
+                                this.$notify({
+                                    title: '成功',
+                                    message: '注册成功!',
+                                    type: 'success'
+                                });
+                            } else {
+                                console.log(response.data.code);
+                            }
+                        })
+                        .catch((error) => {
+                            this.$notify({
+                                title: '失败',
+                                message: '注册失败: ' + '请重试!',
+                                type: 'error'
+                            });
+                            console.log("【Error】:", error);
+                        });
+                    } else {
+                        console.log('error register!!');
+                        return false;
+                    }
+                });          
             },
+
             goToRegister() {
                 this.activePane = 'register';
             },
+
             goToLogin() {
                 this.activePane = 'login';
             },
+
             getVerCode() {
+                this.$axios({
+                    url: '/checkcode',
+                    method: 'get',
+                    baseURL: this.hostUrl
+                })
+                .then((response) => {
+                    // fixed
+                    this.login.imgUrl = response;
+                })
+                .catch((error) => {
+                    console.log("【Error】:", error);
+                });
+            },
+
+            updateVerCode() {
+                // console.log('update');
+                var self = this;
+                self.getVerCode();
+                self.imgUrl = self.changeUrl();
+                console.log(self.imgUrl);
             }
         }
     }

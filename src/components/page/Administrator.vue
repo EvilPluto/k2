@@ -50,73 +50,193 @@
 <script>
     export default {
         data() {
-        	const getUserLabel = (label, email) => {
-        		return label + '(' + email + ')';
-        	}
             return {
-            	usersData: [
-            		{
-            			key: 0,
-            			email: 'xhk6870@163.com',
-            			label: getUserLabel('修海锟', 'xhk6870@163.com'),
-            			disabled: false
-            		},
-            		{
-            			key: 1,
-            			email: '11@boxue.com',
-            			label: getUserLabel('泊学', '11@boxue.com'),
-            			disabled: false
-            		},
-            		{
-            			key: 2,
-            			email: 'hxh258@qq.com',
-            			label: getUserLabel('何徐昊', 'hxh258@qq.com'),
-            			disabled: false
-            		},
-            		{
-            			key: 3,
-            			email: 'EvilBenton@gmail.com',
-            			label: getUserLabel('Pluto', 'EvilBenton@gmail.com'),
-            			disabled: false
-            		}
-            	],
-            	users: [3]
+                hostUrl: 'http://localhost:8888/processmining',
+            	usersData: [],
+            	users: []
             };
         },
+        created() {
+            var self = this;
+
+            self.getAllUsersList();
+        },
         methods: {
+            getUserLabel(label, email) {
+                return label + '(' + email + ')';
+            },
+
+            packData(rawData) {
+                var self = this;
+
+                var newData = new Array();
+                for (var i=0; i<rawData.length; i++) {
+                    console.log(rawData[i].activated);
+                    newData.push({
+                        key: rawData[i].id,
+                        email: rawData[i].email,
+                        label: self.getUserLabel(rawData[i].nickname, rawData[i].email),
+                        disabled: false
+                    });
+                }
+                return newData;
+            },
+
         	handleChange(value, direction, movedKeys) {
-        		console.log(value, direction, movedKeys);
+                var self = this;
+        		// console.log(value, direction, movedKeys);
+                if (direction === 'right') {
+                    // 禁用
+                    console.log('禁用', movedKeys);
+                    var arrBan = movedKeys;
+
+                    this.$axios({
+                        url: '/manager/banUser',
+                        method: 'post',
+                        baseURL: this.hostUrl,
+
+                        data: {
+                            idList: movedKeys
+                        }
+                    })
+                    .then((response) => {
+                        if (response.data.code === 200) {
+                            self.$message({
+                                message: '用户禁用成功!',
+                                type: 'success'                        
+                            })
+                        } else {
+                            console.log(response.data.code);
+                        }
+                    })
+                    .catch((error) => {
+                        this.$message({
+                            message: '用户禁用失败: ' + '请刷新页面!',
+                            type: 'error'
+                        });
+                        console.log("【Error】:", error);
+                    });   
+                } else {
+                    // 激活
+                    console.log('激活', movedKeys);
+                    var arrUnBan = movedKeys;
+
+                    this.$axios({
+                        url: '/manager/unbanUser',
+                        method: 'post',
+                        baseURL: this.hostUrl,
+
+                        data: {
+                            idList: movedKeys
+                        }
+                    })
+                    .then((response) => {
+                        if (response.data.code === 200) {
+                            self.$message({
+                                message: '用户恢复成功!',
+                                type: 'success'                        
+                            })
+                        } else {
+                            console.log(response.data.code);
+                        }
+                    })
+                    .catch((error) => {
+                        this.$message({
+                            message: '用户激活失败: ' + '请刷新页面!',
+                            type: 'error'
+                        });
+                        console.log("【Error】:", error);
+                    });   
+                }
         	},
         	deleteLeftUsers() {
         		var self = this;
-        		var arr = self.$refs.aaa.leftChecked; // 选中的
-        		console.log(self.usersData);
-        		var arrForDel = [] // 删除的key数组
-        		for(var i=0; i<arr.length; i++) {
-        			console.log(arr[i]);
-        			arrForDel.push(arr[i]);
-        		}
-        		arrForDel.sort(); // 排序，使删除的key按照顺序来
-        		for(var i=arrForDel.length-1; i>=0; i--) {
-        			self.usersData.splice(arrForDel[i], 1);
-        		} // 从后向前删
-        		console.log(self.usersData);
+        		var arrDel = self.$refs.aaa.leftChecked; // 选中的
+
+                this.$axios({
+                    url: '/manager/deleteUser',
+                    method: 'post',
+                    baseURL: this.hostUrl,
+
+                    data: {
+                        idList: arrDel
+                    }
+                })
+                .then((response) => {
+                    if (response.data.code === 200) {
+                        self.$message({
+                            message: '数据删除成功!',
+                            type: 'success'                        
+                        })
+                    } else {
+                        console.log(response.data.code);
+                    }
+                })
+                .catch((error) => {
+                    this.$message({
+                        message: '数据删除失败: ' + '请重试!',
+                        type: 'error'
+                    });
+                    console.log("【Error】:", error);
+                });              
         	},
         	deleteRightUsers() {
-        		var self = this;
-        		var arr = self.$refs.aaa.rightChecked; // 选中的
-        		console.log(self.usersData);
-        		var arrForDel = [] // 删除的key数组
-        		for(var i=0; i<arr.length; i++) {
-        			console.log(arr[i]);
-        			arrForDel.push(arr[i]);
-        		}
-        		arrForDel.sort(); // 排序，使删除的key按照顺序来
-        		for(var i=arrForDel.length-1; i>=0; i--) {
-        			self.usersData.splice(arrForDel[i], 1);
-        		} // 从后向前删
-        		console.log(self.usersData);
-        	}
+                var self = this;
+                var arrDel = self.$refs.aaa.rightChecked; // 选中的
+
+                this.$axios({
+                    url: '/manager/deleteUser',
+                    method: 'post',
+                    baseURL: this.hostUrl,
+
+                    data: {
+                        idList: arrDel
+                    }
+                })
+                .then((response) => {
+                    if (response.data.code === 200) {
+                        self.$message({
+                            message: '数据删除成功!',
+                            type: 'success'                        
+                        })
+                    } else {
+                        console.log(response.data.code);
+                    }
+                })
+                .catch((error) => {
+                    this.$message({
+                        message: '数据删除失败: ' + '请重试!',
+                        type: 'error'
+                    });
+                    console.log("【Error】:", error);
+                });   
+        	},
+            getAllUsersList() {
+                var self = this;
+
+                this.$axios({
+                    url: '/manager/listAllUsers',
+                    method: 'get',
+                    baseURL: this.hostUrl
+                })
+                .then((response) => {
+                    var usersList = response.data.allUser;
+                    self.usersData = self.packData(usersList);
+                    self.users = response.data.bannedUserId;
+
+                    self.$message({
+                        message: '数据加载成功!',
+                        type: 'success'                        
+                    })
+                })
+                .catch((error) => {
+                    this.$message({
+                        message: '数据加载失败: ' + '请重试!',
+                        type: 'error'
+                    });
+                    console.log("【Error】:", error);
+                });
+            }
         }
     }
 </script>

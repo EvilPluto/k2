@@ -1,6 +1,6 @@
 <template>
     <div class="header">
-        <div class="logo">K2流程挖掘平台</div>
+        <div class="logo">K2流程挖掘平台(管理员)</div>
         <div class="user-info">
             <el-dropdown trigger="hover" @command="handleCommand">
                 <span class="el-dropdown-link">
@@ -18,7 +18,7 @@
     export default {
         data() {
             return {
-                name: 'linxin'
+                name: 'root'
             }
         },
         computed:{
@@ -49,7 +49,7 @@
     }
     .header .logo{
         float: left;
-        width:250px;
+        width: 250px;
         text-align: center;
     }
     .user-info {
