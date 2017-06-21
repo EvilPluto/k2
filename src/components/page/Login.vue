@@ -126,8 +126,8 @@
 
             return {
                 activePane: 'login',
-                hostUrl: 'http://localhost:8888/processmining', // IP
-                imgUrl: 'http://localhost:8888/processmining/checkcode',
+                hostUrl: '/processmining', // IP
+                imgUrl: '/processmining/checkcode',
                 // hostUrl: '',
                 login: {
                     username: '',

@@ -39,7 +39,7 @@
             };
             return {
                 allowSubmit:true,
-                hostUrl:"http://localhost:8888/processmining",
+                hostUrl:"/processmining",
                 ruleForm: {
                     nickName:''
                 },

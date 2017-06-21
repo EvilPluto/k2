@@ -73,7 +73,7 @@
                 }
             };
             return {
-                hostUrl:"http://localhost:8888/processmining",
+                hostUrl:"/processmining",
                 check1:true,
                 check2:true,
                 check3:true,

@@ -51,7 +51,7 @@
     export default {
         data() {
             return {
-                hostUrl: 'http://localhost:8888/processmining',
+                hostUrl: '/processmining',
             	usersData: [],
             	users: []
             };
