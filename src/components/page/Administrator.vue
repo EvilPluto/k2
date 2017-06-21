@@ -137,7 +137,7 @@
                             })
                         } else {
                             console.log(response.data.code);
-                            codeParsing(response.data.code);
+                            self.codeParsing(response.data.code);
                         }
                     })
                     .catch((error) => {
@@ -169,7 +169,7 @@
                             })
                         } else {
                             console.log(response.data.code);
-                            codeParsing(response.data.code);
+                            self.codeParsing(response.data.code);
                         }
                     })
                     .catch((error) => {
@@ -202,7 +202,7 @@
                         })
                     } else {
                         console.log(response.data.code);
-                        codeParsing(response.data.code);
+                        self.codeParsing(response.data.code);
                     }
                 })
                 .catch((error) => {
@@ -234,7 +234,7 @@
                         })
                     } else {
                         console.log(response.data.code);
-                        codeParsing(response.data.code);
+                        self.codeParsing(response.data.code);
                     }
                 })
                 .catch((error) => {

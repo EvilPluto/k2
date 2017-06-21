@@ -256,7 +256,7 @@
                             } else {
                                 // console.log(response);
                                 console.log('code', response.data.code);
-                                codeParsing(response.data.code);
+                                self.codeParsing(response.data.code);
                             }
                         })
                         .catch((error) => {
@@ -323,7 +323,7 @@
                                 self.login.password = self.register.password;
                             } else {
                                 console.log(response.data.code);
-                                codeParsing(response.data.code);
+                                self.codeParsing(response.data.code);
                             }
                         })
                         .catch((error) => {
