@@ -77,7 +77,6 @@
                                     type:'success',
                                     message:'修改成功'
                                 });
-                                localStorage.setItem('ms_username', vm.ruleForm.nickName);
                             }
                             else if(response.data.code == "304"){
                                 this.$message({
@@ -99,7 +98,6 @@
                                     type:'warning',
                                     message:'AJAX FAIL'
                                 });
-                            localStorage.setItem('ms_username', vm.ruleForm.nickName);
                         });
                               
                     }).catch(() => {

@@ -333,6 +333,7 @@
                                 self.goToLogin();
                                 self.login.username = self.register.username;
                                 self.login.password = self.register.password;
+                                self.getVerCode(); // 手动更一次验证码
                             } else {
                                 console.log(response.data.code);
                                 self.codeParsing(response.data.code);

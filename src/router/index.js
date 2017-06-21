@@ -43,6 +43,14 @@ export default new Router({
                 {
                     path: '/admin/administrator',
                     component: resolve => require(['../components/page/Administrator.vue'], resolve)
+                },
+                {
+                    path: '/admin/merge',
+                    component: resolve => require(['../components/page/MergeAlgorithm.vue'], resolve)
+                },
+                {
+                    path: '/admin/mining',
+                    component: resolve => require(['../components/page/MiningAlgorithm.vue'], resolve)
                 }
             ]
         },

@@ -29,6 +29,21 @@
                         icon: 'el-icon-menu',
                         index: '/admin/administrator',
                         title: '用户管理'
+                    },
+                    {
+                        icon: 'el-icon-document',
+                        index: '/admin/algorithm',
+                        title: '算法管理',
+                        subs: [
+                            {
+                                index: '/admin/merge',
+                                title: '融合算法管理'
+                            },
+                            {
+                                index: '/admin/mining',
+                                title: '挖掘算法管理'
+                            }
+                        ]
                     }
                 ]
             }

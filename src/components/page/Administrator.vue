@@ -1,6 +1,6 @@
 <template>
 	<div>
-        <div>
+        <div class="crumbs">
             <el-breadcrumb separator="/">
                 <el-breadcrumb-item><i class="el-icon-edit"></i> 管理员</el-breadcrumb-item>
                 <el-breadcrumb-item>用户管理</el-breadcrumb-item>
@@ -10,7 +10,9 @@
         <div class="transferForm">
         	<el-transfer 
         		v-model="users"
-        		ref="aaa"
+        		ref="transferRef"
+                filterable
+                filter-placeholder="请输入用户的昵称或Email"
         		:data="usersData"
         		:titles="['恢复用户列表', '禁用用户列表']"
         		:button-texts="['恢复', '禁用']"
@@ -52,7 +54,83 @@
         data() {
             return {
                 hostUrl: '/processmining',
-            	usersData: [],
+            	usersData: [
+                    {
+                        key: 1,
+                        label: 'label1',
+                        disabled: false
+                    },
+                    {
+                        key: 2,
+                        label: 'label2',
+                        disabled: false
+                    },
+                    {
+                        key: 3,
+                        label: 'label3',
+                        disabled: false
+                    },
+                    {
+                        key: 4,
+                        label: 'label1',
+                        disabled: false
+                    },
+                    {
+                        key: 5,
+                        label: 'label1',
+                        disabled: false
+                    },
+                    {
+                        key: 6,
+                        label: 'label1',
+                        disabled: false
+                    },
+                    {
+                        key: 7,
+                        label: 'label1',
+                        disabled: false
+                    },
+                    {
+                        key: 8,
+                        label: 'label1',
+                        disabled: false
+                    },
+                    {
+                        key: 9,
+                        label: 'label1',
+                        disabled: false
+                    },
+                    {
+                        key: 10,
+                        label: 'label1',
+                        disabled: false
+                    },
+                    {
+                        key: 11,
+                        label: 'label1',
+                        disabled: false
+                    },
+                    {
+                        key: 12,
+                        label: 'label1',
+                        disabled: false
+                    },
+                    {
+                        key: 13,
+                        label: 'label1',
+                        disabled: false
+                    },
+                    {
+                        key: 14,
+                        label: 'label1',
+                        disabled: false
+                    },
+                    {
+                        key: 15,
+                        label: 'label1',
+                        disabled: false
+                    }
+                ],
             	users: []
             };
         },
@@ -183,7 +261,7 @@
         	},
         	deleteLeftUsers() {
         		var self = this;
-        		var arrDel = self.$refs.aaa.leftChecked; // 选中的
+        		var arrDel = self.$refs.transferRef.leftChecked; // 选中的
 
                 this.$axios({
                     url: '/manager/deleteUser',
@@ -215,7 +293,7 @@
         	},
         	deleteRightUsers() {
                 var self = this;
-                var arrDel = self.$refs.aaa.rightChecked; // 选中的
+                var arrDel = self.$refs.transferRef.rightChecked; // 选中的
 
                 this.$axios({
                     url: '/manager/deleteUser',
@@ -281,12 +359,17 @@
 		margin-right: 20px;
 		margin: 6px 5px;
 	}
-	.el-transfer-panel {
-		width: 400px;
+    .transferForm .el-transfer-panel {        
+        width: 400px;
+    }
+	.transferForm .el-transfer-panel__body {
 		height: 500px;
 	}
+    .transferForm .el-transfer-panel__list {
+        height: 470px;
+    }
 	.transferForm {
-		padding-top: 40px;
-		padding-left: 40px;
+		padding-top: 50px;
+		padding-left: 50px;
 	}
 </style>
