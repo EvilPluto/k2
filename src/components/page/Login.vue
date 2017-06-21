@@ -17,7 +17,7 @@
                                     ref="a"
                                     placement="right-end"
                                     trigger="hover">
-                                        <img :src="imgUrl" alt="验证码图片" width="200px" @click="updateVerCode">
+                                        <img :src="imgUrl" alt="验证码图片" width="200px" @click="getVerCode">
                                 </el-popover>
                                 <el-input 
                                     v-popover:a
@@ -57,7 +57,7 @@
                                     ref="b"
                                     placement="right-end"
                                     trigger="hover">
-                                        <img :src="imgUrl" alt="验证码图片" width="200px" @click="updateVerCode">
+                                        <img :src="imgUrl" alt="验证码图片" width="200px" @click="getVerCode">
                                 </el-popover>
                                 <el-input 
                                     v-popover:b
@@ -90,13 +90,13 @@
             var checkPwd = (rule, value, callback) => {
                 // console.log(value, this.register.password);
                 if (value === '') {
-                    console.log(value, this.register.password);
+                    // console.log(value, this.register.password);
                     callback(new Error('请再次输入密码!'));
                 } else if (value !== this.register.password) {
-                    console.log(value, this.register.password);
+                    // console.log(value, this.register.password);
                     callback(new Error('两次密码不相同!'));
                 } else {
-                    console.log(value, this.register.password);
+                    // console.log(value, this.register.password);
                     callback();
                 }
             };
@@ -155,20 +155,25 @@
                 registerRules: {
                     username: [
                         { required: true, message: '请输入用户名', trigger: 'blur' },
-                        { type: "email", message: '请输入正确的Email格式', trigger: 'change' }
+                        { type: "email", message: '请输入正确的Email格式', trigger: 'change' },
+                        { type: "email", message: '请输入正确的Email格式', trigger: 'blur' }
                     ],
                     nickname: [
                         { required: true, message: '请输入昵称', trigger: 'blur' },
-                        { validator: checkName, trigger: 'change' }
+                        { validator: checkName, trigger: 'change' },
+                        { validator: checkName, trigger: 'blur' }
                     ],
                     password: [
                         { required: true, message: '请输入密码', trigger: 'blur' },
                         { validator: checkWord, trigger: 'change' },
-                        { min: 6, max: 16, message: '长度在6-16之间', trigger: 'change' }
+                        { validator: checkWord, trigger: 'blur' },
+                        { min: 6, max: 16, message: '长度在6-16之间', trigger: 'change' },
+                        { min: 6, max: 16, message: '长度在6-16之间', trigger: 'blur' }
                     ],
                     repassword: [
                         // { required: true, message: '请确认密码', trigger: 'blur' },
-                        { validator: checkPwd, trigger: 'change' }
+                        { validator: checkPwd, trigger: 'change' },
+                        { validator: checkPwd, trigger: 'blur' }
                     ],
                     verCode: [
                         { required: true, message: '请输入验证码', trigger: 'blur'}
@@ -180,6 +185,35 @@
             this.getVerCode();
         },
         methods: {
+            codeParsing(code) {
+                var msg = (Title, Message) => {
+                    this.$message({
+                        title: Title,
+                        message: Message,
+                        type: 'error'
+                    });
+                };
+                switch(code) {
+                    case 201:
+                        msg('输入域错误', '验证码错误');
+                    case 300:
+                        msg('输入域错误', '邮箱或密码错误');
+                    case 301:
+                        msg('权限问题', '用户已禁用，请联系管理员');
+                    case 302:
+                        msg('权限问题', '用户未激活，请去邮箱激活用户');
+                    case 303:
+                        msg('注册问题', '邮箱已占用，请更改邮箱');
+                    case 304:
+                        msg('注册问题', '昵称已占用，请更改昵称');
+                    case 400:
+                        msg('权限问题', '用户未登录，请重新登录');
+                    case 401:
+                        msg('权限问题', '用户无权访问，请联系管理员');
+                    case 500:
+                        msg('系统错误', '未知错误，请上报管理员');
+                }
+            },
             changeUrl() {
                 var url = this.imgUrl;
 
@@ -213,22 +247,33 @@
                         .then((response) => {
                             if (response.data.code === 200) {
                                 if (response.data.type === 0) {
-                                    localStorage.setItem('ms_username',self.login.username);
+                                    localStorage.setItem('ms_username', response.data.nickname);
                                     self.$router.push('/user/');
                                 } else {
-                                    localStorage.setItem('ms_username',self.login.username);
+                                    localStorage.setItem('ms_username', response.data.nickname);
                                     self.$router.push('/admin/');
                                 }
                             } else {
-                                console.log(response);
+                                // console.log(response);
                                 console.log('code', response.data.code);
+                                codeParsing(response.data.code);
                             }
                         })
                         .catch((error) => {
                             console.log("【Error】:", error);
+                            this.$message({
+                                title: '网络请求错误',
+                                message: '请检查网络并重试',
+                                type: 'error'
+                            });
                         });
                     } else {
                         console.log('error login!!');
+                        this.$message({
+                            title: '格式错误',
+                            message: '请检查输入域是否正确',
+                            type: 'error'
+                        });
                         return false;
                     }
                 });
@@ -273,8 +318,12 @@
                                     message: '注册成功!',
                                     type: 'success'
                                 });
+                                self.goToLogin();
+                                self.login.username = self.register.username;
+                                self.login.password = self.register.password;
                             } else {
                                 console.log(response.data.code);
+                                codeParsing(response.data.code);
                             }
                         })
                         .catch((error) => {
@@ -287,6 +336,11 @@
                         });
                     } else {
                         console.log('error register!!');
+                        this.$message({
+                            title: '格式错误',
+                            message: '请检查输入域是否正确',
+                            type: 'error'
+                        });
                         return false;
                     }
                 });          
@@ -301,26 +355,20 @@
             },
 
             getVerCode() {
-                this.$axios({
-                    url: '/checkcode',
-                    method: 'get',
-                    baseURL: this.hostUrl
-                })
-                .then((response) => {
-                    // fixed
-                    this.login.imgUrl = response;
-                })
-                .catch((error) => {
-                    console.log("【Error】:", error);
-                });
-            },
-
-            updateVerCode() {
-                // console.log('update');
                 var self = this;
-                self.getVerCode();
                 self.imgUrl = self.changeUrl();
-                console.log(self.imgUrl);
+                // this.$axios({
+                //     url: '/checkcode',
+                //     method: 'get',
+                //     baseURL: this.hostUrl
+                // })
+                // .then((response) => {
+                //     // fixed
+                //     this.login.imgUrl = response;
+                // })
+                // .catch((error) => {
+                //     console.log("【Error】:", error);
+                // });
             }
         }
     }

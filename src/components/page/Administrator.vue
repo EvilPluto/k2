@@ -62,6 +62,36 @@
             self.getAllUsersList();
         },
         methods: {
+            codeParsing(code) {
+                var msg = (Title, Message) => {
+                    this.$message({
+                        title: Title,
+                        message: Message,
+                        type: 'error'
+                    });
+                };
+                switch(code) {
+                    case 201:
+                        msg('输入域错误', '验证码错误');
+                    case 300:
+                        msg('输入域错误', '邮箱或密码错误');
+                    case 301:
+                        msg('权限问题', '用户已禁用，请联系管理员');
+                    case 302:
+                        msg('权限问题', '用户未激活，请去邮箱激活用户');
+                    case 303:
+                        msg('注册问题', '邮箱已占用，请更改邮箱');
+                    case 304:
+                        msg('注册问题', '昵称已占用，请更改昵称');
+                    case 400:
+                        msg('权限问题', '用户未登录，请重新登录');
+                    case 401:
+                        msg('权限问题', '用户无权访问，请联系管理员');
+                    case 500:
+                        msg('系统错误', '未知错误，请上报管理员');
+                }
+            },
+
             getUserLabel(label, email) {
                 return label + '(' + email + ')';
             },
@@ -107,6 +137,7 @@
                             })
                         } else {
                             console.log(response.data.code);
+                            codeParsing(response.data.code);
                         }
                     })
                     .catch((error) => {
@@ -138,6 +169,7 @@
                             })
                         } else {
                             console.log(response.data.code);
+                            codeParsing(response.data.code);
                         }
                     })
                     .catch((error) => {
@@ -170,6 +202,7 @@
                         })
                     } else {
                         console.log(response.data.code);
+                        codeParsing(response.data.code);
                     }
                 })
                 .catch((error) => {
@@ -201,6 +234,7 @@
                         })
                     } else {
                         console.log(response.data.code);
+                        codeParsing(response.data.code);
                     }
                 })
                 .catch((error) => {
