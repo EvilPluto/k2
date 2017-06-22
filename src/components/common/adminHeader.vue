@@ -30,8 +30,19 @@
         methods:{
             handleCommand(command) {
                 if(command == 'loginout'){
-                    localStorage.removeItem('ms_username')
-                    this.$router.push('/login');
+                    this.$axios({
+                        url: '/user/logoff',
+                        method: 'get',
+                        baseURL: this.hostUrl
+                    })
+                    .then((response) => {
+                        localStorage.removeItem('ms_username');
+                        this.$router.push('/login');
+                    })
+                    .catch((error) => {
+                        localStorage.removeItem('ms_username');
+                        this.$router.push('/login');
+                    });  
                 }
             }
         }

@@ -149,24 +149,50 @@
                     });
                 };
                 switch(code) {
+                    case -1:
+                        msg('系统错误', '未知错误，请上报管理员');
+                        break;
                     case 201:
                         msg('输入域错误', '验证码错误');
+                        break;
                     case 300:
                         msg('输入域错误', '邮箱或密码错误');
+                        break;
                     case 301:
                         msg('权限问题', '用户已禁用，请联系管理员');
+                        break;
                     case 302:
                         msg('权限问题', '用户未激活，请去邮箱激活用户');
+                        break;
                     case 303:
                         msg('注册问题', '邮箱已占用，请更改邮箱');
+                        break;
                     case 304:
                         msg('注册问题', '昵称已占用，请更改昵称');
+                        break;
                     case 400:
                         msg('权限问题', '用户未登录，请重新登录');
+                        break;
                     case 401:
                         msg('权限问题', '用户无权访问，请联系管理员');
+                        break;
+                    case 402:
+                        msg('操作错误', '删除错误,请刷新重试');
+                        break;
                     case 500:
                         msg('系统错误', '未知错误，请上报管理员');
+                        break;
+                    case 600:
+                        msg('TIME_OUT', '访问超时，请检查网络连接');
+                        break;
+                    case 700:
+                        msg('激活错误', '非法激活链接，请联系管理员');
+                        break;
+                    case 800:
+                        msg('激活错误', '用户已被激活，请直接登录');
+                        break;
+                    default:
+                        break;
                 }
             },
 
@@ -273,17 +299,17 @@
                     }
                 })
                 .then((response) => {
-                    if (response.data.code === 200) {
+                    if (response.data.respCode === 200) {
                         self.$message({
                             message: '数据删除成功!',
                             type: 'success'                        
                         });
-                        var usersList = response.data.allUser;
+                        var usersList = response.data.userUtil.allUser;
                         self.usersData = self.packData(usersList);
                         self.users = response.data.bannedUserId;
                     } else {
-                        console.log(response.data.code);
-                        self.codeParsing(response.data.code);
+                        console.log(response.data.respCode);
+                        self.codeParsing(response.data.respCode);
                     }
                 })
                 .catch((error) => {
@@ -296,7 +322,7 @@
         	},
         	deleteRightUsers() {
                 var self = this;
-                var arrDel = self.$refs.transferRef.rightChecked; // 选中的
+                var arrDel = self.$refs.transferRef.leftChecked; // 选中的
 
                 this.$axios({
                     url: '/manager/deleteUser',
@@ -308,17 +334,17 @@
                     }
                 })
                 .then((response) => {
-                    if (response.data.code === 200) {
+                    if (response.data.respCode === 200) {
                         self.$message({
                             message: '数据删除成功!',
                             type: 'success'                        
                         });
-                        var usersList = response.data.allUser;
+                        var usersList = response.data.userUtil.allUser;
                         self.usersData = self.packData(usersList);
                         self.users = response.data.bannedUserId;
                     } else {
-                        console.log(response.data.code);
-                        self.codeParsing(response.data.code);
+                        console.log(response.data.respCode);
+                        self.codeParsing(response.data.respCode);
                     }
                 })
                 .catch((error) => {
@@ -327,7 +353,7 @@
                         type: 'error'
                     });
                     console.log("【Error】:", error);
-                });   
+                });  
         	},
             getAllUsersList() {
                 var self = this;
@@ -375,6 +401,8 @@
         height: 470px;
     }
 	.transferForm {
+       width: 900px;
+       height: 580px;
 		padding-top: 50px;
 		padding-left: 50px;
 	}
