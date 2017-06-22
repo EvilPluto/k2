@@ -54,83 +54,7 @@
         data() {
             return {
                 hostUrl: '/processmining',
-            	usersData: [
-                    {
-                        key: 1,
-                        label: 'label1',
-                        disabled: false
-                    },
-                    {
-                        key: 2,
-                        label: 'label2',
-                        disabled: false
-                    },
-                    {
-                        key: 3,
-                        label: 'label3',
-                        disabled: false
-                    },
-                    {
-                        key: 4,
-                        label: 'label1',
-                        disabled: false
-                    },
-                    {
-                        key: 5,
-                        label: 'label1',
-                        disabled: false
-                    },
-                    {
-                        key: 6,
-                        label: 'label1',
-                        disabled: false
-                    },
-                    {
-                        key: 7,
-                        label: 'label1',
-                        disabled: false
-                    },
-                    {
-                        key: 8,
-                        label: 'label1',
-                        disabled: false
-                    },
-                    {
-                        key: 9,
-                        label: 'label1',
-                        disabled: false
-                    },
-                    {
-                        key: 10,
-                        label: 'label1',
-                        disabled: false
-                    },
-                    {
-                        key: 11,
-                        label: 'label1',
-                        disabled: false
-                    },
-                    {
-                        key: 12,
-                        label: 'label1',
-                        disabled: false
-                    },
-                    {
-                        key: 13,
-                        label: 'label1',
-                        disabled: false
-                    },
-                    {
-                        key: 14,
-                        label: 'label1',
-                        disabled: false
-                    },
-                    {
-                        key: 15,
-                        label: 'label1',
-                        disabled: false
-                    }
-                ],
+            	usersData: [],
             	users: []
             };
         },
@@ -322,7 +246,7 @@
         	},
         	deleteRightUsers() {
                 var self = this;
-                var arrDel = self.$refs.transferRef.leftChecked; // 选中的
+                var arrDel = self.$refs.transferRef.rightChecked; // 选中的
 
                 this.$axios({
                     url: '/manager/deleteUser',
@@ -402,7 +326,7 @@
     }
 	.transferForm {
        width: 900px;
-       height: 580px;
+       height: 480px;
 		padding-top: 50px;
 		padding-left: 50px;
 	}

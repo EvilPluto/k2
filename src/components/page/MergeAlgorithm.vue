@@ -17,7 +17,7 @@
                 ref="algorithmList"
                 :data="algorithmData" 
                 stripe 
-                max-height="400"
+                max-height="450"
                 style="width: 100%">
                     <el-table-column 
                         type="index" 
@@ -26,10 +26,10 @@
                     <el-table-column 
                         prop="name" 
                         label="算法名称"
-                        width="250">
+                        width="270">
                     </el-table-column>
                     <el-table-column
-                        width="100" 
+                        width="128" 
                         label="操作">
                         <template scope="scope">
                             <el-button
@@ -85,6 +85,24 @@
                     },
                     {
                         name: 'login.txt',
+                    },
+                    {
+                        name: 'login.txt',
+                    },
+                    {
+                        name: 'login.txt',
+                    },
+                    {
+                        name: 'login.txt',
+                    },
+                    {
+                        name: 'login.txt',
+                    },
+                    {
+                        name: 'login.txt',
+                    },
+                    {
+                        name: 'login.txt',
                     }
                 ],
 
@@ -97,7 +115,7 @@
 
 <style scoped>
 .tableForm {
-    width: 500px;
+    width: 550px;
 }
 .crumbs{
     text-decoration: none;
