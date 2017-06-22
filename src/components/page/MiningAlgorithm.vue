@@ -6,8 +6,13 @@
                 <el-breadcrumb-item>挖掘算法管理</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
-       <div class="form-box">
-            <el-button type="primary" class="submit-btn" >上传算法</el-button>
+        <div class="form-box">
+            <el-button 
+                type="primary" 
+                class="submit-btn" 
+                @click="uploadAlgorighm">
+                上传算法
+            </el-button>
         </div>
         
         <br>
@@ -44,8 +49,6 @@
                     </el-table-column>
             </el-table>            
         </div>
-
-
     </div>
 </template>
 
@@ -111,11 +114,27 @@
             }
         },
         methods:{
+            uploadAlgorighm() {
+                // $('.bgPage').css('display', 'none');
+                $('.frontPage').css('display', 'block');
+            }
         }
     }
 </script>
 
 <style>
+.bgPage {
+    position: absolute;
+    z-index: 1;
+    display: block;
+}
+.frontPage {
+    position: absolute;
+    z-index: 2;
+
+
+    display: none;
+}
 .tableForm .el-table th {
     text-align: center;
 }
