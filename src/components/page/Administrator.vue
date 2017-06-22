@@ -277,7 +277,10 @@
                         self.$message({
                             message: '数据删除成功!',
                             type: 'success'                        
-                        })
+                        });
+                        var usersList = response.data.allUser;
+                        self.usersData = self.packData(usersList);
+                        self.users = response.data.bannedUserId;
                     } else {
                         console.log(response.data.code);
                         self.codeParsing(response.data.code);
@@ -309,7 +312,10 @@
                         self.$message({
                             message: '数据删除成功!',
                             type: 'success'                        
-                        })
+                        });
+                        var usersList = response.data.allUser;
+                        self.usersData = self.packData(usersList);
+                        self.users = response.data.bannedUserId;
                     } else {
                         console.log(response.data.code);
                         self.codeParsing(response.data.code);

@@ -424,6 +424,7 @@
         display: inline-block;
         border-radius: 4px;
         border: 1px solid #bfcbd9;
+        cursor: pointer;
     }
     .login-btn span{
         text-decoration: none;
