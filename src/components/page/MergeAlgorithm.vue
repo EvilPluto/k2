@@ -7,7 +7,7 @@
             </el-breadcrumb>
         </div>
         <div class="form-box">
-            <el-button type="primary" class="submit-btn">上传算法</el-button>
+            <el-button type="primary" class="submit-btn" >上传算法</el-button>
         </div>
         
         <br>
@@ -16,12 +16,13 @@
             <el-table 
                 ref="algorithmList"
                 :data="algorithmData" 
-                stripe 
+                border
+                stripe
                 max-height="450"
                 style="width: 100%">
                     <el-table-column 
                         type="index" 
-                        width="150">
+                        width="100">
                     </el-table-column>
                     <el-table-column 
                         prop="name" 
@@ -29,12 +30,13 @@
                         width="270">
                     </el-table-column>
                     <el-table-column
-                        width="128" 
+                        width="108" 
                         label="操作">
                         <template scope="scope">
                             <el-button
-                                size="small"
+                                size="mini"
                                 type="danger"
+                                :plain="true"
                                 @click="deleteAlgorithm(scope.$index, scope.row)">
                                 删除
                             </el-button>
@@ -113,9 +115,13 @@
     }
 </script>
 
-<style scoped>
+<style>
+.tableForm .el-table th {
+    text-align: center;
+}
 .tableForm {
-    width: 550px;
+    width: 480px;
+    text-align: center;
 }
 .crumbs{
     text-decoration: none;
