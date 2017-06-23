@@ -46,7 +46,7 @@
                             <el-input placeholder="昵称" v-model="register.nickname"></el-input>
                         </el-form-item>
                         <el-form-item prop="password">
-                            <el-input type="password" placeholder="请输入6-20位密码" v-model="register.password"></el-input>
+                            <el-input type="password" placeholder="请输入6-16位密码" v-model="register.password"></el-input>
                         </el-form-item>
                         <el-form-item prop="repassword">
                             <el-input type="password" placeholder="确认密码" v-model="register.repassword"></el-input>

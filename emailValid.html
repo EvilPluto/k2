@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<style type="text/css">
+		body {
+			background: #324157;
+		}
+		div {
+			position: absolute;
+			width: 400px;
+			height: 200px;
+			top: 50%;
+			left: 50%;
+			margin: -100px 0 0 -200px;
+		}
+		#not_activate {
+			display: block;
+		}
+		#is_activate {
+			display: none;
+		}
+		#has_activate {
+			display: none;
+		}
+		#time_out {
+			display: none;
+		}
+		#wrong_link {
+			display: none;
+		}
+		p {
+			font-weight: 400;
+			font-size: 18px;
+			color: #FFF;
+			text-align: center;
+		}
+		span {
+			font-size: 14px;
+			color: #F2F2F2;
+		}
+		a {
+			color: red;
+		}
+		a:hover {
+			color: yellow;
+		}
+	</style>
+	<title>【K2流程挖掘平台】用户激活</title>
+</head>
+<body onload="validEmail()">
+	<div id="not_activate">
+		<p>正在验证信息，请稍后:)</p>
+		<p>没有反应，请重试：
+			<a href="javascript:window.location.reload()">重新验证</a>
+		</p>	
+	</div>
+	<div id="is_activate">
+		<p>恭喜您成功激活邮件！</p>
+		<p>请返回K2流程挖掘平台：
+			<a href="./index.html">迫不及待，马上登录</a>
+		</p>
+		<p>
+			<span>本页面将在<span id="mes">5</span>秒后跳转到系统！</span>
+		</p>
+	</div>
+	<div id="has_activate">
+		<p>您的账号是激活账号！</p>
+		<p>无需重新激活：
+			<a href="./index.html">去登录</a>
+		</p>	
+	</div>
+	<div id="wrong_link">
+		<p>您的激活链接错误！</p>
+		<p>请联系管理员：
+			<a href="./index.html">去主页面</a>
+		</p>		
+	</div>
+	<div id="time_out">
+		<p>超时了呢T_T</p>
+		<p>请检查一下网络再重试：
+			<a href="javascript:window.location.reload()">重新验证</a>
+		</p>	
+	</div>
+	<script type="text/javascript">
+		console.log('K2');
+		var xmlhttp = new XMLHttpRequest(); // 创建Ajax对象
+		var hostUrl =  ""; // 主机地址，经常改变
+
+		function activated() {
+			var i = 4;
+			var intervalid = setInterval("countDown()", 1000);
+
+			function countDown() {
+				if (i == 0) {
+					clearInterval(intervalid);
+					window.location.href = "./index.html";
+				}
+				document.getElementById("mes").innerHTML = i;
+				i --;
+			}
+		}
+
+		function validEmail() {
+			var userData = window.location.search;
+			userData = userData.slice(1, userData.length);
+			console.log(userData);
+
+			var datas = userData.split("&");
+			console.log(datas);
+
+			var uid = datas[0];
+			var timestamp = datas[1];
+			var encodedcontent = datas[2];
+
+			var data = hostUrl + "/activate?uid=" + uid + "&timestamp=" + timestamp + "&encodedcontent=" + encodedcontent;
+			console.log(data);
+
+			// Ajax请求
+			xmlhttp.open("GET", data, true);
+			xmlhttp.send();
+
+			var json = xmlhttp.responseText;
+			var obj = eval('(' + json + ')'); // 解析Json
+			console.log(obj.code);
+
+			switch(obj.code) {
+				case 200:
+					// 激活成功
+					document.getElementById("not_activate").style.display = "none";
+					document.getElementById("is_activate").style.display = "block";
+					break;
+				case 600:
+					// Time Out
+					document.getElementById("not_activate").style.display = "none";
+					document.getElementById("time_out").style.display = "block";
+					break;
+				case 700:
+					// 错误链接
+					document.getElementById("not_activate").style.display = "none";
+					document.getElementById("wrong_link").style.display = "block";
+					break;
+				case 800:
+					// 已经被激活
+					document.getElementById("not_activate").style.display = "none";
+					document.getElementById("has_activate").style.display = "block";
+					break;
+				default:
+					alert('未知错误');
+					break;
+			}
+		}
+	</script>
+	
+</body>
+</html>

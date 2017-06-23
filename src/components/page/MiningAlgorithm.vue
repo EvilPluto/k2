@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="crumbs">
-            <el-breadcrumb separator="/">
+            <el-breadcrumb separator="/" class="breadcrumb">
                 <el-breadcrumb-item><i class="el-icon-date"></i> 算法管理</el-breadcrumb-item>
                 <el-breadcrumb-item>挖掘算法管理</el-breadcrumb-item>
             </el-breadcrumb>
@@ -9,7 +9,8 @@
         <div class="form-box">
             <el-button 
                 type="primary" 
-                class="submit-btn" 
+                class="submit-btn"
+                :disabled="tapOrNot"
                 @click="uploadAlgorighm">
                 上传算法
             </el-button>
@@ -49,6 +50,9 @@
                     </el-table-column>
             </el-table>            
         </div>
+        <div class="upload">
+            
+        </div>
     </div>
 </template>
 
@@ -57,6 +61,7 @@
     export default {
         data() {
             return {
+                tapOrNot: false,
                 algorithmData: [
                     {
                         name: 'login.txt',
@@ -115,8 +120,13 @@
         },
         methods:{
             uploadAlgorighm() {
-                // $('.bgPage').css('display', 'none');
-                $('.frontPage').css('display', 'block');
+                this.tapOrNot = true;
+                $('.breadcrumb').append(
+                    '<span class="el-breadcrumb__item"><span class="el-breadcrumb__item__inner"><i class="el-icon-upload"></i> 上传算法</span><span class="el-breadcrumb__separator">/</span></span>'
+                    );
+            },
+            backToForm() {
+                this.tapOrNot = false;
             }
         }
     }
