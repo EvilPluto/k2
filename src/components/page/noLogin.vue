@@ -1,5 +1,5 @@
 <template>
-	<div class="message"><h1>{{message}}<a href="#/login">{{点击此处登录}}</a></h1>
+	<div class="message"><h1>{{message}}<a href="#/login">{{tip}}</a></h1>
 	</div>
 	
 </template>
