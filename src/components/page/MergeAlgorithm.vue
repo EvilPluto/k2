@@ -27,10 +27,9 @@
                     <el-table-column 
                         prop="name" 
                         label="算法名称"
-                        width="270">
+                        width="370">
                     </el-table-column>
                     <el-table-column
-                        width="108" 
                         label="操作">
                         <template scope="scope">
                             <el-button
@@ -120,7 +119,7 @@
     text-align: center;
 }
 .tableForm {
-    width: 480px;
+    width: 600px;
     text-align: center;
 }
 .crumbs{
