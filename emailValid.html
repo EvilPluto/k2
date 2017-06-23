@@ -5,6 +5,7 @@
 	<style type="text/css">
 		body {
 			background: #324157;
+			font-family: 微软雅黑;
 		}
 		div {
 			position: absolute;
@@ -85,7 +86,18 @@
 	<script type="text/javascript">
 		console.log('K2');
 		var xmlhttp = new XMLHttpRequest(); // 创建Ajax对象
-		var hostUrl =  ""; // 主机地址，经常改变
+		var hostUrl =  "/processmining"; // 主机地址，经常改变
+
+		var intervalid;
+		var i = 4;	
+		function countDown() {
+			if (i == 0) {
+				clearInterval(intervalid);
+				window.location.href = "./index.html";
+			}
+			document.getElementById("mes").innerHTML = i;
+			i --;
+		}
 
 		function activated() {
 			var i = 4;
@@ -113,15 +125,16 @@
 			var timestamp = datas[1];
 			var encodedcontent = datas[2];
 
-			var data = hostUrl + "/activate?uid=" + uid + "&timestamp=" + timestamp + "&encodedcontent=" + encodedcontent;
+			var data = hostUrl + "/activate?uid=" + uid + "&timestamp=" + timestamp + "&encodedContent=" + encodedcontent;
 			console.log(data);
 
 			// Ajax请求
-			xmlhttp.open("GET", data, true);
+			xmlhttp.open("GET", data, false);
 			xmlhttp.send();
 
 			var json = xmlhttp.responseText;
-			var obj = eval('(' + json + ')'); // 解析Json
+			// var json = {"code": 200};
+			var obj = JSON.parse(json);
 			console.log(obj.code);
 
 			switch(obj.code) {
@@ -129,6 +142,7 @@
 					// 激活成功
 					document.getElementById("not_activate").style.display = "none";
 					document.getElementById("is_activate").style.display = "block";
+					intervalid = setInterval("countDown()", 1000);
 					break;
 				case 600:
 					// Time Out
