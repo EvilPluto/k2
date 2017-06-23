@@ -21,10 +21,10 @@ export default new Router({
                     path: '/user/change-password',
                     component: resolve => require(['../components/page/changePassword.vue'],resolve)
                 },
-                // {
-                //     path: '/user/origin-log',
-                //     component: resolve => require(['../components/page/originLog.vue'],resolve)
-                // },
+                {
+                    path: '/user/origin-log',
+                    component: resolve => require(['../components/page/originLog.vue'],resolve)
+                }
                 // {
                 //     path: '/user/standard-log',
                 //     component: resolve => require(['../components/page/standardLog.vue'],resolve)
