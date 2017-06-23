@@ -14,6 +14,14 @@
     export default {
         components:{
             vHead, vSidebar
+        },
+        mounted() {
+            console.log("home active");
+            console.log(sessionStorage.getItem('ms_type'));
+            var sessionType = sessionStorage.getItem('ms_type')
+            if(sessionType != 0){
+                this.$router.push('/nologin');
+            }
         }
     }
 </script>

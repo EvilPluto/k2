@@ -10,6 +10,10 @@ export default new Router({
             redirect: '/login'
         },
         {
+            path:'/nologin',
+            component: resolve => require(['../components/page/noLogin.vue'],resolve)
+        },
+        {
             path: '/user',
             component: resolve => require(['../components/common/userHome.vue'], resolve),
             children:[

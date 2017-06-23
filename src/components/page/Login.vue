@@ -257,7 +257,7 @@
 
             loginForm(formName) {
                 const self = this;
-
+                // sessionStorage.setItem('ms_type',2);
                 self.$refs[formName].validate((valid) => {
                     if (valid) {
                        this.$axios({
@@ -273,11 +273,15 @@
                         })
                         .then((response) => {
                             if (response.data.code === 200) {
+                                //user == 0 
                                 if (response.data.type === 0) {
                                     localStorage.setItem('ms_username', response.data.nickname);
+                                    sessionStorage.setItem('ms_type', response.data.type);
                                     self.$router.push('/user/');
                                 } else {
+                                //admin ==1
                                     localStorage.setItem('ms_username', response.data.nickname);
+                                    sessionStorage.setItem('ms_type', response.data.type);
                                     self.$router.push('/admin/');
                                 }
                             } else {

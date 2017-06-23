@@ -63,6 +63,10 @@
 
             self.getAllUsersList();
         },
+        mounted(){
+            var type = sessionStorage.getItem('ms_type');
+            console.log(type);
+        },
         methods: {
             codeParsing(code) {
                 var msg = (Title, Message) => {
