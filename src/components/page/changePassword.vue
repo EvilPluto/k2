@@ -32,6 +32,7 @@
             //这里存在重用性问题 框架提供的自定义规则无法修改？
             var checkOldPassword = (rule,value,callback) => {
                 var vm = this.$data;
+                var reg = /^[a-zA-Z0-9]+$/;
                 if(!value){
                     vm.check1 = true;
                     return callback(new Error('密码不能为空'));
@@ -40,12 +41,18 @@
                     vm.check1 = true;
                     return callback(new Error('密码长度为6 - 16个字符'));
                 }
-                else{
+                else if(!value.match(reg))
+                {
+                    return callback(new Error('密码仅可由数字与字母组成'));
+                }
+                else
+                {
                     vm.check1 = false;
                 }
             };
             var checkNewPassword = (rule,value,callback) => {
                 var vm = this.$data;
+                var reg = /^[a-zA-Z0-9]+$/;
                 if(!value){
                     vm.check2 = true;
                     return callback(new Error('密码不能为空'));
@@ -53,6 +60,10 @@
                 else if(value.gblen() < 6 || value.gblen() > 16){
                     vm.check2 = true;
                     return callback(new Error('密码长度为6 - 16个字符'));
+                }
+                else if(!value.match(reg))
+                {
+                    return callback(new Error('密码仅可由数字与字母组成'));
                 }
                 else{
                     vm.check2 = false;
@@ -60,6 +71,7 @@
             };
             var checkPassword = (rule,value,callback) => {
                 var vm = this.$data;
+                var reg = /^[a-zA-Z0-9]+$/;
                 if(!value){
                     vm.check3 = true;
                     return callback(new Error('密码不能为空'));
@@ -67,6 +79,10 @@
                 else if(value.gblen() < 6 || value.gblen() > 16){
                     vm.check3 = true;
                     return callback(new Error('密码长度为6 - 16个字符'));
+                }
+                else if(!value.match(reg))
+                {
+                    return callback(new Error('密码仅可由数字与字母组成'));
                 }
                 else{
                     vm.check3 = false;
@@ -89,10 +105,17 @@
 
                     // ]
                     oldPassword:[
-                        { validator: checkOldPassword, trigger:'change'}
+                        { validator: checkOldPassword, trigger:'change'},
+                        { validator: checkOldPassword, trigger:'blur'}
                     ],
-                    newPassword:[ { validator: checkNewPassword, trigger:'change'}],
-                    checkNewPassword:[{ validator: checkPassword, trigger:'change'}]
+                    newPassword:[
+                        { validator: checkNewPassword, trigger:'change'},
+                        { validator: checkNewPassword, trigger:'blur'}
+                    ],
+                    checkNewPassword:[
+                        { validator: checkPassword, trigger:'change'},
+                        { validator: checkPassword, trigger:'blur'}
+                    ]
                 }
             }
         },

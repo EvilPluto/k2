@@ -141,8 +141,8 @@
     export default {
         data: function(){
             return {
-                // hostUrl:"./static",
-                hostUrl:"/processmining",
+                hostUrl:"./static",
+                // hostUrl:"/processmining",
                 searchInput:"",
                 currentPageNum:1,
 
@@ -229,8 +229,8 @@
                 vm.tableData = [];
                 console.log("addurl= "+addUrl);
                 this.$axios({
-                    url: '/rawLog/listAll'+addUrl,
-                    // url:'tableData.json',
+                    // url: '/rawLog/listAll'+addUrl,
+                    url:'tableData.json',
                     method: 'get',
                     baseURL: vm.hostUrl,
                 }).then((response) => {
@@ -395,7 +395,7 @@
                                     callback: action => {
                                         this.$message({
                                             type: 'info',
-                                            message: `action: ${ action }`
+                                            message:'已删除'
                                         });
                                 }
                                 });
@@ -405,6 +405,10 @@
                                 this.$alert('删除失败或文件不存在', '删除结果', {
                                     confirmButtonText: '确定',
                                     callback: action => {
+                                        this.$message({
+                                            type: 'info',
+                                            message: `action: ${ action }`
+                                        });
                                 }
                                 });
                             };

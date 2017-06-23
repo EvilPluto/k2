@@ -29,9 +29,9 @@
                     vm.allowSubmit = true;
                     return callback(new Error('昵称不能为空'));
                 }
-                else if(value.gblen() < 4 || value.gblen() > 15){
+                else if(value.gblen() < 4 || value.gblen() > 16){
                     vm.allowSubmit = true;
-                    return callback(new Error('长度为4 - 15个字符'));
+                    return callback(new Error('长度为4 - 16个字符'));
                 }
                 else{
                     vm.allowSubmit = false;
@@ -143,7 +143,7 @@
                             console.log("Error:", error);
                             this.$message({
                                     type:'warning',
-                                    message:'AJAX FAIL'
+                                    message:'网络无连接'
                                 });
                             localStorage.setItem('ms_username', vm.ruleForm.nickName);
                         });
@@ -178,6 +178,6 @@
     margin-left:80px;
 }
 .submit-btn button{
-    width:100%;
+    width:100%; 
 }
 </style>
