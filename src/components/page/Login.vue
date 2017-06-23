@@ -257,7 +257,6 @@
 
             loginForm(formName) {
                 const self = this;
-                // sessionStorage.setItem('ms_type',2);
                 self.$refs[formName].validate((valid) => {
                     if (valid) {
                        this.$axios({

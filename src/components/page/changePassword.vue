@@ -43,6 +43,7 @@
                 }
                 else if(!value.match(reg))
                 {
+                    vm.check2 = true;
                     return callback(new Error('密码仅可由数字与字母组成'));
                 }
                 else
@@ -63,6 +64,7 @@
                 }
                 else if(!value.match(reg))
                 {
+                    vm.check2 = true;
                     return callback(new Error('密码仅可由数字与字母组成'));
                 }
                 else{
@@ -81,7 +83,8 @@
                     return callback(new Error('密码长度为6 - 16个字符'));
                 }
                 else if(!value.match(reg))
-                {
+                {   
+                    vm.check3 = true;
                     return callback(new Error('密码仅可由数字与字母组成'));
                 }
                 else{

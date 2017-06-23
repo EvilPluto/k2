@@ -25,6 +25,7 @@
         data: function(){
             var checkNick = (rule,value,callback) => {
                 var vm = this.$data;
+                var reg = /[^\w\u4E00-\u9fa5]/;
                 if(!value){
                     vm.allowSubmit = true;
                     return callback(new Error('昵称不能为空'));
@@ -32,6 +33,11 @@
                 else if(value.gblen() < 4 || value.gblen() > 16){
                     vm.allowSubmit = true;
                     return callback(new Error('长度为4 - 16个字符'));
+                }
+                else if(value.match(reg))
+                {
+                    vm.allowSubmit = true;
+                    return callback(new Error('昵称只能有汉字、英文、数字组成'));
                 }
                 else{
                     vm.allowSubmit = false;
