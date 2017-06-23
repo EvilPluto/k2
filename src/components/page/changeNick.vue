@@ -136,7 +136,7 @@
                             }
                             else {
                                 console.log(response.data.code);
-                                codeParsing(response.data.code);                                
+                                vm.codeParsing(response.data.code);                                
                             }
                         })
                         .catch((error) => {

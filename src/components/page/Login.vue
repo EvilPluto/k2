@@ -154,7 +154,7 @@
                 },
                 registerRules: {
                     username: [
-                        { required: true, message: '请输入用户名', trigger: 'blur' },
+                        { required: true, message: '请输入Email', trigger: 'blur' },
                         { type: "email", message: '请输入正确的Email格式', trigger: 'change' },
                         { type: "email", message: '请输入正确的Email格式', trigger: 'blur' }
                     ],
@@ -240,7 +240,7 @@
                         break;
                 }
             },
-            
+
             changeUrl() {
                 var url = this.imgUrl;
 
