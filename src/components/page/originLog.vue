@@ -320,45 +320,24 @@
 
             downloadBtn:function(){
                 var vm = this;
-                // if(vm.selected.length ==1){
-                //     var downloadId = vm.selected[0].id;
-                //     this.$axios({
-                //         url: 'rawLog/'+downloadId,
-                //         method: 'get',
-                //         baseURL: vm.hostUrl,
-                //     }).then((response) => {
-                //         this.$message({
-                //             type:'success',
-                //             message:'请求下载成功'
-                //         }); 
-                //         console.log("download link = ");
-                //         console.log(response.data);
-                //         widow.open(response.data);
 
-                //     }).catch((error) => {
-                //         console.log("error=");
-                //         console.log(error.responseText);
-                //     });
-                // }else{
-                //     this.$message({
-                //         type:'error',
-                //         message:'每次只能下载一个文件！'
-                //     });
-                // }
                 if(vm.selected.length ==0){
                     this.$message({
                         type:'error',
                         message:'没有选中任何文件'
                     });
                 }
-                else{
-                    for(let i=0;i<vm.selected.length;i++){
-                        var downloadId = vm.selected[i].id;
-                        console.log("downloadID = "+downloadId);
+                else if(vm.selected.length == 1)
+                {
+                        var downloadId = vm.selected[0].id;
                         window.open(vm.hostUrl+"/rawLog/"+downloadId);
-                    }
                 }
-                
+                else{
+                    var branchUrl = '';
+                    window.open*(vm.hostUrl+branchUrl);
+                }
+
+
             },
             normalizeBtn:function(){
                 //code by...
