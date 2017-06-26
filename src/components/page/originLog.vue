@@ -451,6 +451,7 @@
             normalizeBtn:function(){
                 var vm = this;
                 console.log(vm.selected);
+                console.log(vm.selected);
                 if(vm.selected.length == 0){
                     this.$message({
                         type:'warning',
@@ -461,6 +462,17 @@
                     this.$message({
                         type:'error',
                         message:'一次只能规范化一个日志！'
+                    });
+                }
+                else if(vm.selected[0].standardName){
+                    this.$confirm('此日志已被规范化，你确定要重新规范化吗?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(()=>{
+                        vm.setup();
+                    }).catch((error) => {
+                        console.log('error');
                     });
                 }
                 else{
@@ -550,7 +562,7 @@
                         else {
                             console.log(response.data.code);
                             this.codeParsing(response.data.code);                                
-                        }                       
+                        }      
                     }).catch((error) => {
                         console.log(error);
                     });
