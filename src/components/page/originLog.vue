@@ -12,7 +12,7 @@
                     <el-button type="primary" icon="upload" @click="uploadBtn()">上&nbsp;传</el-button>
                     <el-button type="primary" icon="share" @click="downloadBtn()">下&nbsp;载</el-button>
                     <el-button type="primary" icon="edit" 
-                    @click="normalizeBtn()">规范化</el-button>
+                    @click="normalizeBtn">规范化</el-button>
                     <el-button type="danger" icon="delete2" @click="deleteBtn()">删&nbsp;除</el-button>
                 </el-button-group>
             </div>
@@ -79,7 +79,7 @@
                       width="150">
                       <template scope="scope">
                           <el-button size="small" 
-                          id="shareButton" :style="{display:scope.row.isMine?'inline':'none'}" @click="shareBtn(scope.$index,scope.row)" :type="scope.row.isShare?cancelType:shareType">{{scope.row.isShare?shareMsg:cancelMsg}}</el-button>
+                          id="shareButton" :style="{display:scope.row.isMine?'inline':'none'}" @click="shareBtn(scope.$index,scope.row)" :type="scope.row.isShare?cancelType:shareType">{{scope.row.isShare?cancelMsg:shareMsg}}</el-button>
                       </template>    
                     </el-table-column>                
 
@@ -89,16 +89,16 @@
                 <el-pagination
                   @current-change="handleCurrentChange"
                   :current-page.sync="currentPageNum"
-                  :page-size="100"
+                  :page-size="pageSize"
                   layout="prev, pager, next, jumper"
-                  :total="1000">
+                  :total="pageTotal">
                 </el-pagination>
             </div>
         </div>
     </div>
 </template>
 
-<style scoped>
+<style>
 #shareButton {
 }
 .page-box{
@@ -130,14 +130,25 @@
 .log-table{
     margin-top:80px;
 }
+.normalize-wrap{
+    width:900px;
+} 
+.normalize-wrap .el-message-box__btns {
+    position: relative;
+    margin-top:-76px;
+    width:660px;
+    left: 200px; 
+}
 </style>
 <!-- function GetQueryString(name){
     var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
     var r = window.location.search.substr(1).match(reg);
     if(r != null) return  unescape(r[2]); return null;
 } -->
+
 <script>
     import uploadBox from  './uploadBox.vue'
+    import msgBox from './msgBox.vue'
     export default {
         data: function(){
             return {
@@ -145,7 +156,8 @@
                 hostUrl:"/processmining",
                 searchInput:"",
                 currentPageNum:1,
-
+                pageSize:1,
+                pageTotal:20,
                 tableData: [{
                     id:0,
                     originName:"log1.text",
@@ -213,16 +225,106 @@
                 },
                 multipleSelection: [],
                 //分享按钮
-                shareMsg:"fuckyou",
-                cancelMsg:"asswecan",
+                shareMsg:"分享",
+                cancelMsg:"取消",
                 shareType:"primary",
                 cancelType:"warning",
                 //buffer
                 selected:[],
+                //
+                //
+                //MSG BOX PART
+         isWell:true,
+         toFormat:[{
+          sub:0,
+          name:'[QC]',
+          mark:'ABCD',
+          identifying:'[Method]',
+          originForm:'Incident:A-B-C-D,Plan:C/B/ATD,Task:A/B/CTD,DEFAULT:A-B-CTD',
+          targetForm:'A-B-CTD'
+        }],
+        toConformTime:[{originTime:'[QC]',targetTime:'Time'}],
+        toConformData:[{sub:0,originData:'[Method];[Status]',targetData:'EventName'},
+                      {sub:1,originData:'[FKPlanID]',targetData:'FKPlanID'},
+                      {sub:2,originData:'[PKIncidentID]',targetData:'PKIncidentID'},
+                      {sub:3,originData:'[PKTaskID]',targetData:'PKTaskID'},
+                      {sub:4,originData:'[PKPlanID]',targetData:'PKPlanID'},
+                      {sub:5,originData:'[FKIncidentID]',targetData:'FKIncidentID'}],
+       recordings:[{dataSeparator:'\\t',nameSeparator:' ',nullSeparator:' '}],
+
+            //normalize postData
+            normalizeData:{
+                id:1,
+                formats:'',
+                timeNames:'',
+                targetTimeName:'',
+                dataNames:'',
+                oriitemSeparator:'',
+                orinameValSeparator:'',
+                orinulVal:'',
+                targetitemSeparator:'',
+                targetnameValSeparator:'',
+                targetnulVal:''
+            }
 
             }
         },
         methods:{
+            codeParsing(code) {
+                var msg = (Title, Message) => {
+                    this.$message({
+                        title: Title,
+                        message: Message,
+                        type: 'error'
+                    });
+                };
+                switch(code) {
+                    case -1:
+                        msg('系统错误', '未知错误，请上报管理员');
+                        break;
+                    case 201:
+                        msg('输入域错误', '验证码错误');
+                        break;
+                    case 300:
+                        msg('输入域错误', '邮箱或密码错误');
+                        break;
+                    case 301:
+                        msg('权限问题', '用户已禁用，请联系管理员');
+                        break;
+                    case 302:
+                        msg('权限问题', '用户未激活，请去邮箱激活用户');
+                        break;
+                    case 303:
+                        msg('注册问题', '邮箱已占用，请更改邮箱');
+                        break;
+                    case 304:
+                        msg('注册问题', '昵称已占用，请更改昵称');
+                        break;
+                    case 400:
+                        msg('权限问题', '用户未登录，请重新登录');
+                        break;
+                    case 401:
+                        msg('权限问题', '用户无权访问，请联系管理员');
+                        break;
+                    case 402:
+                        msg('操作错误', '删除错误,请刷新重试');
+                        break;
+                    case 500:
+                        msg('系统错误', '未知错误，请上报管理员');
+                        break;
+                    case 600:
+                        msg('TIME_OUT', '访问超时，请检查网络连接');
+                        break;
+                    case 700:
+                        msg('激活错误', '非法激活链接，请联系管理员');
+                        break;
+                    case 800:
+                        msg('激活错误', '用户已被激活，请直接登录');
+                        break;
+                    default:
+                        break;
+                }
+            },
             //get ajax
             getData:function(addUrl){
                 var vm = this;
@@ -252,6 +354,8 @@
                         console.log("AJAX DATA :");
                         console.log(vm.ajaxData);
                         vm.currentPageNum = vm.ajaxData.pageNum;
+                        vm.pageSize = vm.ajaxData.pageSize;
+                        vm.pageTotal = vm.ajaxData.total;
                         for(let i=0;i<vm.ajaxData.list.length;i++){
                             temp = {};
                             temp.id = vm.ajaxData.list[i].id;
@@ -312,8 +416,8 @@
                 this.$msgbox({
                     title:'上传',
                     message:h(uploadBox),
-                    showConfirmButton: true,
-                    showCancelButton: true,
+                    showConfirmButton:false,
+                    showCancelButton: false,
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                 });
@@ -321,7 +425,8 @@
 
             downloadBtn:function(){
                 var vm = this;
-
+                var postData = [];
+                var postSTR = "";
                 if(vm.selected.length ==0){
                     this.$message({
                         type:'error',
@@ -334,14 +439,125 @@
                         window.open(vm.hostUrl+"/rawLog/"+downloadId);
                 }
                 else{
-                    var branchUrl = '';
-                    window.open*(vm.hostUrl+branchUrl);
+                    for(let i =0;i<vm.selected.length;i++){
+                        postData.push(vm.selected[i].id);
+                    }
+                    postSTR = postData.join(';');
+                    window.open(vm.hostUrl+"/rawLog/downloadBatch?idList="+postSTR);
                 }
 
 
             },
             normalizeBtn:function(){
-                //code by...
+                var vm = this;
+                console.log(vm.selected);
+                if(vm.selected.length == 0){
+                    this.$message({
+                        type:'warning',
+                        message:'请先选择日志'
+                    });
+                }
+                else if(vm.selected.length>1){
+                    this.$message({
+                        type:'error',
+                        message:'一次只能规范化一个日志！'
+                    });
+                }
+                else{
+                    vm.setup();
+                }
+
+            },
+            setup:function(){
+                //code by...Liu
+                const h = this.$createElement; 
+                var self=this;
+                this.$msgbox({
+                  title: '规范化',
+                  message: h(msgBox,{on:{changePara:function(arr1,arr2,arr3,arr4,isOK){
+                    self.toFormat=arr1;
+                    self.toConformTime=arr2;
+                    self.toConformData=arr3;
+                    self.recordings=arr4;
+                    self.isWell=isOK;
+                  }}}),
+                  showCancelButton: false,
+                  customClass:'normalize-wrap',
+                  confirmButtonText: '确定',
+                  beforeClose: (action, instance, done) => {
+                       if (action === 'confirm') {
+                         if(self.isWell){
+                           instance.confirmButtonLoading = true;
+                           instance.confirmButtonText = '执行中...';
+                           setTimeout(() => {
+                           done();
+                           setTimeout(() => {
+                           instance.confirmButtonLoading = false;
+                           }, 300);
+                         }, 1000);
+                         } else{
+                          alert('错误：存在空行或缺失数据项');
+                          return;
+                       }         
+                    } else {
+                      done();
+                    }
+                  }
+                }).then(action => {
+                  if(action=='confirm'){
+                    //formats========================
+                    var formatsArr = [];
+                    for(let i=0;i<self.toFormat.length;i++){
+                        var str1 = self.toFormat[i].name+","+self.toFormat[i].mark+","+self.toFormat[i].identifying+","+self.toFormat[i].originForm+","+self.toFormat[i].targetForm;
+                        formatsArr.push(str1);
+                    };
+                    self.normalizeData.formats = formatsArr.join(';');
+                    //================================
+
+                    //timeNames-=======================
+                    console.log(self.toConformTime);
+                    self.normalizeData.timeNames = self.toConformTime[0].originTime;
+                    self.normalizeData.targetTimeName = self.toConformTime[0].targetTime;
+                    //================================
+
+                    //dataNames======================
+                    var dataNamesArr = [];
+                    for(let i=0;i<self.toConformData.length;i++){
+                        var str2 = self.toConformData[i].originData+":"+self.toConformData[i].targetData;
+                        dataNamesArr.push(str2);
+                    }
+                    self.normalizeData.dataNames = dataNamesArr.join(',');
+                    //===============================
+                    // Recordings
+                    self.normalizeData.oriitemSeparator = self.recordings[0].dataSeparator;
+                    self.normalizeData.orinameValSeparator = self.recordings[0].nameSeparator;
+                    self.normalizeData.orinulVal = self.recordings[0].nullSeparator;
+                    self.normalizeData.id = self.selected[0].id;
+                    console.log(self.normalizeData);
+                    //AJAX============================
+                    this.$axios({
+                        url:'/rawLog/convertToNormLog',
+                        method:'post',
+                        baseURL:this.hostUrl,
+                        data:this.normalizeData
+                    }).then((response) => {
+                        if(response.data.code == "200"){
+                            this.$message({
+                                type:'success',
+                                message:'规范化成功'
+                            });
+                        }
+                        else {
+                            console.log(response.data.code);
+                            this.codeParsing(response.data.code);                                
+                        }                       
+                    }).catch((error) => {
+                        console.log(error);
+                    });
+                    //==================================
+                  }       
+                });   
+
             },
             deleteBtn:function(){
                 var vm = this;
@@ -488,6 +704,7 @@
                 var vm=this;
                 console.log("current-Page:");
                 console.log(vm.currentPageNum);
+                vm.getTableData();
             },
             handleClick:function(val){
                 console.log("CLICK:");

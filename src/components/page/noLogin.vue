@@ -28,6 +28,7 @@
 	h1{
 		display: block;
 		margin-top:20%;
+		font-weight: normal;
 	}
 	.message a{
 		color:#20a0ff;

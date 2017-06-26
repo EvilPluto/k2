@@ -32,7 +32,7 @@
                 }
                 else if(value.gblen() < 4 || value.gblen() > 16){
                     vm.allowSubmit = true;
-                    return callback(new Error('长度为4 - 16个字符'));
+                    return callback(new Error('长度为4 - 16个字节'));
                 }
                 else if(value.match(reg))
                 {
