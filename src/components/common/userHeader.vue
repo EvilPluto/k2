@@ -37,10 +37,12 @@
                     })
                     .then((response) => {
                         localStorage.removeItem('ms_username');
+                        sessionStorage.clear();
                         this.$router.push('/login');
                     })
                     .catch((error) => {
                         localStorage.removeItem('ms_username');
+                        sessionStorage.clear();
                         this.$router.push('/login');
                     });  
                 }
