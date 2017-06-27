@@ -147,7 +147,7 @@
 } -->
 
 <script>
-    import uploadBox from  './uploadBox.vue'
+    import uploadRawBox from  './uploadRawBox.vue'
     import msgBox from './msgBox.vue'
     export default {
         data: function(){
@@ -378,10 +378,7 @@
                         console.log(vm.tableData);
                     }
                     else{
-                        this.$message({
-                            type:'error',
-                            message:'code is not 200'
-                        });
+                        vm.codeParsing(response.data.code);
                         console.log('code='+response.data.code);
                     }
 
@@ -405,7 +402,7 @@
                     });
                 }
                 else{
-                    var searchUrl = "?search="+vm.searchInput;
+                    var searchUrl = "?info="+vm.searchInput;
                     console.log("searchUrl: " + searchUrl);
                     vm.getData(searchUrl);
                 }
@@ -415,7 +412,7 @@
                 const h = this.$createElement;
                 this.$msgbox({
                     title:'上传',
-                    message:h(uploadBox),
+                    message:h(uploadRawBox),
                     showConfirmButton:false,
                     showCancelButton: false,
                     confirmButtonText: '确定',
@@ -578,9 +575,17 @@
                 };
                 console.log("selected=");
                 console.log(vm.selected);
+
                 if(vm.selected.length>0){
                     for(let i =0;i<vm.selected.length;i++){
                         deleteId.idList.push(vm.selected[i].id);
+                        if(!vm.selected[i].isMine){
+                            this.$message({
+                                type:'error',
+                                message:'不能删除不属于你的日志！'
+                            });
+                            return 0;
+                        }
                     }
                     // var deleteUrl = deleteId.join('&');
                     console.log("Delete id = ");
@@ -601,24 +606,13 @@
                                 this.$alert('选中文件均已删除成功', '删除结果', {
                                     confirmButtonText: '确定',
                                     callback: action => {
-                                        this.$message({
-                                            type: 'info',
-                                            message:'已删除'
-                                        });
+                                        console.log('delete success');
                                 }
                                 });
                             }
                             else{
                                 console.log("code = "+response.data.code);
-                                this.$alert('删除失败或文件不存在', '删除结果', {
-                                    confirmButtonText: '确定',
-                                    callback: action => {
-                                        this.$message({
-                                            type: 'info',
-                                            message: `action: ${ action }`
-                                        });
-                                }
-                                });
+                                 vm.codeParsing(response.data.code);
                             };
                         }).catch((error) => {
                             console.log("error=");
@@ -663,10 +657,7 @@
                             row.isShare = !row.isShare;
                         }
                         else{
-                            this.$message({
-                                type:"error",
-                                message:"系统错误"
-                            });
+                            vm.codeParsing(response.data.code);
                         }
                     }).catch((error) => {
                         this.$message({
@@ -691,10 +682,7 @@
                             row.isShare = !row.isShare;
                         }
                         else{
-                            this.$message({
-                                type:"error",
-                                message:"系统错误"
-                            });
+                             vm.codeParsing(response.data.code);
                         }
                     }).catch((error) => {
                         this.$message({

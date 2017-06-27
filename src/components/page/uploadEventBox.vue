@@ -19,10 +19,10 @@
 			  width='70'
 			  @change="switchChange">
 			</el-switch>
-			<el-input type='text' name='file-name' id='file-name' class='file-name' placeholder="请上传文件" :value="fileTitle"/></el-input>
+			<el-input type='text' name='file-name' id='file-name' class='file-name' placeholder="请上传文件" :value="fileTitle" :disabled="enable"/></el-input>
 			<el-button type = "primary" class="btn-browse">浏览</el-button>
 			<el-button type="success" class='btn-upload' @click="submitForm">上传</el-button>
-			<input type="file" :value="uploadForm.file" name="file" class="file-field" id="file-field" @change="changeFileName" accept=".xes,.txt"/></input>
+			<input type="file" :value="uploadForm.file" name="file" class="file-field" id="file-field" @change="changeFileName" :accept="accept" :disabled="enable" /></input>
 
 		</el-form>
 	</div>
@@ -34,7 +34,7 @@
 		data(){
 			return{
                 switchVal: true,
-				uploadUrl:'/processmining/rawLog',
+				uploadUrl:'/processmining/eventLog',
 				uploadForm:{
 					format:'',
 					file:'',
@@ -52,6 +52,8 @@
 						label:'XES'
 					}
 				],
+				accept:'',
+				enable:true
 			}
 		},
 		methods:{
@@ -112,9 +114,18 @@
             },
 			valueChange:function(){
 				var vm=this;
-				console.log(vm.format);
-				if(vm.format != ''){
-					
+				console.log(vm.uploadForm.format);
+				if(vm.uploadForm.format == 'txt'){
+					vm.accept = '.txt';
+					vm.enable = false;
+				}
+				else if(vm.uploadForm.format == 'xes'){
+					vm.accept ='.xes';
+					vm.enable = false;
+				}
+				else{
+					vm.accept ='';
+					vm.enable =true;
 				}
 			},
 			changeFileName:function(value){

@@ -3,7 +3,7 @@
         <div class="crumbs">
             <el-breadcrumb separator="/">
                 <el-breadcrumb-item><i class="el-icon-date"></i> 日志管理</el-breadcrumb-item>
-                <el-breadcrumb-item>事件化日志</el-breadcrumb-item>
+                <el-breadcrumb-item>事件日志</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div  class="form-box">
@@ -11,6 +11,8 @@
                 <el-button-group>
                     <el-button type="primary" icon="upload" @click="uploadBtn()">上&nbsp;传</el-button>
                     <el-button type="primary" icon="share" @click="downloadBtn()">下&nbsp;载</el-button>
+                    <!-- <el-button type="primary" icon="edit" 
+                    @click="eventBtn">事件化</el-button> -->
                     <el-button type="danger" icon="delete2" @click="deleteBtn()">删&nbsp;除</el-button>
                 </el-button-group>
             </div>
@@ -41,23 +43,23 @@
                       align = "left"
                        width="150"
                       show-overflow-tooltip>
-                    <template scope="scope">{{ scope.row.eventName }}</template>
+                      <template scope="scope">{{ scope.row.eventName }}</template>
                     </el-table-column>
                     <el-table-column
                       prop="standardName"
                       label="规范化日志"
                       align = "left"
-                      width="150">
+                      width="150    ">
                       <template scope="scope">{{ scope.row.standardName }}</template>
                     </el-table-column>
-                                        <el-table-column
+                    <el-table-column
                       prop="originName"
                       label="原始日志"
                       align = "left"
                       width="130">
                       <template scope="scope">{{ scope.row.originName }}</template>
                     </el-table-column>
-
+                 
                     <el-table-column
                       prop="creator"
                       label="作者"
@@ -146,7 +148,8 @@
 } -->
 
 <script>
-    import uploadBox from  './uploadBox.vue'
+    import uploadRawBox from  './uploadEventBox.vue'
+    import msgBox from './msgBox.vue'
     export default {
         data: function(){
             return {
@@ -205,10 +208,10 @@
                         creator:'hemouren',
                         hdfsid:'',
                         isshared:true,
+                        toRawLogId:0,
+                        toRawLogName:null,
                         toNormLogId:0,
-                        toNormLogName:null,
-                        toEventLogId:0,
-                        toEventLogName:null
+                        toNormLogName:null
                     }],
                     firstPage:1,
                     prePage:0,
@@ -229,41 +232,6 @@
                 cancelType:"warning",
                 //buffer
                 selected:[],
-                //
-                //
-                //MSG BOX PART
-         isWell:true,
-         toFormat:[{
-          sub:0,
-          name:'[QC]',
-          mark:'ABCD',
-          identifying:'[Method]',
-          originForm:'Incident:A-B-C-D,Plan:C/B/ATD,Task:A/B/CTD,DEFAULT:A-B-CTD',
-          targetForm:'A-B-CTD'
-        }],
-        toConformTime:[{originTime:'[QC]',targetTime:'Time'}],
-        toConformData:[{sub:0,originData:'[Method];[Status]',targetData:'EventName'},
-                      {sub:1,originData:'[FKPlanID]',targetData:'FKPlanID'},
-                      {sub:2,originData:'[PKIncidentID]',targetData:'PKIncidentID'},
-                      {sub:3,originData:'[PKTaskID]',targetData:'PKTaskID'},
-                      {sub:4,originData:'[PKPlanID]',targetData:'PKPlanID'},
-                      {sub:5,originData:'[FKIncidentID]',targetData:'FKIncidentID'}],
-       recordings:[{dataSeparator:'\\t',nameSeparator:' ',nullSeparator:' '}],
-
-            //normalize postData
-            normalizeData:{
-                id:1,
-                formats:'',
-                timeNames:'',
-                targetTimeName:'',
-                dataNames:'',
-                oriitemSeparator:'',
-                orinameValSeparator:'',
-                orinulVal:'',
-                targetitemSeparator:'',
-                targetnameValSeparator:'',
-                targetnulVal:''
-            }
 
             }
         },
@@ -329,7 +297,7 @@
                 vm.tableData = [];
                 console.log("addurl= "+addUrl);
                 this.$axios({
-                    url: '/rawLog/listAll'+addUrl,
+                    url: '/eventLog/listAll'+addUrl,
                     // url:'tableData.json',
                     method: 'get',
                     baseURL: vm.hostUrl,
@@ -357,9 +325,9 @@
                         for(let i=0;i<vm.ajaxData.list.length;i++){
                             temp = {};
                             temp.id = vm.ajaxData.list[i].id;
-                            temp.originName = vm.ajaxData.list[i].name;
+                            temp.originName = vm.ajaxData.list[i].toRawLogName;
                             temp.standardName = vm.ajaxData.list[i].toNormLogName;
-                            temp.eventName = vm.ajaxData.list[i].toEventLogName;
+                            temp.eventName = vm.ajaxData.list[i].name;
                             temp.creator = vm.ajaxData.list[i].creator;
                             temp.createDate = vm.ajaxData.list[i].createTime;
                             temp.isShare = vm.ajaxData.list[i].isshared;
@@ -376,10 +344,7 @@
                         console.log(vm.tableData);
                     }
                     else{
-                        this.$message({
-                            type:'error',
-                            message:'code is not 200'
-                        });
+                        vm.codeParsing(response.data.code);
                         console.log('code='+response.data.code);
                     }
 
@@ -403,7 +368,7 @@
                     });
                 }
                 else{
-                    var searchUrl = "?search="+vm.searchInput;
+                    var searchUrl = "?info="+vm.searchInput;
                     console.log("searchUrl: " + searchUrl);
                     vm.getData(searchUrl);
                 }
@@ -413,7 +378,7 @@
                 const h = this.$createElement;
                 this.$msgbox({
                     title:'上传',
-                    message:h(uploadBox),
+                    message:h(uploadRawBox),
                     showConfirmButton:false,
                     showCancelButton: false,
                     confirmButtonText: '确定',
@@ -434,14 +399,14 @@
                 else if(vm.selected.length == 1)
                 {
                         var downloadId = vm.selected[0].id;
-                        window.open(vm.hostUrl+"/rawLog/"+downloadId);
+                        window.open(vm.hostUrl+"/eventLog/"+downloadId);
                 }
                 else{
                     for(let i =0;i<vm.selected.length;i++){
                         postData.push(vm.selected[i].id);
                     }
                     postSTR = postData.join(';');
-                    window.open(vm.hostUrl+"/rawLog/downloadBatch?idList="+postSTR);
+                    window.open(vm.hostUrl+"/eventLog/downloadBatch?idList="+postSTR);
                 }
 
 
@@ -453,9 +418,17 @@
                 };
                 console.log("selected=");
                 console.log(vm.selected);
+
                 if(vm.selected.length>0){
                     for(let i =0;i<vm.selected.length;i++){
                         deleteId.idList.push(vm.selected[i].id);
+                        if(!vm.selected[i].isMine){
+                            this.$message({
+                                type:'error',
+                                message:'不能删除不属于你的日志！'
+                            });
+                            return 0;
+                        }
                     }
                     // var deleteUrl = deleteId.join('&');
                     console.log("Delete id = ");
@@ -466,7 +439,7 @@
                         type: 'warning'
                     }).then(() => {
                         this.$axios({
-                        url: 'rawLog/',
+                        url: 'eventLog/',
                         method: 'delete',
                         baseURL: vm.hostUrl,
                         data:deleteId
@@ -476,10 +449,7 @@
                                 this.$alert('选中文件均已删除成功', '删除结果', {
                                     confirmButtonText: '确定',
                                     callback: action => {
-                                        this.$message({
-                                            type: 'info',
-                                            message:'已删除'
-                                        });
+                                        console.log('delete success');
                                 }
                                 });
                             }
@@ -488,10 +458,7 @@
                                 this.$alert('删除失败或文件不存在', '删除结果', {
                                     confirmButtonText: '确定',
                                     callback: action => {
-                                        this.$message({
-                                            type: 'info',
-                                            message: `action: ${ action }`
-                                        });
+                                        console.log('delete failed');
                                 }
                                 });
                             };
@@ -524,7 +491,7 @@
                 // row.isShare = !row.isShare;
                 if(!row.isShare){
                     this.$axios({
-                        url:'/rawLog/share/'+ row.id,
+                        url:'/eventLog/share/'+ row.id,
                         method: 'get',
                         baseURL:vm.hostUrl
                     }).then((response) => {
@@ -538,10 +505,7 @@
                             row.isShare = !row.isShare;
                         }
                         else{
-                            this.$message({
-                                type:"error",
-                                message:"系统错误"
-                            });
+                            vm.codeParsing(response.data.code);
                         }
                     }).catch((error) => {
                         this.$message({
@@ -552,7 +516,7 @@
                 }
                 else{
                     this.$axios({
-                        url:'/rawLog/unshare/'+ row.id,
+                        url:'/eventLog/unshare/'+ row.id,
                         method: 'get',
                         baseURL:vm.hostUrl
                     }).then((response) => {
@@ -566,10 +530,7 @@
                             row.isShare = !row.isShare;
                         }
                         else{
-                            this.$message({
-                                type:"error",
-                                message:"系统错误"
-                            });
+                             vm.codeParsing(response.data.code);
                         }
                     }).catch((error) => {
                         this.$message({

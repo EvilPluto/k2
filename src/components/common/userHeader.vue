@@ -18,7 +18,8 @@
     export default {
         data() {
             return {
-                name: 'root'
+                name: 'root',
+                hostUrl:'/processmining'
             }
         },
         computed:{
