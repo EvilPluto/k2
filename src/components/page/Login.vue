@@ -117,7 +117,7 @@
                     callback(new Error('请不要包含空格'));
                 } else if (value.match(reg)) {
                     callback(new Error('请不要输入特殊字符'));
-                } else if (value.gblen() <= 4 || value.gblen >= 16) {
+                } else if (value.gblen() < 4 || value.gblen() > 16) {
                     callback(new Error('请输入4-16位字符'));
                 } else {
                     callback();
@@ -257,6 +257,7 @@
 
             loginForm(formName) {
                 const self = this;
+                // sessionStorage.setItem('ms_type',2);
                 self.$refs[formName].validate((valid) => {
                     if (valid) {
                        this.$axios({

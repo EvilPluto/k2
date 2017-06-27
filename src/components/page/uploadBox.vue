@@ -19,7 +19,7 @@
 			  width='70'
 			  @change="switchChange">
 			</el-switch>
-			<el-input type='text' name='file-name' id='file-name' class='file-name' placeholder="请上传文件":value="fileName"/></el-input>
+			<el-input type='text' name='file-name' id='file-name' class='file-name' placeholder="请上传文件" :value="fileTitle"/></el-input>
 			<el-button type = "primary" class="btn-browse">浏览</el-button>
 			<el-button type="success" class='btn-upload' @click="submitForm">上传</el-button>
 			<input type="file" :value="uploadForm.file" name="file" class="file-field" id="file-field" @change="changeFileName" accept=".xes,.txt"/></input>
@@ -41,7 +41,7 @@
 					shared:1
 				},
 				fileName:'',
-				fileTitle:'11111111',
+				fileTitle:'',
 				selectArray:[
 					{
 						value:'txt',
@@ -126,7 +126,6 @@
 				vm.fileTitle = arr[0];
 				console.log(target.value);
 				console.log(vm.fileTitle);
-				console.log('111');
 				console.log(document.getElementById('file-field'.value));
 			},
 			submitForm:function(){
