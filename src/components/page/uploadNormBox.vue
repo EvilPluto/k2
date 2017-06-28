@@ -25,7 +25,7 @@
 			<input type="file" :value="uploadForm.file" name="file" class="file-field" id="file-field" @change="changeFileName" :accept="accept" :disabled="enable" filename="11"/></input>
 		</form> -->		
 		<form id="upForm">
-			<el-select label = "日志类型" v-model="uploadForm.format" placeholder="请选择文件格式" @change="valueChange" size="30">
+			<el-select label = "日志类型" v-model="uploadForm.format" placeholder="请选择文件格式" @change="valueChange" size="30" disabled="true">
 				<el-option
 				      v-for="item in selectArray"
 				      :key="item.value"
@@ -57,7 +57,7 @@
                 switchVal: true,
 				uploadUrl:'/processmining/normLog',
 				uploadForm:{
-					format:'',
+					format:'txt',
 					file:'',
 					shared:1
 				},
@@ -73,8 +73,8 @@
 						label:'XES'
 					}
 				],
-				accept:'',
-				enable:true
+				accept:'.txt',
+				enable:false
 			}
 		},
 		methods:{
