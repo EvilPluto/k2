@@ -1,6 +1,6 @@
 <template>
 	<div class="file-box">
-		<el-form v-model="uploadForm" ref="uploadForm" name = "uploadForm" class="up-form" id="up-form" :action="uploadUrl" methods="post" enctype="multipart/form-data">
+<!-- 		<form v-model="uploadForm" ref="uploadForm" name = "uploadForm" class="up-form" id="up-form" :action="uploadUrl" methods="post" enctype="multipart/form-data">
 			<el-select label = "日志类型" v-model="uploadForm.format" placeholder="请选择文件格式" @change="valueChange" size="30">
 				<el-option
 				      v-for="item in selectArray"
@@ -19,12 +19,33 @@
 			  width='70'
 			  @change="switchChange">
 			</el-switch>
-			<el-input type='text' name='file-name' id='file-name' class='file-name' placeholder="请上传文件" :value="fileTitle" :disabled="enable"/></el-input>
+			<el-input type='text' name='file-name' id='file-name' class='file-name' placeholder="请上传文件" :value="fileTitle" :disabled="enable"/></input>
 			<el-button type = "primary" class="btn-browse">浏览</el-button>
 			<el-button type="success" class='btn-upload' @click="submitForm">上传</el-button>
-			<input type="file" :value="uploadForm.file" name="file" class="file-field" id="file-field" @change="changeFileName" :accept="accept" :disabled="enable" /></input>
-
-		</el-form>
+			<input type="file" :value="uploadForm.file" name="file" class="file-field" id="file-field" @change="changeFileName" :accept="accept" :disabled="enable" filename="11"/></input>
+		</form> -->		
+		<form id="upForm">
+			<el-select label = "日志类型" v-model="uploadForm.format" placeholder="请选择文件格式" @change="valueChange" size="30">
+				<el-option
+				      v-for="item in selectArray"
+				      :key="item.value"
+				      :label="item.label"
+				      :value="item.value">
+				      <span style="float: left">{{ item.label }}</span>
+				      <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
+			    </el-option>
+			</el-select>
+			<el-switch
+			  class="switch"
+			  v-model="switchVal"
+			  on-text="share"
+			  off-text="not"
+			  width='70'
+			  @change="switchChange">
+			</el-switch>
+			<input type="file" :value="uploadForm.file" name="file" class="file-field ipt" id="file-field" @change="changeFileName" :accept="accept" :disabled="enable" filename=""/>
+			<el-button type="success" class='btn' @click="submitForm">上传</el-button>
+		</form>	
 	</div>
 
 </template>
@@ -132,7 +153,7 @@
 				var vm=this;
 				var target = document.getElementById('file-field');
 				vm.fileName = target.value;
-				var arr = target.value.split('\\');
+				var arr = vm.fileName.split('\\');
 				arr = arr.reverse();
 				vm.fileTitle = arr[0];
 				console.log(target.value);
@@ -154,31 +175,35 @@
 					});
 				}
 				else{
-					var form  = new FormData(document.getElementById('up-form'));
+					var form  = new FormData($('#upForm')[0]);
 					form.append("shared",vm.uploadForm.shared);
 					form.append("format",vm.uploadForm.format);
-					form.append("filename",vm.fileTitle);
-					form.delete("file-name");
-					this.$axios({
+
+					$.ajax({
 						url:this.uploadUrl,
-						method:'post',
+						type:'POST',
+						contentType:false,
+						processData:false,
 						data:form,
-					}).then((response) => {
-                        if(response.data.code == "200"){
-                            this.$message({
-                                type:'success',
-                                message:'upload成功'
-                            });
-                        }
-                        else {
-                            console.log(response.data.code);
-                            this.codeParsing(response.data.code);                                
-                        }
-					}).catch((error) => {
-						this.$message({
+						success:function(data){
+							if(data.code == "200"){
+	                            vm.$message({
+	                                type:'success',
+	                                message:'upload成功'
+	                            });
+                        	}
+	                        else {
+	                            console.log(data.code);
+	                            this.codeParsing(data.code);                                
+	                        }
+	                        // setTimeout(()=>{window.location.reload()},1000);
+						},
+						error:function(){
+							vm.$message({
                                 type:'error',
                                 message:'网络无连接'
                             });
+						}
 					});
 					// document.getElementById('up-form').submit();
 					// console.log(this.uploadForm)
@@ -217,10 +242,9 @@
 	.btn-browse{
 		margin-left:10px;
 	}
-	.btn-upload{}
 	.file-field{
 		display: inline-block;
-		opacity: 0;
+		/*opacity: 0;*/
 		position: absolute;
 		width:300px;
 		height:35px;
@@ -230,6 +254,44 @@
 	.switch{
 		float:right;
 		margin-top:5px;
+	}
+	.btn{
+		float:right;
+		display: inline-block;
+	    line-height: 1;
+	    white-space: nowrap;
+	    cursor: pointer;
+	    background: #fff;
+	    border: 1px solid #bfcbd9;
+	    padding: 10px 15px;
+	    border-radius: 4px;
+	    background-color: #13ce66;
+	    color:'white';
+	    margin-top:19px;
+	    width:68px;
+	}
+	.ipt{
+		background-color: #eef1f6;
+	    border-color: #d1dbe5;
+	    color: #bbb;
+	    cursor: not-allowed;
+	    -webkit-appearance: none;
+	    -moz-appearance: none;
+	    appearance: none;
+	    background-color: #fff;
+	    background-image: none;
+	    border-radius: 4px;
+	    border: 1px solid #bfcbd9;
+	    box-sizing: border-box;
+	    color: #1f2d3d;
+	    display: inline-block;
+	    font-size: inherit;
+	    height: 36px;
+	    line-height: 1;
+	    outline: 0;
+	    padding: 3px 10px;
+	    transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+	    width: 300px;
 	}
 
 </style>

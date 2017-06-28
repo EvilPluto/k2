@@ -10,7 +10,7 @@
             <div class="log-btn">
                 <el-button-group>
                     <el-button type="primary" icon="upload" @click="uploadBtn()">上&nbsp;传</el-button>
-                    <el-button type="primary" icon="share" @click="downloadBtn()">下&nbsp;载</el-button>
+                    <el-button type="primary" icon="caret-bottom" @click="downloadBtn()">下&nbsp;载</el-button>
                     <!-- <el-button type="primary" icon="edit" 
                     @click="eventBtn">事件化</el-button> -->
                     <el-button type="danger" icon="delete2" @click="deleteBtn()">删&nbsp;除</el-button>
@@ -39,7 +39,7 @@
                     </el-table-column>
                     <el-table-column
                       prop="eventName"
-                      label="事件化日志"
+                      label="事件日志"
                       align = "left"
                        width="150"
                       show-overflow-tooltip>
@@ -75,7 +75,7 @@
                       show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column 
-                      label="操作"
+                      label="共享"
                       align = "center"
                       width="150">
                       <template scope="scope">
