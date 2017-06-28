@@ -27,21 +27,35 @@
                 items: [
                     {
                         icon: 'el-icon-setting',
-                        index: 'readme',
-                        title: '简要'
-                    },
-                    {
-                        icon: 'el-icon-setting',
                         index: '1',
                         title: '个人信息管理',
                         subs: [
                             {
-                                index: 'change-nick',
+                                index: '/user/change-nick',
                                 title: '修改昵称'
                             },
                             {
-                                index: 'change-password',
+                                index: '/user/change-password',
                                 title: '修改密码'
+                            }
+                        ]
+                    },
+                    {
+                        icon: 'el-icon-menu',
+                        index: '2',
+                        title: '日志管理',
+                        subs: [
+                            {
+                                index: '/user/origin-log',
+                                title: '原始日志'
+                            },
+                            {
+                                index: '/user/standard-log',
+                                title: '规范化日志'
+                            },
+                            {
+                                index: '/user/event-log',
+                                title: '事件日志'
                             }
                         ]
                     }

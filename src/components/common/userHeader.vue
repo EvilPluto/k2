@@ -2,13 +2,13 @@
     <div class="header">
         <div class="logo">K2流程挖掘平台</div>
         <div class="user-info">
-            <el-dropdown trigger="click" @command="handleCommand">
+            <el-dropdown trigger="hover" @command="handleCommand">
                 <span class="el-dropdown-link">
-                    <img class="user-logo" src="../../../static/img/img.jpg">
-                    {{username}}
+                    <!-- <img class="user-logo" src="../../../static/img/img.jpg"> -->
+                    {{ username }}
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item command="loginout">退出</el-dropdown-item>
+                    <el-dropdown-item command="loginout">注销</el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>
         </div>
@@ -18,7 +18,8 @@
     export default {
         data() {
             return {
-                name: 'linxin'
+                name: 'root',
+                hostUrl:'/processmining'
             }
         },
         computed:{
@@ -30,8 +31,21 @@
         methods:{
             handleCommand(command) {
                 if(command == 'loginout'){
-                    localStorage.removeItem('ms_username')
-                    this.$router.push('/login');
+                    this.$axios({
+                        url: '/user/logoff',
+                        method: 'get',
+                        baseURL: this.hostUrl
+                    })
+                    .then((response) => {
+                        localStorage.removeItem('ms_username');
+                        sessionStorage.clear();
+                        this.$router.push('/login');
+                    })
+                    .catch((error) => {
+                        localStorage.removeItem('ms_username');
+                        sessionStorage.clear();
+                        this.$router.push('/login');
+                    });  
                 }
             }
         }
