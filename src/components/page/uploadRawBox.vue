@@ -169,7 +169,7 @@
 						message:'请选择类型'
 					});
 				}
-				else if(!vm.fileName){
+				else if(!vm.uploadForm.file){
 					this.$message({
 						type:'error',
 						message:'请上传文件'
