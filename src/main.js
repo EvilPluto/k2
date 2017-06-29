@@ -6,9 +6,13 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-default/index.css';    // 默认主题
 //import '../static/css/theme-green/index.css';       // 浅绿色主题
 import "babel-polyfill";
+import * as d3 from 'd3';
+
+// var d3 = require("d3");
 
 Vue.use(ElementUI);
 Vue.prototype.$axios = axios;
+Vue.prototype.$d3 = d3;
 new Vue({
     router,
     render: h => h(App)

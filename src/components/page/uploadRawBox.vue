@@ -163,6 +163,7 @@
 			},
 			submitForm:function(){
 				var vm=this;
+				console.log(vm.uploadForm.file);
 				if(!vm.uploadForm.format){
 					this.$message({
 						type:'error',

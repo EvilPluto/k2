@@ -21,6 +21,25 @@ var autoOpenBrowser = !!config.dev.autoOpenBrowser
 var proxyTable = config.dev.proxyTable
 
 var app = express()
+
+// 自定义
+var forceData = require('../static/force.json');
+var sankeyData = require('../static/sankey.json');
+var apiRoutes = express.Router();
+apiRoutes.get('/force', function(req, res) {
+  res.json({
+    data: forceData
+  });
+});
+apiRoutes.get('/sankey', function(req, res) {
+  res.json({
+    data: sankeyData
+  });
+});
+app.use('/api', apiRoutes);
+
+// 自定义结束
+
 var compiler = webpack(webpackConfig)
 
 var devMiddleware = require('webpack-dev-middleware')(compiler, {

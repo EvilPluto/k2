@@ -42,6 +42,18 @@
                             {
                                 index: '/admin/mining',
                                 title: '挖掘算法管理'
+                            },
+                            {
+                                index: '/admin/upload-practice',
+                                title: '上传测试'
+                            },
+                            {
+                                index: '/admin/sankey',
+                                title: '桑基图'
+                            },
+                            {
+                                index: '/admin/force',
+                                title: '力导向图'
                             }
                         ]
                     }
