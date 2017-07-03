@@ -288,6 +288,9 @@ P<template>
                     case 800:
                         msg('激活错误', '用户已被激活，请直接登录');
                         break;
+                    case 900:
+                        msg('事件化错误', '事件化失败');
+                        break;
                     default:
                         break;
                 }
