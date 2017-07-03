@@ -148,6 +148,32 @@
     
     export default {
         data() {
+            var checkName = (rule, value, callback) => {
+                var reg = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？\\\\]");
+                if (value.indexOf(" ") >= 0) {
+                    callback(new Error('请不要包含空格'));
+                } else if (value.match(reg)) {
+                    callback(new Error('请不要输入特殊字符'));
+                } else if (value.gblen() > 44) {
+                    callback(new Error('请输入少于44位字符的名字'));
+                } else {
+                    callback();
+                }
+            };
+
+            var checkDesc = (rule, value, callback) => {
+                var reg = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？\\\\]");
+                if (value.indexOf(" ") >= 0) {
+                    callback(new Error('请不要包含空格'));
+                } else if (value.match(reg)) {
+                    callback(new Error('请不要输入特殊字符'));
+                } else if (value.gblen() > 255) {
+                    callback(new Error('请输入少于255位字符的描述'));
+                } else {
+                    callback();
+                }
+            };
+
             return {
                 tapOrNot: false,
                 hostUrl: '/processmining', // IP'
@@ -157,34 +183,101 @@
                     name: '',
                     desc: ''
                 },
-                algorithmData: [
-                    {
-                        name: 'login.txt',
-                    },
-                    {
-                        name: 'login.txt',
-                    },
-                    {
-                        name: 'login.txt',
-                    }
-                ],
+                algorithmData: [],
                 uploadRules: {
                     package: [
-                        { required: true, message: '请上传算法包', trigger: 'change' }
+                        { required: true, message: '请上传算法包', trigger: 'blur' }
                     ],
                     conf: [
-                        { required: true, message: '请上传算法配置文件', trigger: 'change' }
+                        { required: true, message: '请上传算法配置文件', trigger: 'blur' }
                     ],
                     name: [
-                        { required: true, message: '请填写算法名称', trigger: 'blur' }
+                        { required: true, message: '请填写算法名称', trigger: 'blur' },
+                        { validator: checkName, trigger: 'change' },
+                        { validator: checkName, trigger: 'blur' }
                     ],
                     desc: [
-                        { required: true, message: '请添加算法描述', trigger: 'blur' }
+                        { required: true, message: '请添加算法描述', trigger: 'blur' },
+                        { validator: checkDesc, trigger: 'change' },
+                        { validator: checkDesc, trigger: 'blur' },
                     ]
                 }
             }
         },
+        created() {
+            this.loadData();
+        },
         methods:{
+            codeParsing(code) {
+                var msg = (Title, Message) => {
+                    this.$message({
+                        title: Title,
+                        message: Message,
+                        type: 'error'
+                    });
+                };
+                switch(code) {
+                    case -1:
+                        msg('系统错误', '未知错误，请上报管理员');
+                        break;
+                    default:
+                        break;
+                }
+            },
+
+            loadData() {
+                this.$axios({
+                    url: '/manager/listMiningAlgo',
+                    method: 'get',
+                    baseURL: this.hostUrl
+                })
+                .then((response) => {
+                    this.algorithmData = response.data;
+                    this.$message({
+                        message: '数据加载成功!',
+                        type: 'success'                        
+                    })
+                })
+                // fixed: 经常跳出
+                .catch((error) => {
+                    this.$message({
+                        message: '数据加载失败: ' + '请重试!',
+                        type: 'error'
+                    });
+                    console.log("【Error】:", error);
+                });
+            },
+
+            deleteAlgorithm(index, row) {
+                var self = this;
+                console.log(index, row);
+                console.log(row.id);
+                this.$axios({
+                    url: '/manager/deleteJarAndConfig/' + row.id,
+                    method: 'delete',
+                    baseURL: this.hostUrl
+                })
+                .then((response) => {
+                    if (response.data.code === 200) {
+                        self.$message({
+                            message: '数据删除成功!',
+                            type: 'success'                        
+                        });
+                        self.algorithmData = response.data.algo;
+                    } else {
+                        console.log(response.data.code);
+                        self.codeParsing(response.data.code);
+                    }
+                })
+                .catch((error) => {
+                    this.$message({
+                        message: '数据删除失败: ' + '请重试!',
+                        type: 'error'
+                    });
+                    console.log("【Error】:", error);
+                });  
+            },
+
             uploadAlgorithm() {
                 this.tapOrNot = true;
                 $('.tableForm').css('display', 'none');
@@ -214,6 +307,7 @@
                 if (suffix === 'jar') {
                     this.fileUpload.package = file.name;
                 } else {
+                    this.$refs.package.value = null;
                     this.$message({
                         title: '算法包格式错误',
                         message: '请上传正确的.jar算法包！',
@@ -225,7 +319,17 @@
             getConf(e) {
                 let file = e.target.files[0];
                 console.log(file);
-                this.fileUpload.conf = file.name;
+                var suffix = file.name.substring(file.name.lastIndexOf(".")+1, file.name.length);
+                if (suffix === 'json') {
+                    this.fileUpload.conf = file.name;
+                } else {
+                    this.$refs.conf.value = null;
+                    this.$message({
+                        title: '配置文件格式错误',
+                        message: '请上传正确的.json配置文件！',
+                        type: 'error'
+                    });
+                }
             },
 
             cancel() {
@@ -233,6 +337,10 @@
                 this.$refs['fileUpload'].resetFields();
                 this.fileUpload.package = '';
                 this.fileUpload.conf = '';
+
+                this.$refs.package.value = null;
+                this.$refs.conf.value = null;
+
                 self.backToForm();
             },
 
@@ -271,11 +379,21 @@
                             data: formData,
                         })
                         .then((response) => {
-                            // 还未处理
-                            console.log(response);
+                            if (response.data.code === 200) {
+                                self.$message({
+                                    message: '数据上传成功!',
+                                    type: 'success'                        
+                                });
+                                self.algorithmData = response.data.payload;
+                                console.log(self.algorithmData);
+                            } else {
+                                console.log(response.data.code);
+                                self.codeParsing(response.data.code);
+                            }
+                            self.cancel();
                         })
                         .catch((error) => {
-                            console.log(error);
+                            console.log("【Error】:" + error);
                         });
                     } else {
                         this.$message({
@@ -343,7 +461,6 @@
     .myContent {
         width: 560px;
         min-height: 360px;
-        /*background: red;*/
         padding-top: 20px;
         padding-right: 20px;
         padding-left: 20px;
