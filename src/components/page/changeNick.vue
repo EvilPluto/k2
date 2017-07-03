@@ -144,6 +144,8 @@
                                 console.log(response.data.code);
                                 vm.codeParsing(response.data.code);                                
                             }
+                            setTimeout(()=>{window.location.reload()},1000);
+
                         })
                         .catch((error) => {
                             console.log("Error:", error);
@@ -152,6 +154,7 @@
                                     message:'网络无连接'
                                 });
                             localStorage.setItem('ms_username', vm.ruleForm.nickName);
+
                         });
                               
                     }).catch(() => {

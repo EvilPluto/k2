@@ -147,13 +147,14 @@
 } -->
 
 <script>
-    import uploadRawBox from  './uploadNormBox.vue'
+    import uploadNormBox from  './uploadNormBox.vue'
     import msgBox from './msgBox.vue'
     export default {
         data: function(){
             return {
                 // hostUrl:"./static",
                 hostUrl:"/processmining",
+                myKey:true,
                 searchInput:"",
                 currentPageNum:1,
                 pageSize:1,
@@ -374,15 +375,21 @@
             },
 
             uploadBtn:function(){
+                var self= this;
+                self.clearKey();
                 const h = this.$createElement;
                 this.$msgbox({
                     title:'上传',
-                    message:h(uploadRawBox),
+                    message:h(uploadNormBox,{key:self.myKey}),
                     showConfirmButton:false,
                     showCancelButton: false,
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                 });
+            },
+            clearKey:function(){
+                var self = this;
+                self.myKey = !self.myKey;
             },
 
             downloadBtn:function(){
@@ -425,42 +432,58 @@
                         message:'一次只能事件化一个日志！'
                     });
                 }
+                else if(!vm.selected[0].isMine){
+                    this.$message({
+                        type:'info',
+                        message:'不能操作不属于你的日志！'
+                    });
+                }
                 else if(vm.selected[0].eventName){
-                    this.$confirm('此日志已被事件化，你确定要重新事件化吗?', '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                    }).then(()=>{
-                        var getUrl = '/normLog/convertToEventLog?id='+vm.selected[0].id;
-                        this.$axios({
-                            url:getUrl,
-                            method:'get',
-                            baseURL:vm.hostUrl
-                        }).then((response)=>{
-                            vm.getTableData();
-                            if(response.data.code=="200"){
-                                this.$alert('事件化成功', '事件化结果', {
-                                    confirmButtonText: '确定',
-                                    callback: action => {
-                                        console.log("事件化完成");
-                                    }
-                                });
+                    const h = vm.$createElement;
+                    vm.clearKey();
+                    this.$msgbox({
+                        title:'警告',
+                        message:h('p',{key:vm.myKey},'选择的日志已被事件化过，确定要重新事件化吗？'),
+                        showCancelButton:true,
+                        showConfirmButton:true,
+                        confirmButtonText:'确定',
+                        cancelButtonText:'取消',
+                        beforeClose: (action, instance, done) => {
+                            if (action === 'confirm') {
+                                instance.confirmButtonLoading = true;
+                                instance.confirmButtonText = '执行中...';
+                                setTimeout(() => {
+                                    done();
+                                    setTimeout(() => {
+                                        instance.confirmButtonLoading = false;
+                                    }, 300);
+                                }, 1000);
                             }
-                            else{
-                                console.log("code = "+response.data.code);
-                                vm.codeParsing(response.data.code);
-                            };
-                        }).catch((error) => {
-                            console.log("error=");
-                            console.log(error);
-                        });
-                        
-                    }).catch((error) => {
-                        console.log('error');
+                            else {
+                              done();
+                            }   
+                        }
+                    }).then(action=>{
+                        if(action == "confirm"){
+                            vm.setup();
+                        }
+                        else{
+                            this.$message({
+                                type:'warning',
+                                message:'已取消'
+                            });
+                        }
+                    }).catch(() => {
+                        console.log('SBBBBBBBBBBBBBBB');
                     });
                 }
                 else{
-                    var getUrl = '/normLog/convertToEventLog?id='+vm.selected[0].id;
+                    vm.setup();
+                }
+            },
+            setup:function(){
+                var vm = this;
+                var getUrl = '/normLog/convertToEventLog?id='+vm.selected[0].id;
                         this.$axios({
                             url:getUrl,
                             method:'get',
@@ -468,14 +491,9 @@
                         }).then((response)=>{
                             vm.getTableData();
                             if(response.data.code=="200"){
-                                this.$alert('事件化成功', '事件化结果', {
-                                    confirmButtonText: '确定',
-                                    callback: action => {
-                                        this.$message({
-                                            type: 'info',
-                                            message:'事件化完成'
-                                        });
-                                    }
+                                this.$message({
+                                    type: 'info',
+                                    message:'事件化完成'
                                 });
                             }
                             else{
@@ -483,11 +501,13 @@
                                 vm.codeParsing(response.data.code);
                             };
                         }).catch((error) => {
+                            this.$message({
+                                type:'error',
+                                message:'网络无连接'
+                            });
                             console.log("error=");
                             console.log(error);
                         });
-                        
-                }
 
             },
             deleteBtn:function(){
@@ -502,54 +522,78 @@
                     for(let i =0;i<vm.selected.length;i++){
                         deleteId.idList.push(vm.selected[i].id);
                         if(!vm.selected[i].isMine){
-                            this.$message({
+                            this.$message({ 
                                 type:'error',
                                 message:'不能删除不属于你的日志！'
                             });
                             return 0;
                         }
                     }
-                    // var deleteUrl = deleteId.join('&');
+
                     console.log("Delete id = ");
                     console.log(deleteId.idList);
-                    this.$confirm('此操作将永久删除文件, 是否继续?', '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                    }).then(() => {
-                        this.$axios({
-                        url: 'normLog/',
-                        method: 'delete',
-                        baseURL: vm.hostUrl,
-                        data:deleteId
-                        }).then((response) =>{
-                            vm.getTableData();
-                            if(response.data.code=="200"){
-                                this.$alert('选中文件均已删除成功', '删除结果', {
-                                    confirmButtonText: '确定',
-                                    callback: action => {
-                                        console.log('delete success');
-                                }
-                                });
+
+                    const h = vm.$createElement;
+                    vm.clearKey();
+                    this.$msgbox({
+                        title:'警告',
+                        message:h('p',{key:vm.myKey},'此操作将永久删除文件, 是否继续?'),
+                        showCancelButton:true,
+                        showConfirmButton:true,
+                        confirmButtonText:'确定',
+                        cancelButtonText:'取消',
+                        beforeClose: (action, instance, done) => {
+                            if (action === 'confirm') {
+                                instance.confirmButtonLoading = true;
+                                instance.confirmButtonText = '执行中...';
+                                setTimeout(() => {
+                                    done();
+                                    setTimeout(() => {
+                                        instance.confirmButtonLoading = false;
+                                    }, 300);
+                                }, 1000);
                             }
-                            else{
-                                console.log("code = "+response.data.code);
-                                this.$alert('删除失败或文件不存在', '删除结果', {
-                                    confirmButtonText: '确定',
-                                    callback: action => {
-                                        console.log('delete failed');
+                            else {
+                              done();
+                            }   
+                        }
+                    }).then(action=>{
+                        if(action == "confirm"){
+                            this.$axios({
+                                url: 'normLog/',
+                                method: 'delete',
+                                baseURL: vm.hostUrl,
+                                data:deleteId
+                            }).then((response) =>{
+                                vm.getTableData();
+                                if(response.data.code=="200"){
+                                    this.$message({
+                                        type:'success',
+                                        message:'删除成功'                                    
+                                    });
                                 }
+                                else{
+                                    console.log("code = "+response.data.code);
+                                    vm.codeParsing(response.data.code);
+                                };
+                            }).catch((error) => {
+                                this.$message({
+                                    type:'error',
+                                    message:'网络无连接'
                                 });
-                            };
-                        }).catch((error) => {
-                            console.log("error=");
-                            console.log(error);
-                        });
+                                console.log("error=");
+                                console.log(error);
+                                vm.getTableData();
+                            });   
+                        }
+                        else{
+                            this.$message({
+                                type:'warning',
+                                message:'已取消'
+                            });
+                        }
                     }).catch(() => {
-                        this.$message({
-                          type: 'info',
-                          message: '已取消删除'
-                        });          
+                        console.log('SBBBBBBBBBBBBBBB')
                     });
                 }
                 else{

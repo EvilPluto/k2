@@ -1,7 +1,7 @@
 <template>
 	<div class="file-box">
-<!-- 		<form v-model="uploadForm" ref="uploadForm" name = "uploadForm" class="up-form" id="up-form" :action="uploadUrl" methods="post" enctype="multipart/form-data">
-			<el-select label = "日志类型" v-model="uploadForm.format" placeholder="请选择文件格式" @change="valueChange" size="30">
+		<form v-model="uploadForm" ref="uploadForm" name = "uploadForm" class="up-form" id="up-form" :action="uploadUrl" methods="post" enctype="multipart/form-data">
+			<el-select label = "日志类型" v-model="uploadForm.format" placeholder="请选择文件格式" @change="valueChange" size="28" disabled="enable">
 				<el-option
 				      v-for="item in selectArray"
 				      :key="item.value"
@@ -16,36 +16,15 @@
 			  v-model="switchVal"
 			  on-text="share"
 			  off-text="not"
-			  width='70'
+			  width="70"
 			  @change="switchChange">
 			</el-switch>
-			<el-input type='text' name='file-name' id='file-name' class='file-name' placeholder="请上传文件" :value="fileTitle" :disabled="enable"/></input>
+			<el-input class='file-name' placeholder="请上传文件" v-model="uploadForm.fileName" />
 			<el-button type = "primary" class="btn-browse">浏览</el-button>
 			<el-button type="success" class='btn-upload' @click="submitForm">上传</el-button>
-			<input type="file" :value="uploadForm.file" name="file" class="file-field" id="file-field" @change="changeFileName" :accept="accept" :disabled="enable" filename="11"/></input>
-		</form> -->		
-		<form id="upForm">
-			<el-select label = "日志类型" v-model="uploadForm.format" placeholder="请选择文件格式" @change="valueChange" size="30" disabled="true">
-				<el-option
-				      v-for="item in selectArray"
-				      :key="item.value"
-				      :label="item.label"
-				      :value="item.value">
-				      <span style="float: left">{{ item.label }}</span>
-				      <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
-			    </el-option>
-			</el-select>
-			<el-switch
-			  class="switch"
-			  v-model="switchVal"
-			  on-text="share"
-			  off-text="not"
-			  width='70'
-			  @change="switchChange">
-			</el-switch>
-			<input type="file" :value="uploadForm.file" name="file" class="file-field ipt" id="file-field" @change="changeFileName" :accept="accept" :disabled="enable" filename=""/>
-			<el-button type="success" class='btn' @click="submitForm">上传</el-button>
-		</form>	
+			<input type="file" class="file" id="file" ref="file" @change="changeFileName" :accept="accept" />
+		</form>		
+
 	</div>
 
 </template>
@@ -59,10 +38,9 @@
 				uploadForm:{
 					format:'xes',
 					file:'',
-					shared:1
+					shared:1,
+					fileName:''
 				},
-				fileName:'',
-				fileTitle:'',
 				selectArray:[
 					{
 						value:'txt',
@@ -149,35 +127,34 @@
 					vm.enable =true;
 				}
 			},
-			changeFileName:function(value){
-				var vm=this;
-				var target = document.getElementById('file-field');
-				vm.fileName = target.value;
-				var arr = vm.fileName.split('\\');
-				arr = arr.reverse();
-				vm.fileTitle = arr[0];
-				console.log(target.value);
-				console.log(vm.fileTitle);
-				console.log(document.getElementById('file-field'.value));
+			changeFileName:function(e){
+				var self = this;
+				let file = e.target.files[0];
+                console.log(file);
+                var Fname = file.name;
+                self.uploadForm.fileName = Fname;
 			},
 			submitForm:function(){
 				var vm=this;
+				console.log(vm.uploadForm.file);
 				if(!vm.uploadForm.format){
 					this.$message({
 						type:'error',
 						message:'请选择类型'
 					});
 				}
-				else if(!vm.fileName){
+				else if(!vm.uploadForm.fileName){
 					this.$message({
 						type:'error',
 						message:'请上传文件'
 					});
 				}
 				else{
-					var form  = new FormData($('#upForm')[0]);
+					var form  = new FormData();
+					var file = this.$refs.file.files[0];
 					form.append("shared",vm.uploadForm.shared);
 					form.append("format",vm.uploadForm.format);
+					form.append("file",file,file.name);
 
 					$.ajax({
 						url:this.uploadUrl,
@@ -196,7 +173,7 @@
 	                            console.log(data.code);
 	                            this.codeParsing(data.code);                                
 	                        }
-	                        // setTimeout(()=>{window.location.reload()},1000);
+	                        setTimeout(()=>{window.location.reload()},1000);
 						},
 						error:function(){
 							vm.$message({
@@ -206,8 +183,7 @@
                             // setTimeout(()=>{window.location.reload()},1000);
 						}
 					});
-					// document.getElementById('up-form').submit();
-					// console.log(this.uploadForm)
+
 				}
 
 			},
@@ -243,9 +219,9 @@
 	.btn-browse{
 		margin-left:10px;
 	}
-	.file-field{
+	.file{
 		display: inline-block;
-		/*opacity: 0;*/
+		opacity: 0;
 		position: absolute;
 		width:300px;
 		height:35px;
@@ -254,6 +230,7 @@
 	}
 	.switch{
 		float:right;
+		width:80px;
 		margin-top:5px;
 	}
 	.btn{

@@ -1,4 +1,4 @@
-<template>
+P<template>
     <div>
         <div class="crumbs">
             <el-breadcrumb separator="/">
@@ -148,7 +148,7 @@
 } -->
 
 <script>
-    import uploadRawBox from  './uploadEventBox.vue'
+    import uploadEventBox from  './uploadEventBox.vue'
     import msgBox from './msgBox.vue'
     export default {
         data: function(){
@@ -156,6 +156,7 @@
                 // hostUrl:"./static",
                 hostUrl:"/processmining",
                 searchInput:"",
+                myKey:true,
                 currentPageNum:1,
                 pageSize:1,
                 pageTotal:20,
@@ -375,17 +376,22 @@
             },
 
             uploadBtn:function(){
+                var self= this;
+                self.clearKey();
                 const h = this.$createElement;
                 this.$msgbox({
                     title:'上传',
-                    message:h(uploadRawBox),
+                    message:h(uploadEventBox,{key:self.myKey}),
                     showConfirmButton:false,
                     showCancelButton: false,
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                 });
             },
-
+            clearKey:function(){
+                var self = this;
+                self.myKey = !self.myKey;
+            },
             downloadBtn:function(){
                 var vm = this;
                 var postData = [];
@@ -423,54 +429,78 @@
                     for(let i =0;i<vm.selected.length;i++){
                         deleteId.idList.push(vm.selected[i].id);
                         if(!vm.selected[i].isMine){
-                            this.$message({
+                            this.$message({ 
                                 type:'error',
                                 message:'不能删除不属于你的日志！'
                             });
                             return 0;
                         }
                     }
-                    // var deleteUrl = deleteId.join('&');
+
                     console.log("Delete id = ");
                     console.log(deleteId.idList);
-                    this.$confirm('此操作将永久删除文件, 是否继续?', '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                    }).then(() => {
-                        this.$axios({
-                        url: 'eventLog/',
-                        method: 'delete',
-                        baseURL: vm.hostUrl,
-                        data:deleteId
-                        }).then((response) =>{
-                            vm.getTableData();
-                            if(response.data.code=="200"){
-                                this.$alert('选中文件均已删除成功', '删除结果', {
-                                    confirmButtonText: '确定',
-                                    callback: action => {
-                                        console.log('delete success');
-                                }
-                                });
+
+                    const h = vm.$createElement;
+                    vm.clearKey();
+                    this.$msgbox({
+                        title:'警告',
+                        message:h('p',{key:vm.myKey},'此操作将永久删除文件, 是否继续?'),
+                        showCancelButton:true,
+                        showConfirmButton:true,
+                        confirmButtonText:'确定',
+                        cancelButtonText:'取消',
+                        beforeClose: (action, instance, done) => {
+                            if (action === 'confirm') {
+                                instance.confirmButtonLoading = true;
+                                instance.confirmButtonText = '执行中...';
+                                setTimeout(() => {
+                                    done();
+                                    setTimeout(() => {
+                                        instance.confirmButtonLoading = false;
+                                    }, 300);
+                                }, 1000);
                             }
-                            else{
-                                console.log("code = "+response.data.code);
-                                this.$alert('删除失败或文件不存在', '删除结果', {
-                                    confirmButtonText: '确定',
-                                    callback: action => {
-                                        console.log('delete failed');
+                            else {
+                              done();
+                            }   
+                        }
+                    }).then(action=>{
+                        if(action == "confirm"){
+                            this.$axios({
+                                url: 'eventLog/',
+                                method: 'delete',
+                                baseURL: vm.hostUrl,
+                                data:deleteId
+                            }).then((response) =>{
+                                vm.getTableData();
+                                if(response.data.code=="200"){
+                                    this.$message({
+                                        type:'success',
+                                        message:'删除成功'                                    
+                                    });
                                 }
+                                else{
+                                    console.log("code = "+response.data.code);
+                                    vm.codeParsing(response.data.code);
+                                };
+                            }).catch((error) => {
+                                this.$message({
+                                    type:'error',
+                                    message:'网络无连接'
                                 });
-                            };
-                        }).catch((error) => {
-                            console.log("error=");
-                            console.log(error);
-                        });
+                                console.log("error=");
+                                console.log(error);
+                                vm.getTableData();
+                            });   
+                        }
+                        else{
+                            this.$message({
+                                type:'warning',
+                                message:'已取消'
+                            });
+                        }
                     }).catch(() => {
-                        this.$message({
-                          type: 'info',
-                          message: '已取消删除'
-                        });          
+                        console.log('SBBBBBBBBBBBBBBB')
                     });
                 }
                 else{
