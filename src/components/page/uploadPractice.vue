@@ -8,7 +8,7 @@
         </div>
         <div class="myContent">
                 <el-form ref="fileUpload" :model="fileUpload">
-                    <p class="title">挖掘算法导入及参数设置</p>
+                    <p class="title">算法导入及参数设置</p>
                     <el-form-item>
                         <el-col :span="11">
                             <el-input
@@ -155,6 +155,9 @@
 </script>
 
 <style>
+    .myContent .title {
+        padding-bottom: 20px;
+    }
     .file {
         display: none;
     }

@@ -6,18 +6,18 @@
                 <el-breadcrumb-item>融合算法管理</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
-        <div class="form-box">
+        <div>
             <el-button 
                 type="primary" 
                 class="submit-btn"
                 :disabled="tapOrNot"
-                @click="uploadAlgorighm">
+                @click="uploadAlgorithm">
                 上传算法
             </el-button>
         </div>
         
         <br>
-        
+
         <div class="tableForm">
             <el-table 
                 ref="algorithmList"
@@ -58,34 +58,44 @@
                 @click="backToForm">
             </el-button>
             <div class="myContent">
-                <el-form>
+                <el-form ref="fileUpload" :model="fileUpload" :rules="uploadRules">
                     <p class="title">融合算法导入及参数设置</p>
-                    <el-form-item>
+                    <el-row>
                         <el-col :span="11">
+                        <el-form-item prop="package">
                             <el-input
-                                v-model="fileUpload.package"
-                                placeholder="导入算法包"
+                                placeholder="导入算法包(*.jar)"
                                 icon="upload"
-                                :on-icon-click="getFiles"
-                                width="100%"
+                                v-model="fileUpload.package"
+                                :on-icon-click="uploadPackage"
+                                readonly="readonly"
                                 >
                             </el-input>
+                            <input type="file" name="package" class="file" id="package"
+                                ref="package"
+                                @change="getPackage" />
+                        </el-form-item>
                         </el-col>
                         <el-col :span="2">
                             &nbsp
                         </el-col>
                         <el-col :span="11">
+                        <el-form-item prop="conf">
                             <el-input
-                                v-model="fileUpload.conf"
-                                placeholder="导入配置文件"
+                                placeholder="导入配置文件(*.json)"
                                 icon="upload"
-                                :on-icon-click="getFiles"
-                                width="100%"
+                                v-model="fileUpload.conf"
+                                :on-icon-click="uploadConf"
+                                readonly="readonly"
                                 >
-                            </el-input>                     
+                            </el-input>
+                            <input type="file" name="conf" class="file" id="conf"
+                                ref="conf" accept="application/json"
+                                @change="getConf" />      
+                        </el-form-item>    
                         </el-col>
-                    </el-form-item>
-                    <el-form-item>
+                    </el-row>
+                    <el-form-item prop="name">
                         <el-input
                             placeholder="设置算法名称"
                             v-model="fileUpload.name"
@@ -93,7 +103,7 @@
                             >
                         </el-input>
                     </el-form-item>
-                    <el-form-item>
+                    <el-form-item prop="desc">
                         <el-input
                             type="textarea"
                             v-model="fileUpload.desc"
@@ -108,6 +118,7 @@
                                 type="primary"
                                 size="large"
                                 class="uploadBtn"
+                                @click="submit('fileUpload')"
                             >
                             添加
                             </el-button>
@@ -121,6 +132,7 @@
                                 size="large"
                                 :plain="true"
                                 class="uploadBtn"
+                                @click="cancel"
                             >
                             取消
                             </el-button>
@@ -138,57 +150,180 @@
         data() {
             return {
                 tapOrNot: false,
+                hostUrl: '/processmining', // IP'
                 fileUpload: {
                     package: '',
                     conf: '',
+                    name: '',
                     desc: ''
                 },
                 algorithmData: [
                     {
-                        name: 'login.txt',
+                        name: 'login1.txt',
                     },
                     {
-                        name: 'login.txt',
+                        name: 'login2.txt',
                     },
                     {
-                        name: 'login.txt',
+                        name: 'login3.txt',
                     }
                 ],
-
+                uploadRules: {
+                    package: [
+                        { required: true, message: '请上传算法包', trigger: 'change' }
+                    ],
+                    conf: [
+                        { required: true, message: '请上传算法配置文件', trigger: 'change' }
+                    ],
+                    name: [
+                        { required: true, message: '请填写算法名称', trigger: 'blur' }
+                    ],
+                    desc: [
+                        { required: true, message: '请添加算法描述', trigger: 'blur' }
+                    ]
+                }
             }
         },
         methods:{
-            uploadAlgorighm() {
+            deleteAlgorithm(index, row) {
+                console.log(index, row);
+                console.log(row.name);
+                this.$axios({
+                    url: '/#/' + row.name,
+                    method: 'delete',
+                    baseURL: this.hostUrl
+                })
+                .then((response) => {
+                    console.log("Delete Success!")
+                    this.algorithmData = response.data;
+                })
+                .catch((error) => {
+                    console.log("Error:", error);
+                });
+            },
+
+            uploadAlgorithm() {
                 this.tapOrNot = true;
                 $('.tableForm').css('display', 'none');
-                $('.content').addClass('hangUp');
+                // $('.content').addClass('hangUp');
                 $('.upload').css('display', 'block');
-                // $('.breadcrumb').append(
-                //     '<span class="el-breadcrumb__item"><span class="el-breadcrumb__item__inner"><i class="el-icon-upload"></i> 上传算法</span><span class="el-breadcrumb__separator">/</span></span>'
-                //     );
             },
+
             backToForm() {
                 this.tapOrNot = false;
                 $('.tableForm').css('display', 'block')
-                $('.content').removeClass('hangUp');
+                // $('.content').removeClass('hangUp');
                 $('.upload').css('display', 'none');
             },
-            getFiles() {
-                // console.log(this.$refs.upload);
+
+            uploadPackage() {
+                $('#package').click();
             },
-            logPrint() {
-                console.log('233');
+
+            uploadConf() {
+                $('#conf').click();
+            },
+
+            getPackage(e) {
+                let file = e.target.files[0];
+                console.log(file);
+                var suffix = file.name.substring(file.name.lastIndexOf(".")+1, file.name.length);
+                if (suffix === 'jar') {
+                    this.fileUpload.package = file.name;
+                } else {
+                    this.$message({
+                        title: '算法包格式错误',
+                        message: '请上传正确的.jar算法包！',
+                        type: 'error'
+                    });
+                }
+            },
+
+            getConf(e) {
+                let file = e.target.files[0];
+                console.log(file);
+                this.fileUpload.conf = file.name;
+            },
+
+            cancel() {
+                var self = this;
+                this.$refs['fileUpload'].resetFields();
+                this.fileUpload.package = '';
+                this.fileUpload.conf = '';
+                self.backToForm();
+            },
+
+            submit(formName) {
+                var self = this;
+
+                self.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        const h = this.$createElement;
+
+                        this.$notify({
+                            title: '注册信息',
+                            message: h
+                                ('pre',
+                                { style: 'color: teal' },
+                                '\n算法包: ' + this.fileUpload.package +
+                                '\n配置文件: ' + this.fileUpload.conf +
+                                '\n算法名称: ' + this.fileUpload.name +
+                                '\n算法描述: ' + this.fileUpload.desc
+                                )
+                        });
+
+                        let pac = this.$refs.package.files[0];
+                        let con = this.$refs.conf.files[0];
+                        let formData = new FormData();
+                        formData.append('pack', pac, pac.name);
+                        formData.append('conf', con, con.name);
+                        formData.append('name', this.fileUpload.name);
+                        formData.append('desc', this.fileUpload.desc);
+
+                        this.$axios ({
+                            method: 'post',
+                            url: '/manager/uploadJarAndConfig',
+                            baseURL: this.hostUrl,
+                            headers: { 'Content-Type': 'multiple/form-data' },
+                            data: formData,
+                        })
+                        .then((response) => {
+                            // 还未处理
+                            console.log(response);
+                            self.cancel();
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                    } else {
+                        this.$message({
+                            title: '算法上传失败',
+                            message: '请确保填写所有配置信息',
+                            type: 'error'
+                        });
+                        return false;
+                    }
+                });   
             }
         }
     }
 </script>
 
 <style>
+ /*   .hangUp {
+        background: rgba(204, 204, 204, 0.8);
+    }
+*/    .loadStyle .el-upload--text{
+        width: 100%;
+        height: 100%;
+        overflow: inherit;
+        border: 1px #d9d9d9;
+    }
     .uploadBtn {
         width: 100%;
     }
-    .hangUp {
-        background: rgba(204, 204, 204, 0.5);
+    .uploadWidget {
+        display: none;
     }
     .rightClose {
         position: absolute;
@@ -226,12 +361,14 @@
     .myContent {
         width: 560px;
         min-height: 360px;
-        /*background: red;*/
         padding-top: 20px;
         padding-right: 20px;
         padding-left: 20px;
     }
     .myContent .title {
         padding-bottom: 20px;
+    }
+    .file {
+        display: none;
     }
 </style>

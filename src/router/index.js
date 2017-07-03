@@ -64,11 +64,14 @@ export default new Router({
                     path: '/admin/sankey',
                     component: resolve => require(['../components/page/sankey.vue'], resolve)
                 },
-
                 {
                     path: '/admin/force',
                     component: resolve => require(['../components/page/force.vue'], resolve)
                 },
+                {
+                    path: '/admin/testMining',
+                    component: resolve => require(['../components/page/testMining.vue'], resolve)                    
+                }
             ]
         },
         {
