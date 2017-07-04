@@ -4,14 +4,14 @@
         <div class="ms-login">
             <el-tabs v-model="activePane">
                 <el-tab-pane label="登录" name="login">
-                    <el-form :model="login" :rules="loginRules" ref="login" label-width="0px" onsubmit="return false;">
+                    <el-form :model="login" :rules="loginRules" ref="login" label-width="0px">
                         <el-form-item prop="username">
                             <el-input v-model="login.username" placeholder="邮箱"></el-input>
                         </el-form-item>
                         <el-form-item prop="password">
                             <el-input type="password" placeholder="密码" v-model="login.password"></el-input>
                         </el-form-item>
-                        <el-form :model="login" :rules="loginRules" ref="login" label-width="0px">
+                        <el-form :model="login" :rules="loginRules" ref="login" label-width="0px" onsubmit="return false;">
                             <el-form-item prop="verCode">
                                 <el-popover
                                     ref="a"
@@ -51,7 +51,7 @@
                         <el-form-item prop="repassword">
                             <el-input type="password" placeholder="确认密码" v-model="register.repassword"></el-input>
                         </el-form-item>
-                        <el-form :model="register" :rules="registerRules" ref="register" label-width="0px">
+                        <el-form :model="register" :rules="registerRules" ref="register" label-width="0px" onsubmit="return false;">
                             <el-form-item prop="verCode">
                                 <el-popover
                                     ref="b"
