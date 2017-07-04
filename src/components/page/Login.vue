@@ -4,7 +4,7 @@
         <div class="ms-login">
             <el-tabs v-model="activePane">
                 <el-tab-pane label="登录" name="login">
-                    <el-form :model="login" :rules="loginRules" ref="login" label-width="0px" >
+                    <el-form :model="login" :rules="loginRules" ref="login" label-width="0px" onsubmit="return false;">
                         <el-form-item prop="username">
                             <el-input v-model="login.username" placeholder="邮箱"></el-input>
                         </el-form-item>
