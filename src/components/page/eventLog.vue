@@ -291,6 +291,9 @@ P<template>
                     case 900:
                         msg('事件化错误', '事件化失败');
                         break;
+                    case 901:
+                        msg('事件化错误', '文件大小为0');
+                        break;   
                     default:
                         break;
                 }

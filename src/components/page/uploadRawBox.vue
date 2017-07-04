@@ -21,7 +21,7 @@
 			</el-switch>
 			<el-input class='file-name' placeholder="请上传文件" v-model="uploadForm.fileName" />
 			<el-button type = "primary" class="btn-browse">浏览</el-button>
-			<el-button type="success" class='btn-upload' @click="submitForm">上传</el-button>
+			<el-button :disabled="uploadEnable" type="success" class='btn-upload' @click="submitForm">上传</el-button>
 			<input type="file" class="file" id="file" ref="file" @change="changeFileName" :accept="accept" />
 		</form>		
 
@@ -52,7 +52,8 @@
 					}
 				],
 				accept:'.txt',
-				enable:false
+				enable:false,
+				uploadEnable:false,
 			}
 		},
 		methods:{
@@ -108,11 +109,12 @@
                         msg('激活错误', '用户已被激活，请直接登录');
                         break;
                     case 900:
-                        msg('事件化错误', '事件化失败');
-                        break;
+                    	msg('事件化错误','事件化失败');
+                    	break;
                     case 901:
-                        msg('上传错误', '上传文件为空文件');
-                        break;
+                    	msg('上传错误','文件为空');
+                    	break;
+
                     default:
                         break;
                 }
@@ -142,18 +144,21 @@
 			},
 			submitForm:function(){
 				var vm=this;
+				vm.uploadEnable = true;
 				console.log(vm.uploadForm.file);
 				if(!vm.uploadForm.format){
 					this.$message({
 						type:'error',
 						message:'请选择类型'
 					});
+					vm.uploadEnable = false;
 				}
 				else if(!vm.uploadForm.fileName){
 					this.$message({
 						type:'error',
 						message:'请上传文件'
 					});
+					vm.uploadEnable = false;
 				}
 				else{
 					var form  = new FormData();
@@ -177,7 +182,7 @@
                         	}
 	                        else {
 	                            console.log(data.code);
-	                            this.codeParsing(data.code);                                
+	                            vm.codeParsing(data.code);                                
 	                        }
 	                        setTimeout(()=>{window.location.reload()},1000);
 						},
@@ -186,7 +191,7 @@
                                 type:'error',
                                 message:'网络无连接'
                             });
-                            // setTimeout(()=>{window.location.reload()},1000);
+                            setTimeout(()=>{vm.uploadEnable = false;},1000);
 						}
 					});
 
