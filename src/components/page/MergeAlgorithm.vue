@@ -153,22 +153,17 @@
                 if (value.indexOf(" ") >= 0) {
                     callback(new Error('请不要包含空格'));
                 } else if (value.match(reg)) {
-                    callback(new Error('请不要输入特殊字符'));
+                    callback(new Error('请不要输入特殊字节'));
                 } else if (value.gblen() > 44) {
-                    callback(new Error('请输入少于44位字符的名字'));
+                    callback(new Error('请输入少于44位字节的名字'));
                 } else {
                     callback();
                 }
             };
 
             var checkDesc = (rule, value, callback) => {
-                var reg = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？\\\\]");
-                if (value.indexOf(" ") >= 0) {
-                    callback(new Error('请不要包含空格'));
-                } else if (value.match(reg)) {
-                    callback(new Error('请不要输入特殊字符'));
-                } else if (value.gblen() > 255) {
-                    callback(new Error('请输入少于255位字符的描述'));
+                if (value.gblen() > 255) {
+                    callback(new Error('请输入少于255位字节的描述'));
                 } else {
                     callback();
                 }
@@ -364,14 +359,15 @@
                         let pac = this.$refs.package.files[0];
                         let con = this.$refs.conf.files[0];
                         let formData = new FormData();
-                        formData.append('pack', pac, pac.name);
-                        formData.append('conf', con, con.name);
-                        formData.append('name', this.fileUpload.name);
-                        formData.append('desc', this.fileUpload.desc);
+                        formData.append('package', pac, pac.name);
+                        formData.append('config', con, con.name);
+                        formData.append('algoName', this.fileUpload.name);
+                        formData.append('description', this.fileUpload.desc);
+                        formData.append('type', 0);
 
                         this.$axios ({
                             method: 'post',
-                            url: '/manager/uploadJarAndConfig',
+                            url: '/manager/uploadAlgo',
                             baseURL: this.hostUrl,
                             headers: { 'Content-Type': 'multiple/form-data' },
                             data: formData,

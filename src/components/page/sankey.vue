@@ -45,8 +45,11 @@
                 var json;
                 $.ajax({
                     url: '/api/sankey',
+                    // url: this.baseUrl + '/logMining/mining',
+                    // type: 'POST',
                     type: 'GET',
                     async: false,
+                    // data: ,
                     success: function(data) {
                         json = data.data;
                         console.log(data.data);
