@@ -38,7 +38,7 @@
            width="280"
            align='center'>
            <template scope="scope">
-             <el-popover trigger="hover" placement="top"width='260'>
+             <el-popover trigger="click" placement="top"width='260'>
                 <h4>{{ scope.row.fusionType }}</h4>
                 <p style="margin-top:14px">{{scope.row.fusionDescription}}</p>
                 <div slot="reference" class="name-wrapper">

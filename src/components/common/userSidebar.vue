@@ -58,6 +58,17 @@
                                 title: '事件日志'
                             }
                         ]
+                    },
+                    {
+                        icon: 'el-icon-menu',
+                        index: '3',
+                        title: '日志融合',
+                        subs: [
+                            {
+                                index: '/user/fusion-op',
+                                title: '融合操作'
+                            }
+                        ]
                     }
                 ]
             }

@@ -107,6 +107,13 @@
                     case 800:
                         msg('激活错误', '用户已被激活，请直接登录');
                         break;
+                    case 900:
+                    	msg('事件化错误','事件化失败');
+                    	break;
+                    case 901:
+                    	msg('上传错误','文件为空');
+                    	break;
+
                     default:
                         break;
                 }

@@ -186,20 +186,18 @@
                 algorithmData: [],
                 uploadRules: {
                     package: [
-                        { required: true, message: '请上传算法包', trigger: 'blur' }
+                        { required: true, message: '请上传算法包', trigger: 'change' }
                     ],
                     conf: [
-                        { required: true, message: '请上传算法配置文件', trigger: 'blur' }
+                        { required: true, message: '请上传算法配置文件', trigger: 'change' }
                     ],
                     name: [
                         { required: true, message: '请填写算法名称', trigger: 'blur' },
-                        { validator: checkName, trigger: 'change' },
-                        { validator: checkName, trigger: 'blur' }
+                        { validator: checkName, trigger: 'change, blur' }
                     ],
                     desc: [
                         { required: true, message: '请添加算法描述', trigger: 'blur' },
-                        { validator: checkDesc, trigger: 'change' },
-                        { validator: checkDesc, trigger: 'blur' },
+                        { validator: checkDesc, trigger: 'change, blur' }
                     ]
                 }
             }

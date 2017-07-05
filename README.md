@@ -16,19 +16,14 @@
 	|-- src                              // 源码目录
 	|   |-- components                   // 组件
 	|       |-- common                   // 公共组件
-	|           |-- Header.vue           // 公共头部
-	|           |-- Home.vue           	 // 公共路由入口
-	|           |-- Sidebar.vue          // 公共左边栏
+	|           |-- adminHeader.vue      // 管理员头部
+	|           |-- adminHome.vue        // 管理员路由入口
+	|           |-- adminSidebar.vue     // 管理员左边栏
+	|           |-- userHeader.vue       // 用户头部
+	|           |-- userHome.vue         // 用户路由入口
+	|           |-- userSidebar.vue      // 用户左边栏
 	|		|-- page                   	 // 主要路由页面
-	|           |-- BaseCharts.vue       // 基础图表
-	|           |-- BaseForm.vue         // 基础表单
-	|           |-- BaseTable.vue        // 基础表格
-	|           |-- Login.vue          	 // 登录
-	|           |-- Markdown.vue         // markdown组件
-	|           |-- Readme.vue           // 自述组件
-	|           |-- Upload.vue           // 图片上传
-	|           |-- VueEditor.vue        // 富文本编辑器
-	|           |-- VueTable.vue         // vue表格组件
+	|           |-- Readme.vue           // 介绍组件
 	|   |-- App.vue                      // 页面入口文件
 	|   |-- main.js                      // 程序入口文件，加载各种公共组件
 	|-- .babelrc                         // ES6语法编译配置

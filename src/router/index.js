@@ -36,6 +36,10 @@ export default new Router({
                 {
                     path: '/user/event-log',
                     component: resolve => require(['../components/page/eventLog.vue'],resolve)
+                },
+                {
+                    path: '/user/fusion-op',
+                    component: resolve => require(['../components/page/fusionOp.vue'],resolve)
                 }
             ]
         },
