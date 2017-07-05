@@ -153,7 +153,7 @@
                 if (value.indexOf(" ") >= 0) {
                     callback(new Error('请不要包含空格'));
                 } else if (value.match(reg)) {
-                    callback(new Error('请不要输入特殊字节'));
+                    callback(new Error('请不要输入特殊字符'));
                 } else if (value.gblen() > 44) {
                     callback(new Error('请输入少于44位字节的名字'));
                 } else {
@@ -392,7 +392,7 @@
                     } else {
                         this.$message({
                             title: '算法上传失败',
-                            message: '请确保填写所有配置信息',
+                            message: '请确保所有配置信息填写正确',
                             type: 'error'
                         });
                         return false;
