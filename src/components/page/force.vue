@@ -24,20 +24,7 @@
             }
         },
         methods:{
-            load() {
-              var json;
-              $.ajax({
-                  url: '/api/force',
-                  type: 'GET',
-                  async: false,
-                  success: function(data) {
-                      json = data.data;
-                      // console.log(data.data);
-                  },
-                  error: function(error) {
-                      console.log(error);
-                  }
-              }); 
+            renderForce(json) {
                   
               var width = 800;
               var height = 600;

@@ -67,8 +67,22 @@
                             {
                                 index: '/user/fusion-op',
                                 title: '融合操作'
+                            },
+                            {
+                                index: '/user/test',
+                                title: 'test'
                             }
                         ]
+                    },
+                    {
+                        icon: 'el-icon-menu',
+                        index: '/user/processMining',
+                        title: '流程挖掘'
+                    },
+                     {
+                        icon: 'el-icon-menu',
+                        index: '/user/renderGraph',
+                        title: '挖掘结果'
                     }
                 ]
             }

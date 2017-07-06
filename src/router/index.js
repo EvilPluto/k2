@@ -40,6 +40,18 @@ export default new Router({
                 {
                     path: '/user/fusion-op',
                     component: resolve => require(['../components/page/fusionOp.vue'],resolve)
+                },
+                 {
+                    path: '/user/test',
+                    component: resolve => require(['../components/page/test.vue'],resolve)
+                },
+                {
+                    path: '/user/processMining',
+                    component: resolve => require(['../components/page/processMining.vue'],resolve)
+                },
+                 {
+                    path: '/user/renderGraph',
+                    component: resolve => require(['../components/page/sankey.vue'],resolve)
                 }
             ]
         },
