@@ -66,71 +66,64 @@ import fusionBox from './fusionbox.vue'
               algoId: '',
               param: {}
             },
-            fusionData:[{
-               fusionType:'人工免疫日志融合算法',
-               fusionDescription:'人工免疫日志融合方法是一种基于人工免疫算法'
-               +'的日志融合方法，是在实例级别进行日志融合。您可以点击“应用”按'
-               +'钮进行参数配置，然后进行融合计算。',
-               paraList:[
-               {
-                name: 'cszqgm',
-                type: 1,
-                defaultValue: 60,
-                displayName: '初始种群规模'
-               },
-               {
-                name: 'zqzdjhds',
-                type: 2,
-                defaultValue: 1.2,
-                displayName: '种群最大进化代数'
-               }
-               ]
-            },{
-               fusionType:'混合人工免疫日志融合算法',
-               fusionDescription:'混合人工免疫日志融合方法是一种基于人工免疫算法'
-               +'的日志融合方法，是在实例级别进行日志融合。您可以点击“应用”按'
-               +'钮进行参数配置，然后进行融合计算。',
-               paraList:[
-               {
-                name: 'das',
-                type: 3,
-                defaultValue: '1;2;3',
-                displayName: '初始种群规模'
-               },
-               {
-                name: 'asd',
-                type: 4,
-                defaultValue: '3.0;4.0;5.0',
-                displayName: '种群最大进化代数'
-               },
-               {
-                name: 'sb',
-                type: 5,
-                defaultValue: true,
-                displayName: 'SB了吧'
-               }
-               ]
-            }],
-
+            fusionData:[],
+            paraListDesc: []
           }
       },
       created() {
-        // 屏蔽esc        
-        $(document).ready(function() {
-        }).keydown(function(e) {
-          if (e.which === 27) {
-            console.log('ESC');
-            e.keyCode = 0;
-            // e.cancelBubble = true;
-            e.returnValue = false;
-            return false;
-          }
-        });
-
         // 加载初始算法列表
         this.loadFusionList();
       },
       methods:{
+        showMsg(msg) {
+          if (msg.data.code === 200) {
+              const h = this.$createElement;
+
+              this.$notify({
+                  title: '融合结果',
+                  message: h
+                      ('pre',
+                      { style: 'color: teal' },
+                      '\n融合用时: ' + msg.data.payload.time
+                      // '\n昵称: ' + this.register.nickname +
+                      // '\n密码: ' + this.register.repassword
+                      )
+              });
+          }
+        },
+        validSubmitJson(params) {
+          var self = this;
+          var regInt = new RegExp("^[0-9]*$");
+          var regIntDot = new RegExp("\\d+(\\.\\d+)?$");
+          if (!(self.submitJsonData.evtLog1Id && self.submitJsonData.evtLog2Id)) {
+              self.$message({
+                  message: '请选择需要融合的日志文件！',
+                  type: 'error'                        
+              });
+              return false;
+          }
+          for (var i=0; i<self.paraListDesc.length; i++) {
+            if (self.paraListDesc[i].type === 1) {
+              // 检查整型
+              if (!regInt.test(params[i])) {
+                self.$message({
+                    message: '请输入正确参数格式！(整数)',
+                    type: 'error'                        
+                });  
+                return false;              
+              }
+            } else if (self.paraListDesc[i].type === 2) {
+              if (!regIntDot.test(params[i])) {
+                self.$message({
+                    message: '请输入正确参数格式！(浮点数)',
+                    type: 'error'                        
+                });  
+                return false;              
+              }
+            }
+          }
+          return true;
+        },
         loadFusionList() {
           this.$axios({
               url: '/manager/listMergeAlgo',
@@ -140,7 +133,6 @@ import fusionBox from './fusionbox.vue'
           })
           .then((response) => {
               var data = new Array();
-              // 不知道为什么for in 不行
               for (var i=0; i<response.data.length; i++) {
                 var algo = response.data[i];
                 var algoJson = {
@@ -186,7 +178,6 @@ import fusionBox from './fusionbox.vue'
         },
         popUp(index, row){
           var self = this;
-          var paraListDesc;
           console.log(row.id);
           console.log(index);
           self.submitJsonData.algoId = row.id;
@@ -198,7 +189,7 @@ import fusionBox from './fusionbox.vue'
               success: function(data) {
                 if (data.code === 200) {
                   self.fusionData[index].paraList = data.config.params;
-                  paraListDesc = data.config.params;
+                  self.paraListDesc = data.config.params;
                 }
                 console.log(self.fusionData);
               },
@@ -208,7 +199,7 @@ import fusionBox from './fusionbox.vue'
           }); 
 
           this.clearBox();
-
+          var parTmp;
           const h = this.$createElement;
           this.$msgbox({
             title: this.fusionData[index].fusionType,
@@ -218,41 +209,72 @@ import fusionBox from './fusionbox.vue'
                 props: {paraList:self.fusionData[index].paraList},
                 key:self.boxShow,
                 on: {changeValue: function(evtLog1, evtLog2, params) {
-                  console.log(evtLog1, evtLog2, params);
                   self.submitJsonData.evtLog1Id = evtLog1;
                   self.submitJsonData.evtLog2Id = evtLog2;
+                  parTmp = params;
                   var paramObj = {};
-                  console.log(self.fusionData);
-                  for (var i=0; i<paraListDesc.length; i++) {
-                    paramObj[paraListDesc[i].name] = params[i];
+
+                  $('.confirmSubmit').removeClass('is-disabled'); // 重置
+                  for (var i=0; i<self.paraListDesc.length; i++) {
+                    if (!params[i]) {
+                      $('.confirmSubmit').addClass('is-disabled'); 
+                    }
+                    paramObj[self.paraListDesc[i].name] = params[i];
                   }
                   self.submitJsonData.param = paramObj;
-                  // console.log(self.submitJsonData);
                 }}
               }),
             showCancelButton: true,
+            confirmButtonClass: 'confirmSubmit',
             confirmButtonText: '确定',
             customClass:'fusionPop',
             cancelButtonText: '取消',
+            closeOnPressEscape: false,
             beforeClose: (action, instance, done) => {
               if (action === 'confirm') {
-                instance.confirmButtonLoading = true;
-                instance.confirmButtonText = '执行中...';
-                self.mergeSubmit();
-                setTimeout(() => {
-                  done();
-                  setTimeout(() => {
-                    instance.confirmButtonLoading = false;
-                  }, 300);
-                }, 3000);
+                if (self.validSubmitJson(parTmp)) {
+                    // log没选择
+                    instance.confirmButtonLoading = true;
+                    instance.confirmButtonText = '执行中...';
+                    console.log("merge");
+                    this.$axios({
+                      url: 'merge',
+                      method: 'post',
+                      baseURL: this.hostUrl,
+
+                      data: this.submitJsonData
+                    })
+                    .then((response) => {
+                      console.log(response.data);
+                      instance.confirmButtonLoading = false;
+                      instance.confirmButtonText = '确定';
+                      this.$message({
+                          message: '日志融合成功！',
+                          type: 'success'
+                      });
+                      done();
+                      self.showMsg(response);
+                    })
+                    .catch((error) => {
+                      console.log("【Error】:", error);
+                      instance.confirmButtonLoading = false;
+                      instance.confirmButtonText = '确定';
+                      this.$message({
+                          message: '日志融合失败！：请重试',
+                          type: 'error'
+                      });
+                    });
+                }
               } else {
+                instance.confirmButtonLoading = false;
+                instance.confirmButtonText = '确定';
                 done();
               }
             }
           }).then(action => {
             this.$message({
               type: 'info',
-              message: 'action: ' + action
+              message: action
             });
          });
         }
@@ -262,6 +284,9 @@ import fusionBox from './fusionbox.vue'
 </script>
 
 <style>
+  .disableBtn {
+
+  }
   .main {
     width: 800px;
   }

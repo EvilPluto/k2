@@ -85,13 +85,17 @@
                 <template scope="scope">
                   <div class="scopeStyle" v-if="scope.row.type === 1">
                     <el-input 
+                      type="number"
                       v-model="defaultValues[scope.$index]"
+                      placeholder="整型"
                       @change="sentToFather">
                     </el-input>
                   </div>
                   <div class="scopeStyle" v-if="scope.row.type === 2">
                     <el-input 
+                      type="number"
                       v-model="defaultValues[scope.$index]"
+                      placeholder="浮点型"
                       @change="sentToFather">
                     </el-input>
                   </div>
@@ -166,16 +170,11 @@
     props:['paraList'],
     created() {
       this.sentToFather(); 
+      console.log('created');
     },
     methods: {
-     sentToFather(){
+     sentToFather() {
        this.$emit('changeValue',this.evtLog1,this.evtLog2,this.defaultValues);
-     },
-     loop(){                                    //周期性向父组件传递消息
-       var self=this;
-       setInterval(function(){
-         self.sentToFather();
-       },1000);
      },
      parseType(type) {
       switch(type) {
@@ -216,6 +215,10 @@
                   type: 'success'                        
               })
             } else {
+              this.$message({
+                  message: '数据加载失败: ' + '请重试!',
+                  type: 'error'                        
+              })
               console.log(response);
             }
         })
@@ -226,12 +229,11 @@
             });
             console.log("【Error】:", error);
         });
-        // 添加申请page代码
      },
      handleCurrentChange2() {
       var self = this;
       console.log("current-Page:", self.currentPageNum2);
-      self.getTableData1();
+      self.getTableData2();
      },
      getTableData2(){
         var self = this;
@@ -246,42 +248,47 @@
               if (json.code === 200) {
               self.logsTotal2 = json.data.total;
               self.list2 = json.data.list;
-              this.$message({
+              self.$message({
                   message: '数据加载成功!',
                   type: 'success'                        
               })
             } else {
+              self.$message({
+                  message: '数据加载失败: ' + '请重试!',
+                  type: 'error'
+              });
               console.log(response);
             }
         })
         .catch((error) => {
-            this.$message({
+            self.$message({
                 message: '数据加载失败: ' + '请重试!',
                 type: 'error'
             });
             console.log("【Error】:", error);
         });
      },
-     handleInputConfirm() {
-     },
      changeInputValue(index, row) {
       console.log(index, row);
      },
      selectLog1(val) {
-      $("#fileName1").attr("value", val.name + ' by "' + val.creator + '"');
-      this.evtLog1 = val.id;
-      this.pop1Visible = false;
-      this.sentToFather();
+      if (val) {
+        $("#fileName1").attr("value", val.name);
+        this.evtLog1 = val.id;
+        this.pop1Visible = false;
+        this.sentToFather();
+      }
      },
      selectLog2(val) {
-      $("#fileName2").attr("value", val.name + ' by "' + val.creator + '"');
-      this.evtLog2 = val.id;
-      this.pop2Visible = false;
-      this.sentToFather();
+      if (val) {
+        $("#fileName2").attr("value", val.name);
+        this.evtLog2 = val.id;
+        this.pop2Visible = false;
+        this.sentToFather();
+      }
      },
      Init(){
        var self = this;
-       // console.log(self.paraList);
        for (var i=0; i<this.paraList.length; i++) {
         var tmp = this.paraList[i];
         var obj = {};
@@ -313,8 +320,6 @@
     mounted(){
       var self = this;
       self.Init();
-      // self.loop();
-      // console.log(vm.fusion);
     }
   }
 </script>
