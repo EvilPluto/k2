@@ -40,6 +40,10 @@ export default new Router({
                 {
                     path: '/user/fusion-op',
                     component: resolve => require(['../components/page/fusionOp.vue'],resolve)
+                },
+                {
+                    path: '/user/processmining',
+                    component: resolve => require(['../components/page/processMining.vue'],resolve)
                 }
             ]
         },

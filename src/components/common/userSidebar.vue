@@ -69,6 +69,11 @@
                                 title: '融合操作'
                             }
                         ]
+                    },
+                    {
+                        icon: 'el-icon-time',
+                        index: '/user/processmining',
+                        title: '流程挖掘'
                     }
                 ]
             }

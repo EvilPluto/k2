@@ -15,7 +15,7 @@
                     <el-input  icon="search" type = "password" v-model="ruleForm.newPassword" @keyup=""></el-input>   
                 </el-form-item>
                  <el-form-item label = "确认密码" prop="checkNewPassword">
-                    <el-input  icon="search" type = "password"  v-model="ruleForm.checkNewPassword" @keyup=""></el-input>   
+                    <el-input  icon="search" type = "password"  v-model="ruleForm.checkNewPassword" @keyup=""></el-input>  
                 </el-form-item>
             </el-form>
             <div class="submit-btn">

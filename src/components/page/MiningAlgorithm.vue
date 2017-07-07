@@ -366,6 +366,9 @@
                         formData.append('description', this.fileUpload.desc);
                         formData.append('type', 1);
 
+                        // 屏蔽上传按钮
+                        self.submitOrNot = true;
+
                         this.$axios ({
                             method: 'post',
                             url: '/manager/uploadAlgo',
@@ -386,9 +389,11 @@
                                 self.codeParsing(response.data.code);
                             }
                             self.cancel();
+                            self.submitOrNot = false;
                         })
                         .catch((error) => {
                             console.log("【Error】:" + error);
+                            self.submitOrNot = false;
                         });
                     } else {
                         this.$message({

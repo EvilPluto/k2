@@ -37,29 +37,85 @@
                 var ss = sankey()
                     .nodeWidth(15)
                     .nodePadding(10)
-                    // .nodeId(function(d) { return d.name; })
+                    .nodeId(function(d) { return d.name; })
                     .extent([[1, 1], [width - 1, height - 6]]);
 
                 // 确认为数据问题，当数据不符合sankey图规范时，浏览器会陷入计算死循环，导致卡死
                 // 暂时没有解决方案
-                var json;
-                $.ajax({
-                    url: '/api/sankey',
-                    // url: this.baseUrl + '/logMining/mining',
-                    // type: 'POST',
-                    type: 'GET',
-                    async: false,
-                    // data: ,
-                    success: function(data) {
-                        json = data.data;
-                        console.log(data.data);
-                    },
-                    error: function(error) {
-                        console.log(error);
-                    }
-                });
+                var json = {
+                        "code": 200,
+                        "payload": {
+                            "mineUsetime": "5",
+                            "netElementList": null,
+                            "nodes": [
+                                {
+                                    "name": "a"
+                                },
+                                {
+                                    "name": "b"
+                                },
+                                {
+                                    "name": "c"
+                                },
+                                {
+                                    "name": "d"
+                                },
+                                {
+                                    "name": "e"
+                                },
+                                {
+                                    "name": "f"
+                                }
+                            ],
+                            "links": [
+                                {
+                                    "source": "a",
+                                    "target": "d",
+                                    "value": 1
+                                },
+                                {
+                                    "source": "a",
+                                    "target": "b",
+                                    "value": 2
+                                },
+                                {
+                                    "source": "a",
+                                    "target": "e",
+                                    "value": 1
+                                },
+                                {
+                                    "source": "a",
+                                    "target": "c",
+                                    "value": 2
+                                },
+                                {
+                                    "source": "b",
+                                    "target": "f",
+                                    "value": 1
+                                },
+                                {
+                                    "source": "c",
+                                    "target": "f",
+                                    "value": 1
+                                },
+                                {
+                                    "source": "d",
+                                    "target": "f",
+                                    "value": 3
+                                },
+                                {
+                                    "source": "e",
+                                    "target": "f",
+                                    "value": 1
+                                }
+                            ],
+                            "traces": null,
+                            "allTraces": null
+                        }
+                    };
                 
-                var energy = json;
+                var energy = json.payload;
+                console.log(energy);
                 var graph = ss(energy);
 
                 var link = svg.append("g")

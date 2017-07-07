@@ -5,19 +5,24 @@
        ref="popover1"
        placement="bottom"
        width="752"
-       triger="click">
-         <el-table :data="list1">
-            <el-table-column width="250" property="name" label="事件日志"></el-table-column>
-            <el-table-column width="250" property="creator" label="创建者"></el-table-column>
+       triger="click"       
+       v-model="pop1Visible">
+         <el-table 
+          :data="list1"
+          highlight-current-row
+          @current-change="selectLog1">
+            <el-table-column width="400" property="name" label="事件日志"></el-table-column>
+            <el-table-column width="150" property="creator" label="创建者"></el-table-column>
             <el-table-column width="250" property="createTime" label="创建时间"></el-table-column>
          </el-table>
-        <div class="pageBar">
+        <div class="pageBox">
             <el-pagination
-            @current-change ="handlePageChange1"
-            :current-page.sync='curPage1'
-            :page-size='pageSize1'
-            layout="prev, pager, next"
-            :total="pageTotal1">
+              @current-change="handleCurrentChange1"
+              :current-page.sync="currentPageNum1"
+              :page-size="pageSize1"
+              small
+              layout="total, prev, pager, next"
+              :total="logsTotal1">
             </el-pagination>
         </div>
        </el-popover>
@@ -25,30 +30,36 @@
        ref="popover2"
        placement="bottom"
        width="752"
-       triger="click">
-         <el-table :data="list2">
-            <el-table-column width="250" property="name" label="事件日志"></el-table-column>
-            <el-table-column width="250" property="creator" label="创建者"></el-table-column>
+       triger="click"
+       v-model="pop2Visible">
+         <el-table 
+          :data="list2"
+          max-height="250"
+          highlight-current-row
+          @current-change="selectLog2">
+            <el-table-column width="400" property="name" label="事件日志"></el-table-column>
+            <el-table-column width="150" property="creator" label="创建者"></el-table-column>
             <el-table-column width="250" property="createTime" label="创建时间"></el-table-column>
          </el-table>
-         <div class="pageBar">
+        <div class="pageBox">
             <el-pagination
-            @current-change ="handlePageChange2"
-            :current-page.sync='curPage2'
-            :page-size='pageSize2'
-            layout="prev, pager, next"
-            :total="pageTotal2">
+              @current-change="handleCurrentChange2"
+              :current-page.sync="currentPageNum2"
+              :page-size="pageSize2"
+              small
+              layout="total, prev, pager, next"
+              :total="logsTotal2">
             </el-pagination>
-         </div>
+        </div>
        </el-popover>
        <div class="top">
            <div class="SelectLog left">
               <input class="padi" id="fileName1" readonly="readonly" placeholder="导入日志文件-1"/>
-	            <a class="addFile"  v-popover:popover1><img src="../../assets/addFile.png" alt="按钮"></a>
+	            <a class="addFile"  v-popover:popover1 @click="getTableData1"><img src="../../assets/addFile.png" alt="按钮"></a>
 			     </div>
            <div class="SelectLog right">
               <input class="padi" id="fileName2" readonly="readonly"placeholder="导入日志文件-2"/>
-	            <a class="addFile" v-popover:popover2><img src="../../assets/addFile.png" alt="按钮"></a>
+	            <a class="addFile" v-popover:popover2 @click="getTableData2"><img src="../../assets/addFile.png" alt="按钮"></a>
 			     </div>
        </div>
        <div class="modifyPara">
@@ -59,36 +70,71 @@
               ref="fusionTable"
               :data="fusion"
               border
-              highlight-current-row 
-              @current-change="handleChange"
               style="width:100%"
               max-height="400">
-              <el-table-column
-                prop="sub"
-                label="下标"
-                align="center"
-                width="1">
-                <template scope="scope">
-                 <span> </span>
-                </template>       
-              </el-table-column>
               <el-table-column
                 prop="name"
                 label="参数名"
                 align="center"
-                width="304">
-                <template scope="scope">
-                 <span>{{scope.row.name}}</span>
-                </template>       
+                width="304">   
               </el-table-column>
               <el-table-column
-                prop="val"
                 label="设置值"
                 align="center"
                 width="304">
                 <template scope="scope">
-                 <input v-model="scope.row.val">
-                </template>   
+                  <div class="scopeStyle" v-if="scope.row.type === 1">
+                    <el-input 
+                      v-model="defaultValues[scope.$index]"
+                      @change="sentToFather">
+                    </el-input>
+                  </div>
+                  <div class="scopeStyle" v-if="scope.row.type === 2">
+                    <el-input 
+                      v-model="defaultValues[scope.$index]"
+                      @change="sentToFather">
+                    </el-input>
+                  </div>
+                  <div class="scopeStyle" v-if="scope.row.type === 3">
+                    <el-select 
+                      v-model="defaultValues[scope.$index]" 
+                      placeholder="请选择" 
+                      @change="sentToFather">
+                      <el-option
+                        v-for="item in scope.row.dataArr"
+                        :key="item"
+                        :label="item"
+                        :value="item">
+                      </el-option>
+                    </el-select>
+                  </div>
+                  <div class="scopeStyle" v-if="scope.row.type === 4">
+                    <el-select 
+                      v-model="defaultValues[scope.$index]" 
+                      placeholder="请选择" 
+                      @change="sentToFather">
+                      <el-option
+                        v-for="item in scope.row.dataArr"
+                        :key="item"
+                        :label="item"
+                        :value="item">
+                      </el-option>
+                    </el-select>
+                  </div>
+                  <div class="scopeStyle" v-if="scope.row.type === 5">
+                    <el-select 
+                      v-model="defaultValues[scope.$index]" 
+                      placeholder="请选择" 
+                      @change="sentToFather">
+                      <el-option
+                        v-for="item in scope.row.dataArr"
+                        :key="item"
+                        :label="item"
+                        :value="item">
+                      </el-option>
+                    </el-select>
+                  </div>
+                </template>
               </el-table-column>
              </el-table>
         </div>
@@ -98,60 +144,197 @@
   export default {
     data() {
       return {
+        hostUrl: 'http://110.64.72.33:8888/processmining',
+        pageSize1: 5,
+        currentPageNum1: 1,
+        logsTotal1: 20,
+        list1:[],
+        evtLog1: '',
+
+        pageSize2: 5,
+        currentPageNum2: 1,
+        logsTotal2: 20,
+        list2:[],
+        evtLog2: '',
+
         fusion:[],
-
-        list1:[{name:'log.txt',creator:'Ella',createTime:'2017-06-29'},
-        {name:'log.txt',creator:'Ella',createTime:'2017-06-29'},
-        {name:'log.txt',creator:'Ella',createTime:'2017-06-29'}],
-        curPage1:1,
-        pageSize1:10,
-        pageTotal1:0,
-        
-          
-        list2:[{name:'log.txt',creator:'Ella',createTime:'2017-06-29'},
-        {name:'log.txt',creator:'Ella',createTime:'2017-06-29'},
-        {name:'log.txt',creator:'Ella',createTime:'2017-06-29'}],
-        curPage2:1,
-        pageSize2:10,
-        pageTotal2:0,
-
-        ajaxdata1:[
-
-        ]
+        defaultValues: [],
+        pop1Visible: false,
+        pop2Visible: false,
       }
     },
     props:['paraList'],
+    created() {
+      this.sentToFather(); 
+    },
     methods: {
-     handleChange(){
-
+     sentToFather(){
+       this.$emit('changeValue',this.evtLog1,this.evtLog2,this.defaultValues);
      },
-     handlePageChange1(){
-
+     loop(){                                    //周期性向父组件传递消息
+       var self=this;
+       setInterval(function(){
+         self.sentToFather();
+       },1000);
      },
-     handlePageChange2(){
-
+     parseType(type) {
+      switch(type) {
+        case 1:
+          break;
+        case 2:
+          break;
+        case 3:
+          break;
+        case 4:
+          break;
+        case 5:
+          break;
+        default:
+          break;
+      }
+     },
+     handleCurrentChange1() {
+      var self = this;
+      console.log("current-Page:", self.currentPageNum1);
+      self.getTableData1();
+     },
+     getTableData1(){
+        var self = this;
+        var addUrl = "?pageNum=" + self.currentPageNum1 + "&pageSize=" + self.pageSize1;
+        self.$axios({
+            url: '/eventLog/listAll' + addUrl,
+            method: 'get',
+            baseURL: this.hostUrl
+        })
+        .then((response) => {
+            var json = response.data;
+              if (json.code === 200) {
+              self.logsTotal1 = json.data.total;
+              self.list1 = json.data.list;
+              this.$message({
+                  message: '数据加载成功!',
+                  type: 'success'                        
+              })
+            } else {
+              console.log(response);
+            }
+        })
+        .catch((error) => {
+            this.$message({
+                message: '数据加载失败: ' + '请重试!',
+                type: 'error'
+            });
+            console.log("【Error】:", error);
+        });
+        // 添加申请page代码
+     },
+     handleCurrentChange2() {
+      var self = this;
+      console.log("current-Page:", self.currentPageNum2);
+      self.getTableData1();
+     },
+     getTableData2(){
+        var self = this;
+        var addUrl = "?pageNum=" + self.currentPageNum2 + "&pageSize=" + self.pageSize2;
+        self.$axios({
+            url: '/eventLog/listAll' + addUrl,
+            method: 'get',
+            baseURL: this.hostUrl
+        })
+        .then((response) => {
+            var json = response.data;
+              if (json.code === 200) {
+              self.logsTotal2 = json.data.total;
+              self.list2 = json.data.list;
+              this.$message({
+                  message: '数据加载成功!',
+                  type: 'success'                        
+              })
+            } else {
+              console.log(response);
+            }
+        })
+        .catch((error) => {
+            this.$message({
+                message: '数据加载失败: ' + '请重试!',
+                type: 'error'
+            });
+            console.log("【Error】:", error);
+        });
+     },
+     handleInputConfirm() {
+     },
+     changeInputValue(index, row) {
+      console.log(index, row);
+     },
+     selectLog1(val) {
+      $("#fileName1").attr("value", val.name + ' by "' + val.creator + '"');
+      this.evtLog1 = val.id;
+      this.pop1Visible = false;
+      this.sentToFather();
+     },
+     selectLog2(val) {
+      $("#fileName2").attr("value", val.name + ' by "' + val.creator + '"');
+      this.evtLog2 = val.id;
+      this.pop2Visible = false;
+      this.sentToFather();
      },
      Init(){
-       let sub=0;
-       for(var item of this.paraList ){
-         for(var prop in item){
-             let obj={};
-             obj.sub=sub;
-             obj.name=prop;
-             obj.val=item[prop];
-             this.fusion.push(obj);
-             sub++;
-         }
+       var self = this;
+       // console.log(self.paraList);
+       for (var i=0; i<this.paraList.length; i++) {
+        var tmp = this.paraList[i];
+        var obj = {};
+        var defaultV;
+        obj.name = tmp.displayName;
+        obj.type = tmp.type;
+        var arr = new Array();
+        switch(tmp.type) {
+          case 1:
+          case 2:
+            arr.push(tmp.defaultValue);
+            break;
+          case 3:
+          case 4:
+          case 5:
+            arr = tmp.defaultValue.split(";");
+            break;
+          default:
+            break;
+        }
+        defaultV = arr[0];
+        obj.dataArr = arr;
+        self.fusion.push(obj);
+        self.defaultValues.push(defaultV);
        }
     }
     },
+
     mounted(){
-      var vm=this;
-      vm.Init();
-    },
+      var self = this;
+      self.Init();
+      // self.loop();
+      // console.log(vm.fusion);
+    }
   }
 </script>
 <style scoped>
+.scopeStyle {
+  margin: auto;
+  width: 80px;
+}
+.pageBox {
+  padding-top: 10px;
+}
+.inputTag {
+  width: 100px;
+  overflow: hidden;
+  border-radius: 4px;
+  border: 1px solid #bfcbd9;
+  color: white;
+  font-size: 11px;
+  min-width: 20px;
+}
 .top{
    height: 36px;
    width: 100%;
@@ -166,12 +349,8 @@
   width: 278px;
   height: 36px;
   border:solid #e4e4e4 1px;
-}
-.modifyPara input{
-   background: none;
-   border:none;
-   height: 30px;
-   outline:none;
+  border-radius: 4px;
+  text-align: center;
 }
 .right{
   position: relative;

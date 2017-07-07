@@ -118,6 +118,7 @@
                                 type="primary"
                                 size="large"
                                 class="uploadBtn"
+                                :loading="submitOrNot"
                                 @click="submit('fileUpload')"
                             >
                             添加
@@ -171,6 +172,7 @@
 
             return {
                 tapOrNot: false,
+                submitOrNot: false,
                 hostUrl: '/processmining', // IP'
                 fileUpload: {
                     package: '',
@@ -231,7 +233,6 @@
                         type: 'success'                        
                     })
                 })
-                // fixed: 经常跳出
                 .catch((error) => {
                     this.$message({
                         message: '数据加载失败: ' + '请重试!',
@@ -356,6 +357,9 @@
                                 )
                         });
 
+                        // 屏蔽上传按钮
+                        self.submitOrNot = true;
+
                         let pac = this.$refs.package.files[0];
                         let con = this.$refs.conf.files[0];
                         let formData = new FormData();
@@ -385,9 +389,11 @@
                                 self.codeParsing(response.data.code);
                             }
                             self.cancel();
+                            self.submitOrNot = false;
                         })
                         .catch((error) => {
                             console.log("【Error】:" + error);
+                            self.submitOrNot = false;
                         });
                     } else {
                         this.$message({
