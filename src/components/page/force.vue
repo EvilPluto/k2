@@ -24,7 +24,164 @@
             }
         },
         methods:{
-            renderForce(json) {
+            load() {
+                var data={
+    "code": 200,
+    "payload": {
+        "mineUsetime": "62",
+        "netElementList": null,
+        "nodes": [
+            {
+                "name": "accept"
+            },
+            {
+                "name": "collect reviews"
+            },
+            {
+                "name": "decide"
+            },
+            {
+                "name": "get review 1"
+            },
+            {
+                "name": "get review 2"
+            },
+            {
+                "name": "get review 3"
+            },
+            {
+                "name": "get review X"
+            },
+            {
+                "name": "invite additional reviewer"
+            },
+            {
+                "name": "invite reviewers"
+            },
+            {
+                "name": "reject"
+            },
+            {
+                "name": "time-out 1"
+            },
+            {
+                "name": "time-out 2"
+            },
+            {
+                "name": "time-out 3"
+            },
+            {
+                "name": "time-out X"
+            }
+        ],
+        "links": [
+            {
+                "source": "collect reviews",
+                "target": "decide",
+                "value": 100
+            },
+            {
+                "source": "decide",
+                "target": "accept",
+                "value": 45
+            },
+            {
+                "source": "decide",
+                "target": "invite additional reviewer",
+                "value": 526
+            },
+            {
+                "source": "decide",
+                "target": "reject",
+                "value": 55
+            },
+            {
+                "source": "get review 1",
+                "target": "collect reviews",
+                "value": 11
+            },
+            {
+                "source": "get review 2",
+                "target": "collect reviews",
+                "value": 10
+            },
+            {
+                "source": "get review 3",
+                "target": "collect reviews",
+                "value": 11
+            },
+            {
+                "source": "get review X",
+                "target": "decide",
+                "value": 263
+            },
+            {
+                "source": "invite additional reviewer",
+                "target": "get review X",
+                "value": 263
+            },
+            {
+                "source": "invite additional reviewer",
+                "target": "time-out X",
+                "value": 263
+            },
+            {
+                "source": "invite reviewers",
+                "target": "get review 1",
+                "value": 16
+            },
+            {
+                "source": "invite reviewers",
+                "target": "time-out 1",
+                "value": 16
+            },
+            {
+                "source": "invite reviewers",
+                "target": "get review 2",
+                "value": 19
+            },
+            {
+                "source": "invite reviewers",
+                "target": "time-out 2",
+                "value": 12
+            },
+            {
+                "source": "invite reviewers",
+                "target": "get review 3",
+                "value": 19
+            },
+            {
+                "source": "invite reviewers",
+                "target": "time-out 3",
+                "value": 18
+            },
+            {
+                "source": "time-out 1",
+                "target": "collect reviews",
+                "value": 22
+            },
+            {
+                "source": "time-out 2",
+                "target": "collect reviews",
+                "value": 26
+            },
+            {
+                "source": "time-out 3",
+                "target": "collect reviews",
+                "value": 20
+            },
+            {
+                "source": "time-out X",
+                "target": "decide",
+                "value": 263
+            }
+        ],
+        "traces": null,
+        "allTraces": null
+    }
+};
+              var json=data.payload;
+              
                   
               var width = 800;
               var height = 600;
@@ -34,7 +191,12 @@
               
               // 通过布局来转换数据，然后进行绘制
               var simulation = this.$d3.forceSimulation()
-                    .force("link", this.$d3.forceLink().id(function(d) { return d.name; }))
+                    .force("link", this.$d3.forceLink().id(function(d) { return d.name; })
+                                                       .distance(function(d){ 
+                                                           console.log(d.value)
+                                                           if(d.value<50){return d.value+50;}
+                                                           if(d.value>200)return d.value-100;
+                                                           else{return d.value;}}))
                     .force("charge",this.$d3.forceManyBody())
                     .force("center",this.$d3.forceCenter(width/2, height/2));
               // console.log(simulation);
@@ -49,16 +211,18 @@
                   .enter()
                   .append("line")
                   .attr("class", "lines")
-                  .attr("stroke","#000")
-                  .attr("stroke-width",1/*, function(d) { return d.value / 5; }*/)
+                  .attr("stroke","#515151")
+                  .attr("stroke-width",function (d) {
+                    return Math.sqrt(d.value) > 5 ? 5 : Math.sqrt(d.value);
+                  })
                   .attr("stroke-opacity", 0.5);
-              // console.log('links', svg_links);
 
               var svg_nodes = svg.selectAll("circle")
                   .data(json.nodes)
                   .enter()
                   .append("circle")
-                  .attr("r",2)
+                  .attr("r",6)
+                  .attr("name", function(d) { return d.name; })
                   .attr("fill",function(d,i){
                       return color(i);
                   })    
@@ -68,19 +232,21 @@
                       .on("start", dragstarted)
                       .on("drag", dragged)
                       .on("end", dragended));
-              
+              svg_nodes.append('title')
+                       .text(function(d){
+                            return d.name;
+                       });
               var svg_text = svg.selectAll("text")
                   .data(json.nodes)
                   .enter()
                   .append("text")
-                  .style("fill","#000")
+                  .style("fill","#EE6666")
+                  .attr("class", "slice")
                   .attr("dx",2)
                   .attr("dy",1)
-                  .text(function(d){return d.name;});
-
-              // console.log("转换后的nodes links数据:");
-              // console.log(json.nodes);
-              // console.log(json.links);
+                  .text(function (d) {
+                    return '';
+                  });
               
               function draw(){
                   svg_nodes
@@ -97,7 +263,6 @@
                        .attr("x2",function(d){ return d.target.x; })
                        .attr("y2",function(d){ return d.target.y; });
               }
-              // simulation.on("tick",draw);
 
               function dragstarted(d) {
                 console.log("DragStarted");
@@ -129,11 +294,12 @@
 
 <style>
       line:hover {
-          stroke-width: 2;
+          stroke-width: 6;
           stroke-opacity: 0.8;
+          stroke: #ff9900;
       }
       circle:hover {
-          r: 5;
+          r: 8;
       }
       text {
           font-family: sans-serif;

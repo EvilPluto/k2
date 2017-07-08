@@ -125,13 +125,15 @@ import drawGraph from './renderGraph.vue'
                    instance.confirmButtonLoading = true;
                    instance.confirmButtonText = '执行中...';
                    self.$axios({
-                      url:'http://110.64.72.33:8888/processmining/logMining/mining',
+                      url:'/logMining/mining',
                       method:'post',
+                      baseURL: self.hostUrl,
                       data:{
                          logId:self.logId,
                          methodId:self.methodId,
                          paramList:self.configList,
-                         imageType:self.imageType
+                         imageType:self.imageType,
+                         rrAttr:''
                       }
                    }).then((response)=>{
                       instance.confirmButtonLoading = false;
@@ -140,7 +142,7 @@ import drawGraph from './renderGraph.vue'
                         done();
                         self.payload=response.data.payload;
                         tag=1;
-                        console.log(self.payload);
+                        //console.log(self.payload);
                       }
                    })
                 }
@@ -157,9 +159,9 @@ import drawGraph from './renderGraph.vue'
         Init(){                                   //初始化挖掘算法列表
             var self=this;
             this.$axios({
-                url:'http://110.64.72.33:8888/processmining/logMining/method',
+                url:'/logMining/method',
                 method:'get',
-                //baseURL: self.hostUrl,
+                baseURL: self.hostUrl,
             }).then((response)=>{
                 if(response.data.code==200){
                   var data=response.data.data;
@@ -183,9 +185,9 @@ import drawGraph from './renderGraph.vue'
                this.methodId=id;
                 var self=this;
                 this.$axios({
-                    url:'http://110.64.72.33:8888/processmining/logMining/algoConfig/'+id,
+                    url:'/logMining/algoConfig/'+id,
                     method:'get',
-                    //baseURL:self.hostUrl
+                    baseURL:self.hostUrl
                 }).then((response)=>{
                     if(response.data.code==200){
                         self.paraList=response.data.config.params;
@@ -282,6 +284,6 @@ import drawGraph from './renderGraph.vue'
   .showBox .el-message-box__header{
     width:700px;
     position: relative;
-    left: 250px;
+    left: 260px;
   }
 </style>

@@ -35,7 +35,7 @@
        </el-popover>
        <div class="top">
            <div class="SelectLog">
-              <input class="padi" id="fileName1" readonly="readonly" placeholder="导入事件日志"/>
+              <input class="padi" id="fileName1" readonly="readonly" placeholder="  导入事件日志"/>
 	            <a class="addFile"  v-popover:popover @click="getLog(curPage)"><img src="../../assets/addFile.png" alt="按钮"></a>
 			     </div>
        </div>
@@ -96,7 +96,7 @@
     data() {
       return {
         miningData:[],                //算法参数
-
+        hostUrl:"http://110.64.72.33:8888/processmining",
         list:[],
         curPage:1,
         pageSize:10,
@@ -124,9 +124,11 @@
     props:['paraList'],                                             //从父组件接收的参数列表
     methods: {
      handleSelectChange(val){
-        this.currentRow=val;
-        this.selectLogId=val.id;
-        this.selectLogName=val.logName;
+       if(val.id){
+          this.currentRow=val;
+          this.selectLogId=val.id;
+          this.selectLogName=val.logName;
+       }
      },
      handleClick_sure(){                                               //用户确认所选择的事件日志
         if(!this.currentRow){
@@ -135,7 +137,7 @@
        var pop=document.getElementsByClassName('popover')[0];
        pop.style.display='none';
        var tip=document.getElementsByClassName('padi')[0];
-       tip.value=this.selectLogName;
+       tip.value='   '+this.selectLogName;
      },
      handleClick_cancel(){                                             //用户取消选择日志
        var pop=document.getElementsByClassName('popover')[0];
@@ -145,15 +147,16 @@
        this.selectLogId='';
        this.selectLogName='';
      },
-     handlePageChange(){
+     handlePageChange(){                             //监听用户翻页
         this.getLog(this.curPage);
      },
      getLog(pageNum){                                //获取事件日志列表
        this.list=[];
        var self=this;
        this.$axios({
-           url:'http://110.64.72.33:8888/processmining//eventLog/listAll?pageNum='+pageNum+'&pageSize=5',
+           url:'/eventLog/listAll?pageNum='+pageNum+'&pageSize=5',
            method:'get',
+           baseURL:self.hostUrl
        }).then((response)=>{
           if(response.data.code==200){
               var data=response.data.data;

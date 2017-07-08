@@ -43,7 +43,7 @@ export default new Router({
                 },
                  {
                     path: '/user/test',
-                    component: resolve => require(['../components/page/test.vue'],resolve)
+                    component: resolve => require(['../components/page/force.vue'],resolve)
                 },
                 {
                     path: '/user/processMining',
