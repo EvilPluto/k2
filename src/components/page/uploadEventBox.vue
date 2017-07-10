@@ -142,18 +142,21 @@
 			},
 			submitForm:function(){
 				var vm=this;
+				vm.uploadEnable = true;
 				console.log(vm.uploadForm.file);
 				if(!vm.uploadForm.format){
 					this.$message({
 						type:'error',
 						message:'请选择类型'
 					});
+					vm.uploadEnable = false;
 				}
 				else if(!vm.uploadForm.fileName){
 					this.$message({
 						type:'error',
 						message:'请上传文件'
 					});
+					vm.uploadEnable = false;
 				}
 				else{
 					var form  = new FormData();
@@ -186,7 +189,7 @@
                                 type:'error',
                                 message:'网络无连接'
                             });
-                            // setTimeout(()=>{window.location.reload()},1000);
+                            setTimeout(()=>{vm.uploadEnable = false;},1000);
 						}
 					});
 

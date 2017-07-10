@@ -1,5 +1,11 @@
 <template>
   <div class="mix">
+   <el-dialog 
+    class="resultDialog"
+    title="日志融合结果" 
+    :visible.sync="mergeResultVisible">
+
+   </el-dialog>
    <div class="head" style="margin-bottom:30px;">
        <el-breadcrumb separator="/">
         <el-breadcrumb-item> 日志融合</el-breadcrumb-item>
@@ -58,8 +64,9 @@ import fusionBox from './fusionbox.vue'
      components:{fusionBox},
       data(){
           return {
-            hostUrl: 'http://110.64.72.33:8888/processmining',
+            hostUrl: '/processmining',
             boxShow:true,
+            mergeResultVisible: false,
             submitJsonData: {
               evtLog1Id: '',
               evtLog2Id: '',
@@ -75,6 +82,9 @@ import fusionBox from './fusionbox.vue'
         this.loadFusionList();
       },
       methods:{
+        practice() {
+          this.mergeResultVisible = true;
+        },
         showMsg(msg) {
           if (msg.data.code === 200) {
               const h = this.$createElement;

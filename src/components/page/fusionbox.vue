@@ -148,7 +148,8 @@
   export default {
     data() {
       return {
-        hostUrl: 'http://110.64.72.33:8888/processmining',
+        // hostUrl: 'http://110.64.72.33:8888/processmining',
+        hostUrl: '/processmining',
         pageSize1: 5,
         currentPageNum1: 1,
         logsTotal1: 20,

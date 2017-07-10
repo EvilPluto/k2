@@ -326,10 +326,10 @@
                 vm.tableData = [];
                 console.log("addurl= "+addUrl);
                 this.$axios({
-                    url: '/rawLog/listAll'+addUrl,
-                    // url:'tableData.json',
+                    // url: '/rawLog/listAll'+addUrl,
+                    url:'./static/tableData.json',
                     method: 'get',
-                    baseURL: vm.hostUrl,
+                    // baseURL: vm.hostUrl,
                 }).then((response) => {
                     var temp = {
                             id:0,
@@ -351,6 +351,8 @@
                         vm.currentPageNum = vm.ajaxData.pageNum;
                         vm.pageSize = vm.ajaxData.pageSize;
                         vm.pageTotal = vm.ajaxData.total;
+                        console.log("============");
+                        console.log(vm.ajaxData.list[0]);
                         for(let i=0;i<vm.ajaxData.list.length;i++){
                             temp = {};
                             temp.id = vm.ajaxData.list[i].id;
