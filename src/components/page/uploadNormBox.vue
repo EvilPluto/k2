@@ -21,7 +21,7 @@
 			</el-switch>
 			<el-input class='file-name' placeholder="请上传文件" v-model="uploadForm.fileName" />
 			<el-button type = "primary" class="btn-browse">浏览</el-button>
-			<el-button type="success" class='btn-upload' @click="submitForm">上传</el-button>
+			<el-button :disabled="uploadEnable" type="success" class='btn-upload' @click="submitForm">上传</el-button>
 			<input type="file" class="file" id="file" ref="file" @change="changeFileName" :accept="accept" />
 		</form>		
 
@@ -52,7 +52,8 @@
 					}
 				],
 				accept:'.txt',
-				enable:false
+				enable:false,
+				uploadEnable:false
 			}
 		},
 		methods:{

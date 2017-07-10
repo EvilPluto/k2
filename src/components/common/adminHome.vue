@@ -17,11 +17,11 @@
         },
         mounted(){
             console.log("home active");
-            // console.log(sessionStorage.getItem('ms_type'));
-            // var sessionType = sessionStorage.getItem('ms_type')
-            // if(sessionType != 1){
-            //     this.$router.push('/nologin');
-            // }
+            console.log(sessionStorage.getItem('ms_type'));
+            var sessionType = sessionStorage.getItem('ms_type')
+            if(sessionType != 1){
+                this.$router.push('/nologin');
+            }
         }
 
     }
