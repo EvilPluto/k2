@@ -13,12 +13,12 @@
                     <el-button type="danger" icon="delete2" @click="deleteBtn()">删&nbsp;除</el-button>
                 </el-button-group>
             </div>
-            <!-- <div class="search-box">
+            <div class="search-box">
                 <el-input v-model="searchInput" > 
                     <el-button @click="searchBtn" slot="append" icon="search"></el-button>
                 </el-input>
 
-            </div> -->
+            </div>
 
             <div class="log-table">
                 <el-table
@@ -38,7 +38,7 @@
                       prop="targetname"
                       label="融合日志"
                       align = "left"
-                       width="130"
+                       width="180"
                       show-overflow-tooltip>
                       <template scope="scope">{{ scope.row.targetname }}</template>
                     </el-table-column>
@@ -46,14 +46,14 @@
                       prop="source1name"
                       label="关联事件日志-1"
                       align = "left"
-                      width="170">
+                      width="220">
                       <template scope="scope">{{ scope.row.source1name }}</template>
                     </el-table-column>
                     <el-table-column
                       prop="source2name"
                       label="关联事件日志-2"
                       align = "left"
-                      width="170">
+                      width="220">
                       <template scope="scope">{{ scope.row.source2name }}</template>
                     </el-table-column>
                  
@@ -278,7 +278,7 @@
                 vm.tableData = [];
                 console.log("addurl= "+addUrl);
                 this.$axios({
-                    url: '/listAllMEL'+addUrl,
+                    url:addUrl,
                     // url:'mergeLog.json',
                     method: 'get',
                     baseURL: vm.hostUrl,
@@ -340,8 +340,23 @@
             //make ajaxdata into tableData
             getTableData:function(){
                 var vm = this;
-                var addUrl = "?pageNum="+vm.currentPageNum;
+                var addUrl = "/listAllMEL?pageNum="+vm.currentPageNum;
                 vm.getData(addUrl);
+            },
+            searchBtn:function(){
+                var vm =this;
+                if(vm.searchInput == ''){
+                    this.$message({
+                        type:'error',
+                        message:'搜索内容为空'
+                    });
+                }
+                else{
+                    var searchUrl = "/search?searchInfo="+vm.searchInput;
+                    console.log("searchUrl: " + searchUrl);
+                    vm.getData(searchUrl);
+                }
+
             },
             clearKey:function(){
                 var self = this;

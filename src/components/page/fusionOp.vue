@@ -4,7 +4,38 @@
     class="resultDialog"
     title="日志融合结果" 
     :visible.sync="mergeResultVisible">
-
+    <el-card>
+      <table border="10" width="100%" class="resultDialog">
+      <tr>
+        <th class="headerResult">名称</th>
+        <th class="headerResult">项值</th>
+      </tr>
+      <tr>
+        <th>总耗时</th>
+        <td>{{ result.time }}</td>
+      </tr>      
+      <tr>
+        <th>总实例数</th>
+        <td>{{ result.totalinstancenum }}</td>
+      </tr>
+      <tr>
+        <th>总事件数</th> 
+        <td>{{ result.totaleventnum }}</td>
+      </tr>
+      <tr>
+        <th>平均每实例中事件数</th> 
+        <td>{{ result.average }}</td>
+      </tr>
+      <tr>
+        <th>流程活动事件</th> 
+        <td>{{ result.processactivityevent }}</td>
+      </tr>
+      <tr>
+        <th>流程活动操作人</th> 
+        <td>{{ result.controller }}</td>
+      </tr>
+      </table>
+    </el-card>
    </el-dialog>
    <div class="head" style="margin-bottom:30px;">
        <el-breadcrumb separator="/">
@@ -65,6 +96,7 @@ import fusionBox from './fusionbox.vue'
       data(){
           return {
             hostUrl: '/processmining',
+            // hostUrl: 'http://110.64.72.33:8888/processmining',
             boxShow:true,
             mergeResultVisible: false,
             submitJsonData: {
@@ -74,32 +106,36 @@ import fusionBox from './fusionbox.vue'
               param: {}
             },
             fusionData:[],
-            paraListDesc: []
+            paraListDesc: [],
+            result: {
+              time: "",
+              totalinstancenum: "",
+              totaleventnum: "",
+              average: "",
+              processactivityevent: "",
+              controller: ""
+            },
           }
       },
       created() {
         // 加载初始算法列表
         this.loadFusionList();
+        // this.practice();
       },
       methods:{
-        practice() {
-          this.mergeResultVisible = true;
-        },
-        showMsg(msg) {
-          if (msg.data.code === 200) {
-              const h = this.$createElement;
-
-              this.$notify({
-                  title: '融合结果',
-                  message: h
-                      ('pre',
-                      { style: 'color: teal' },
-                      '\n融合用时: ' + msg.data.payload.time
-                      // '\n昵称: ' + this.register.nickname +
-                      // '\n密码: ' + this.register.repassword
-                      )
-              });
-          }
+        // practice() {
+        //   this.mergeResultVisible = true;
+        // },
+        showMsg(json) {
+          var resultTmp = {};
+          resultTmp.time = json.time + "(ms)";
+          resultTmp.totalinstancenum = json.resultLog.totalinstancenum;
+          resultTmp.totaleventnum = json.resultLog.totaleventnum;
+          resultTmp.average = json.resultLog.average;
+          resultTmp.processactivityevent = json.resultLog.processactivityevent;
+          resultTmp.controller = json.resultLog.controller;
+          this.result = resultTmp;
+          this.mergeResultVisible = true;          
         },
         validSubmitJson(params) {
           var self = this;
@@ -263,7 +299,7 @@ import fusionBox from './fusionbox.vue'
                           type: 'success'
                       });
                       done();
-                      self.showMsg(response);
+                      self.showMsg(response.data.payload);
                     })
                     .catch((error) => {
                       console.log("【Error】:", error);
@@ -294,6 +330,25 @@ import fusionBox from './fusionbox.vue'
 </script>
 
 <style>
+  .resultDialog {
+    text-align: center;
+    font-family: "微软雅黑";
+  }
+  .resultDialog th {
+    width: 200px;
+    color: #bfcbd9;
+    font-weight: bold;
+  }
+  .resultDialog td {
+    padding: 5px;
+    word-break: break-all;
+    word-wrap: break-word;
+    table-layout: fixed;
+  }
+  .resultDialog .headerResult {
+    color: black;
+    font-weight: bolder;
+  }
   .disableBtn {
 
   }

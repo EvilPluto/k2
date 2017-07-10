@@ -65,6 +65,10 @@
                         title: '日志融合',
                         subs: [
                             {
+                                index: '/user/mergelist',
+                                title: '融合日志列表'
+                            },
+                            {
                                 index: '/user/fusion-op',
                                 title: '融合操作'
                             }
