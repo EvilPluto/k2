@@ -1,11 +1,17 @@
 {
     "code": 200,
     "payload": {
-        "mineUsetime": "5",
+        "mineUsetime": "115",
         "netElementList": null,
         "nodes": [
             {
                 "name": "a"
+            },
+            {
+                "name": "advise claimant on reimbursement"
+            },
+            {
+                "name": "assess claim"
             },
             {
                 "name": "b"
@@ -14,13 +20,31 @@
                 "name": "c"
             },
             {
+                "name": "check if sufficient information is available"
+            },
+            {
+                "name": "close claim"
+            },
+            {
                 "name": "d"
+            },
+            {
+                "name": "determine likelihood of claim"
             },
             {
                 "name": "e"
             },
             {
+                "name": "end"
+            },
+            {
                 "name": "f"
+            },
+            {
+                "name": "initiate payment"
+            },
+            {
+                "name": "register claim"
             }
         ],
         "links": [
@@ -45,6 +69,26 @@
                 "value": 2
             },
             {
+                "source": "advise claimant on reimbursement",
+                "target": "end",
+                "value": 13
+            },
+            {
+                "source": "assess claim",
+                "target": "advise claimant on reimbursement",
+                "value": 48
+            },
+            {
+                "source": "assess claim",
+                "target": "end",
+                "value": 23
+            },
+            {
+                "source": "assess claim",
+                "target": "initiate payment",
+                "value": 28
+            },
+            {
                 "source": "b",
                 "target": "f",
                 "value": 1
@@ -55,14 +99,59 @@
                 "value": 1
             },
             {
+                "source": "check if sufficient information is available",
+                "target": "end",
+                "value": 17
+            },
+            {
+                "source": "check if sufficient information is available",
+                "target": "register claim",
+                "value": 115
+            },
+            {
+                "source": "close claim",
+                "target": "end",
+                "value": 63
+            },
+            {
                 "source": "d",
                 "target": "f",
                 "value": 3
             },
             {
+                "source": "determine likelihood of claim",
+                "target": "assess claim",
+                "value": 99
+            },
+            {
+                "source": "determine likelihood of claim",
+                "target": "end",
+                "value": 16
+            },
+            {
                 "source": "e",
                 "target": "f",
                 "value": 1
+            },
+            {
+                "source": "f",
+                "target": "register claim",
+                "value": 3
+            },
+            {
+                "source": "initiate payment",
+                "target": "close claim",
+                "value": 61
+            },
+            {
+                "source": "register claim",
+                "target": "a",
+                "value": 3
+            },
+            {
+                "source": "register claim",
+                "target": "determine likelihood of claim",
+                "value": 115
             }
         ],
         "traces": null,

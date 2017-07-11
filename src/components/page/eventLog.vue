@@ -1,5 +1,42 @@
-P<template>
+<template>
     <div>
+        <el-dialog 
+        class="resultDialog"
+        title="事件日志信息" 
+        :visible.sync="eventVisible">
+        <el-card>
+          <table border="10" width="100%" class="resultDialog">
+          <tr>
+            <th class="headerResult">名称</th>
+            <th class="headerResult">项值</th>
+          </tr>
+          <tr>
+            <th>总耗时</th>
+            <td>{{ result.time }}</td>
+          </tr>      
+          <tr>
+            <th>总实例数</th>
+            <td>{{ result.totalinstancenum }}</td>
+          </tr>
+          <tr>
+            <th>总事件数</th> 
+            <td>{{ result.totaleventnum }}</td>
+          </tr>
+          <tr>
+            <th>平均每实例中事件数</th> 
+            <td>{{ result.average }}</td>
+          </tr>
+          <tr>
+            <th>流程活动事件</th> 
+            <td>{{ result.processactivityevent }}</td>
+          </tr>
+          <tr>
+            <th>流程活动操作人</th> 
+            <td>{{ result.controller }}</td>
+          </tr>
+          </table>
+        </el-card>
+        </el-dialog>
         <div class="crumbs">
             <el-breadcrumb separator="/">
                 <el-breadcrumb-item><i class="el-icon-date"></i> 日志管理</el-breadcrumb-item>
@@ -74,6 +111,17 @@ P<template>
                       width="200"
                       show-overflow-tooltip>
                     </el-table-column>
+
+                    <el-table-column 
+                      label="共享"
+                      align = "center"
+                      width="150">
+                      <template scope="scope">
+                          <el-button size="small" 
+                           @click="checkBtn(scope.$index,scope.row)">查看详细</el-button>
+                      </template>    
+                    </el-table-column>      
+
                     <el-table-column 
                       label="共享"
                       align = "center"
@@ -106,7 +154,7 @@ P<template>
     margin-top:30px;
 }
 .form-box{
-    width:971px;
+    width:11201px;
     margin-left:0px;
     box-shadow:0 0 8px 0
         rgba(232,237,250,.9),0 2px 4px 0
@@ -153,7 +201,6 @@ P<template>
     export default {
         data: function(){
             return {
-                // hostUrl:"./static",
                 hostUrl:"/processmining",
                 searchInput:"",
                 myKey:true,
@@ -233,6 +280,15 @@ P<template>
                 cancelType:"warning",
                 //buffer
                 selected:[],
+                result: {
+                    time: "",
+                    totalinstancenum: "",
+                    totaleventnum: "",
+                    average: "",
+                    processactivityevent: "",
+                    controller: ""
+                },
+                eventVisible:false
 
             }
         },
@@ -305,7 +361,7 @@ P<template>
                 console.log("addurl= "+addUrl);
                 this.$axios({
                     url: '/eventLog/listAll'+addUrl,
-                    // url:'tableData.json',
+                    // url:'./static/tableData.json',
                     method: 'get',
                     baseURL: vm.hostUrl,
                 }).then((response) => {
@@ -577,6 +633,31 @@ P<template>
 
                 }
             },
+            checkBtn:function(index,obj){
+                console.log("CHECK");
+                console.log(index);
+                console.log(obj);
+                var self=this;
+                self.$axios({
+                    url:'/eventLog/getInfo/'+obj.id,
+                    // url:'./static/faker.json',
+                    method:'get',
+                    baseURL:self.hostUrl
+                }).then((response)=>{
+                    if(response.data.code == "200"){
+                        self.result = response.data.payload;
+                        self.eventVisible = true;
+                    }
+                    else{
+                        self.codeParsing(response.data.code);
+                    }
+                }).catch((error)=>{
+                    this.$message({
+                        type:"error",
+                        message:"网络无连接"
+                    });
+                });
+            },
             handleSelectionChange(val){
                 var vm = this;
                 vm.selected = val;
@@ -591,8 +672,8 @@ P<template>
                 vm.getTableData();
             },
             handleClick:function(val){
-                console.log("CLICK:");
-                console.log(val);
+                // console.log("CLICK:");
+                // console.log(val);
             }
 
         },

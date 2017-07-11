@@ -37,85 +37,24 @@
                 var ss = sankey()
                     .nodeWidth(15)
                     .nodePadding(10)
-                    .nodeId(function(d) { return d.name; })
                     .extent([[1, 1], [width - 1, height - 6]]);
 
-                // 确认为数据问题，当数据不符合sankey图规范时，浏览器会陷入计算死循环，导致卡死
-                // 暂时没有解决方案
-                var json = {
-                        "code": 200,
-                        "payload": {
-                            "mineUsetime": "5",
-                            "netElementList": null,
-                            "nodes": [
-                                {
-                                    "name": "a"
-                                },
-                                {
-                                    "name": "b"
-                                },
-                                {
-                                    "name": "c"
-                                },
-                                {
-                                    "name": "d"
-                                },
-                                {
-                                    "name": "e"
-                                },
-                                {
-                                    "name": "f"
-                                }
-                            ],
-                            "links": [
-                                {
-                                    "source": "a",
-                                    "target": "d",
-                                    "value": 1
-                                },
-                                {
-                                    "source": "a",
-                                    "target": "b",
-                                    "value": 2
-                                },
-                                {
-                                    "source": "a",
-                                    "target": "e",
-                                    "value": 1
-                                },
-                                {
-                                    "source": "a",
-                                    "target": "c",
-                                    "value": 2
-                                },
-                                {
-                                    "source": "b",
-                                    "target": "f",
-                                    "value": 1
-                                },
-                                {
-                                    "source": "c",
-                                    "target": "f",
-                                    "value": 1
-                                },
-                                {
-                                    "source": "d",
-                                    "target": "f",
-                                    "value": 3
-                                },
-                                {
-                                    "source": "e",
-                                    "target": "f",
-                                    "value": 1
-                                }
-                            ],
-                            "traces": null,
-                            "allTraces": null
-                        }
-                    };
+                  var json;
+                  $.ajax({
+                      url: '/api/sankey',
+                      type: 'GET',
+                      async: false,
+                      success: function(data) {
+                          json = data.data;
+                      },
+                      error: function(error) {
+                          console.log(error);
+                      }
+                  }); 
                 
                 var energy = json.payload;
                 console.log(energy);
+                pre(energy);
                 var graph = ss(energy);
 
                 var link = svg.append("g")
@@ -142,6 +81,68 @@
                     .call(this.$d3.drag()
                             .on("start", dragstarted)
                             .on("end", dragended));
+
+                // 对数据进行加工，将不能用的数据剔除
+                function pre(graph) {
+                    var kimap = {};
+                    var outEdgeCountMap = {};
+                    var inEdgeCountMap = {};
+                    var nGraph = {
+                        nodes: [],
+                        links: []
+                    }
+                    var ns = new Array();
+                    var ls = new Array();
+                    console.log('2333', nGraph);
+
+                    for (var i = 0; i !== graph.nodes.length; i++) {
+                        kimap[graph.nodes[i].name] = i;
+                        outEdgeCountMap[graph.nodes[i].name] = 1;
+                        inEdgeCountMap[graph.nodes[i].name] = 1;
+                    }
+
+                    var posMap = {};
+                    for (var j = 0; j !== graph.links.length; j++) {
+                        var s = graph.links[j].source;
+                        var t = graph.links[j].target;
+                        if (posMap[s] !== undefined) {
+                            posMap[t] = posMap[s] + outEdgeCountMap[s];
+                            outEdgeCountMap[s]++;
+                        } else if (posMap[t] !== undefined) {
+                            posMap[s] = posMap[t] - inEdgeCountMap[t];
+                            inEdgeCountMap[t]++;
+                        } else {
+                            posMap[s] = 0;
+                            posMap[t] = 1;
+                            outEdgeCountMap[s]++;
+                        }
+                    }
+
+                    ns = graph.nodes.sort(function (a, b) {
+                        return posMap[a.name] - posMap[b.name];
+                    });
+
+                    for (var i = 0; i !== ns.length; i++) {
+                        kimap[ns[i].name] = i;
+                    }
+
+                    for (var i = 0; i !== graph.links.length; i++) {
+                        var s = kimap[graph.links[i].source];
+                        var t = kimap[graph.links[i].target];
+                        if (s > t) {
+                            continue;
+                        }
+                        var tmp = {
+                            source: s,
+                            target: t,
+                            value: parseInt(graph.links[i].value),
+                        };
+                        ls.push(tmp);
+                    }
+
+                    graph.nodes = ns;
+                    graph.links = ls;
+                }
 
                 function clickStarted(d) {
                     var source = d.source.name;
@@ -324,19 +325,15 @@
 <style>
     path:hover {
         stroke-opacity: 0.5;
-        /*stroke: red;*/
     }
     .select {
         stroke-opacity: 0.5;
     }
     .clear {
-        /*stroke: black;*/
         stroke-opacity: 0.1;
-        /*stroke-opacity: 1;*/
     }
     .clear rect {
         opacity: 0.1;
-        /*fill: white;*/
     }
     .clear text {
         opacity: 0.1;
