@@ -126,6 +126,61 @@ import fusionBox from './fusionbox.vue'
         // practice() {
         //   this.mergeResultVisible = true;
         // },
+          codeParsing(code) {
+            var msg = (Title, Message) => {
+                this.$message({
+                    title: Title,
+                    message: Message,
+                    type: 'error'
+                });
+            };
+            switch(code) {
+                case -1:
+                    msg('系统错误', '未知错误，请上报管理员');
+                    break;
+                case 201:
+                    msg('输入域错误', '验证码错误');
+                    break;
+                case 300:
+                    msg('输入域错误', '邮箱或密码错误');
+                    break;
+                case 301:
+                    msg('权限问题', '用户已禁用，请联系管理员');
+                    break;
+                case 302:
+                    msg('权限问题', '用户未激活，请去邮箱激活用户');
+                    break;
+                case 303:
+                    msg('注册问题', '邮箱已占用，请更改邮箱');
+                    break;
+                case 304:
+                    msg('注册问题', '昵称已占用，请更改昵称');
+                    break;
+                case 400:
+                    msg('权限问题', '用户未登录，请重新登录');
+                    break;
+                case 401:
+                    msg('权限问题', '用户无权访问，请联系管理员');
+                    break;
+                case 402:
+                    msg('操作错误', '删除错误,请刷新重试');
+                    break;
+                case 500:
+                    msg('系统错误', '未知错误，请上报管理员');
+                    break;
+                case 600:
+                    msg('TIME_OUT', '访问超时，请检查网络连接');
+                    break;
+                case 700:
+                    msg('激活错误', '非法激活链接，请联系管理员');
+                    break;
+                case 800:
+                    msg('激活错误', '用户已被激活，请直接登录');
+                    break;
+                default:
+                    break;
+            }
+        },
         showMsg(json) {
           var resultTmp = {};
           resultTmp.time = json.time + "(ms)";
@@ -178,6 +233,7 @@ import fusionBox from './fusionbox.vue'
               baseURL: this.hostUrl
           })
           .then((response) => {
+            if (response.data.code === 200) {
               var data = new Array();
               for (var i=0; i<response.data.length; i++) {
                 var algo = response.data[i];
@@ -193,7 +249,10 @@ import fusionBox from './fusionbox.vue'
               this.$message({
                   message: '数据加载成功!',
                   type: 'success'                        
-              })
+              });
+            } else {
+              this.codeParsing(response.data.code);
+            }
           })
           .catch((error) => {
               this.$message({
@@ -228,7 +287,7 @@ import fusionBox from './fusionbox.vue'
           console.log(index);
           self.submitJsonData.algoId = row.id;
           $.ajax({
-              url: self.hostUrl + '/algoConfig/' + row.id,
+              url: self.hostUrl + '/mergeLog/algoConfig/' + row.id,
               // url: '/api/practice1',
               type: 'GET',
               async: false,
@@ -236,8 +295,9 @@ import fusionBox from './fusionbox.vue'
                 if (data.code === 200) {
                   self.fusionData[index].paraList = data.config.params;
                   self.paraListDesc = data.config.params;
+                } else {
+                  self.codeParsing(data.code);
                 }
-                console.log(self.fusionData);
               },
               error: function(error) {
                   console.log(error);
