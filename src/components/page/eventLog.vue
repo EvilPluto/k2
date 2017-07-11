@@ -9,11 +9,7 @@
           <tr>
             <th class="headerResult">名称</th>
             <th class="headerResult">项值</th>
-          </tr>
-          <tr>
-            <th>总耗时</th>
-            <td>{{ result.time }}</td>
-          </tr>      
+          </tr>   
           <tr>
             <th>总实例数</th>
             <td>{{ result.totalinstancenum }}</td>
@@ -113,7 +109,7 @@
                     </el-table-column>
 
                     <el-table-column 
-                      label="共享"
+                      label="查看"
                       align = "center"
                       width="150">
                       <template scope="scope">
@@ -154,7 +150,7 @@
     margin-top:30px;
 }
 .form-box{
-    width:11201px;
+    width:1121px;
     margin-left:0px;
     box-shadow:0 0 8px 0
         rgba(232,237,250,.9),0 2px 4px 0

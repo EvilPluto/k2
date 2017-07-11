@@ -60,7 +60,7 @@
                         ]
                     },
                     {
-                        icon: 'el-icon-menu',
+                        icon: 'el-icon-star-on',
                         index: '3',
                         title: '日志融合',
                         subs: [

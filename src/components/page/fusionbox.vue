@@ -274,6 +274,9 @@
      },
      selectLog1(val) {
       if (val) {
+        if (val.name.length > 20)
+          val.name = val.name.slice(0, 20) + '...';
+
         $("#fileName1").attr("value", val.name);
         this.evtLog1 = val.id;
         this.pop1Visible = false;
@@ -282,6 +285,8 @@
      },
      selectLog2(val) {
       if (val) {
+        if (val.name.length > 20)
+          val.name = val.name.slice(0, 20) + '...';
         $("#fileName2").attr("value", val.name);
         this.evtLog2 = val.id;
         this.pop2Visible = false;

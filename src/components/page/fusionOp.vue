@@ -172,7 +172,7 @@ import fusionBox from './fusionbox.vue'
         },
         loadFusionList() {
           this.$axios({
-              url: '/manager/listMergeAlgo',
+              url: '/mergeLog/listMergeAlgo',
               // url: '/api/practice',
               method: 'get',
               baseURL: this.hostUrl
@@ -228,7 +228,7 @@ import fusionBox from './fusionbox.vue'
           console.log(index);
           self.submitJsonData.algoId = row.id;
           $.ajax({
-              url: self.hostUrl + '/manager/algoConfig/' + row.id,
+              url: self.hostUrl + '/algoConfig/' + row.id,
               // url: '/api/practice1',
               type: 'GET',
               async: false,

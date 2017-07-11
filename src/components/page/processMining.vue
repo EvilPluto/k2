@@ -9,12 +9,12 @@
          :data="pmData"
          border
          highlight-current-row
-         style="width:100%;margin-bottom:60px;"
+         style="width:92%;margin-bottom:60px;"
          max-height="350">
          <el-table-column
            prop="sub"
            label="#"
-           width="50"
+           width="80"
            align='center'>
             <template scope="scope">
                <span>{{scope.row.sub+1}}</span>
@@ -23,7 +23,7 @@
          <el-table-column
            prop="miningType"
            label="挖掘方法"
-           width="200"
+           width="170"
            align='center'>
            <template scope="scope">
                <span>{{scope.row.miningType}}</span>
@@ -32,7 +32,7 @@
           <el-table-column
            prop="bagName"
            label="包名"
-           width="200"
+           width="212"
            align='center'>
            <template scope="scope">
               <span>{{scope.row.bagName}}</span>
@@ -78,7 +78,7 @@ import drawGraph from './renderGraph.vue'
       data(){
           return {
             boxShow:true,
-            hostUrl:"/processmining",
+            hostUrl:"http://110.64.72.33:8888/processmining",
             methodId:'',          //用户选中的算法ID
             pmData:[],            //算法列表
             paraList:[],          //某个算法的参数
@@ -312,6 +312,10 @@ import drawGraph from './renderGraph.vue'
   .pm .head{
     font-size: 13px;
     font-family: "Helvetica Neue",Helvetica, "microsoft yahei", arial, STHeiTi, sans-serif;
+  }
+  .pm .main{
+      width:1120px;
+      border: none;
   }
   .pmPop{
     width: 450px;
