@@ -394,7 +394,7 @@
                         const h = this.$createElement;
 
                         this.$notify({
-                            title: '注册信息',
+                            title: '算法信息',
                             message: h
                                 ('pre',
                                 { style: 'color: teal' },
