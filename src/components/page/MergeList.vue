@@ -1,51 +1,15 @@
 <template>
     <div>
-        <el-dialog 
-        class="resultDialog"
-        title="事件日志信息" 
-        :visible.sync="eventVisible">
-        <el-card>
-          <table border="2" width="100%" class="resultDialog">
-          <tr>
-            <th class="headerResult">名称</th>
-            <th class="headerResult">项值</th>
-          </tr>   
-          <tr>
-            <th>总实例数</th>
-            <td>{{ result.totalinstancenum }}</td>
-          </tr>
-          <tr>
-            <th>总事件数</th> 
-            <td>{{ result.totaleventnum }}</td>
-          </tr>
-          <tr>
-            <th>平均每实例中事件数</th> 
-            <td>{{ result.average }}</td>
-          </tr>
-          <tr>
-            <th>流程活动事件</th> 
-            <td>{{ result.processactivityevent }}</td>
-          </tr>
-          <tr>
-            <th>流程活动操作人</th> 
-            <td>{{ result.controller }}</td>
-          </tr>
-          </table>
-        </el-card>
-        </el-dialog>
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-date"></i> 日志管理</el-breadcrumb-item>
-                <el-breadcrumb-item>事件日志</el-breadcrumb-item>
+                <el-breadcrumb-item><i class="el-icon-date"></i> 日志融合</el-breadcrumb-item>
+                <el-breadcrumb-item>融合日志列表</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div  class="form-box">
             <div class="log-btn">
                 <el-button-group>
-                    <el-button type="primary" icon="upload" @click="uploadBtn()">上&nbsp;传</el-button>
                     <el-button type="primary" icon="caret-bottom" @click="downloadBtn()">下&nbsp;载</el-button>
-                    <!-- <el-button type="primary" icon="edit" 
-                    @click="eventBtn">事件化</el-button> -->
                     <el-button type="danger" icon="delete2" @click="deleteBtn()">删&nbsp;除</el-button>
                 </el-button-group>
             </div>
@@ -63,7 +27,7 @@
                     border
                     tooltip-effect="dark"
                     style="width: 100%"
-                    @cell-click="handleClick"
+                 
                     @selection-change="handleSelectionChange">
                     <el-table-column
                       type="selection"
@@ -71,26 +35,26 @@
                       width="70">
                     </el-table-column>
                     <el-table-column
-                      prop="eventName"
-                      label="事件日志"
+                      prop="targetname"
+                      label="融合日志"
                       align = "left"
-                       width="150"
+                       width="180"
                       show-overflow-tooltip>
-                      <template scope="scope">{{ scope.row.eventName }}</template>
+                      <template scope="scope">{{ scope.row.targetname }}</template>
                     </el-table-column>
                     <el-table-column
-                      prop="standardName"
-                      label="规范化日志"
+                      prop="source1name"
+                      label="关联事件日志-1"
                       align = "left"
-                      width="150    ">
-                      <template scope="scope">{{ scope.row.standardName }}</template>
+                      width="220">
+                      <template scope="scope">{{ scope.row.source1name }}</template>
                     </el-table-column>
                     <el-table-column
-                      prop="originName"
-                      label="原始日志"
+                      prop="source2name"
+                      label="关联事件日志-2"
                       align = "left"
-                      width="130">
-                      <template scope="scope">{{ scope.row.originName }}</template>
+                      width="220">
+                      <template scope="scope">{{ scope.row.source2name }}</template>
                     </el-table-column>
                  
                     <el-table-column
@@ -107,18 +71,7 @@
                       width="200"
                       show-overflow-tooltip>
                     </el-table-column>
-
-                    <el-table-column 
-                      label="查看"
-                      align = "center"
-                      width="150">
-                      <template scope="scope">
-                          <el-button size="small" 
-                           @click="checkBtn(scope.$index,scope.row)">查看详细</el-button>
-                      </template>    
-                    </el-table-column>      
-
-                    <el-table-column 
+                   <!--  <el-table-column 
                       label="共享"
                       align = "center"
                       width="150">
@@ -126,7 +79,7 @@
                           <el-button size="small" 
                           id="shareButton" :style="{display:scope.row.isMine?'inline':'none'}" @click="shareBtn(scope.$index,scope.row)" :type="scope.row.isShare?cancelType:shareType">{{scope.row.isShare?cancelMsg:shareMsg}}</el-button>
                       </template>    
-                    </el-table-column>                
+                    </el-table-column>     -->            
 
                 </el-table>
             </div>
@@ -143,33 +96,14 @@
     </div>
 </template>
 
-<style>
-.resultDialog {
-    text-align: center;
-    font-family: "微软雅黑";
-    border-collapse: collapse;
-    border: #ccc;
-}
-.resultDialog th {
-    width: 200px;
-    font-weight: normal;
-}
-.resultDialog td {
-    padding: 5px;
-    word-break: break-all;
-    word-wrap: break-word;
-    table-layout: fixed;
-}
-.resultDialog .headerResult {
-    font-weight: bolder;
-}
+<style scoped>
 #shareButton {
 }
 .page-box{
     margin-top:30px;
 }
 .form-box{
-    width:1121px;
+    width:1011px;
     margin-left:0px;
     box-shadow:0 0 8px 0
         rgba(232,237,250,.9),0 2px 4px 0
@@ -211,11 +145,10 @@
 } -->
 
 <script>
-    import uploadEventBox from  './uploadEventBox.vue'
-    import msgBox from './msgBox.vue'
     export default {
         data: function(){
             return {
+                // hostUrl:"./static",
                 hostUrl:"/processmining",
                 searchInput:"",
                 myKey:true,
@@ -224,35 +157,15 @@
                 pageTotal:20,
                 tableData: [{
                     id:0,
-                    originName:"log1.text",
-                    standardName:"log2.text",
-                    eventName:"log3.text",
+                    targeteventlogid:0,
+                    targetname:"log1.text",
+                    source1name:"log2.text",
+                    source2name:"log3.text",
                     creator:"Madam Liu",
                     createDate:"1989-06-03",
-                    isShare:false,
+                    // isShare:false,
                     isMine:true,
 
-                },
-                {
-                    id:1,
-                    originName:"log1.text",
-                    standardName:"log2.text",
-                    eventName:"log3.text",
-                    creator:"Madam Liu",
-                    createDate:"1989-06-04",
-                    isShare:true,
-                    isMine:true
-
-                },
-                {
-                    id:2,
-                    originName:"log1.text",
-                    standardName:"log2.text",
-                    eventName:"log3.text",
-                    creator:"Madam Liu",
-                    createDate:"1989-06-05",
-                    isShare:false,
-                    isMine:false
                 }],
                 ajaxData:{
                     pageNum:1,
@@ -264,17 +177,19 @@
                     total:100,
                     pages:34,
                     list:[{
-                        id:1,
-                        name:'file',
-                        format:'txt',
+                        id:1,//merge id 
+                        targeteventlogid:1,// database id
+                        // name:'file',
+                        // format:'txt',
                         createTime:'2017-6-19 16:31',
                         creator:'hemouren',
-                        hdfsid:'',
-                        isshared:true,
-                        toRawLogId:0,
-                        toRawLogName:null,
-                        toNormLogId:0,
-                        toNormLogName:null
+                        // hdfsid:'',
+                        // isshared:true,
+                        targetname:null,
+                        sourceeventlog1id:0,
+                        source1name:null,
+                        sourceeventlog2id:0,
+                        source2name:null
                     }],
                     firstPage:1,
                     prePage:0,
@@ -295,15 +210,6 @@
                 cancelType:"warning",
                 //buffer
                 selected:[],
-                result: {
-                    time: "",
-                    totalinstancenum: "",
-                    totaleventnum: "",
-                    average: "",
-                    processactivityevent: "",
-                    controller: ""
-                },
-                eventVisible:false
 
             }
         },
@@ -376,20 +282,21 @@
                 vm.tableData = [];
                 console.log("addurl= "+addUrl);
                 this.$axios({
-                    url: '/eventLog/listAll'+addUrl,
-                    // url:'./static/tableData.json',
+                    url:addUrl,
+                    // url:'mergeLog.json',
                     method: 'get',
                     baseURL: vm.hostUrl,
                 }).then((response) => {
                     var temp = {
-                            id:0,
-                            originName:"log1.text",
-                            standardName:"log2.text",
-                            eventName:"log3.text",
-                            creator:"Madam Liu",
-                            createDate:"1989-06-03",
-                            isShare:false,
-                            isMine:true
+                        id:0,
+                        targeteventlogid:0,
+                        targetname:"log1.text",
+                        source1name:"log2.text",
+                        source2name:"log3.text",
+                        creator:"Madam Liu",
+                        createDate:"1989-06-03",
+                        // isShare:false,
+                        isMine:false,
                       };
                     console.log("responseData:");
                     console.log(response.data);
@@ -404,12 +311,14 @@
                         for(let i=0;i<vm.ajaxData.list.length;i++){
                             temp = {};
                             temp.id = vm.ajaxData.list[i].id;
-                            temp.originName = vm.ajaxData.list[i].toRawLogName;
-                            temp.standardName = vm.ajaxData.list[i].toNormLogName;
-                            temp.eventName = vm.ajaxData.list[i].name;
+                            temp.targeteventlogid = vm.ajaxData.list[i].targeteventlogid;
+                            temp.sourceeventlog1id = vm.ajaxData.list[i].sourceeventlog1id;
+                            temp.sourceeventlog2id = vm.ajaxData.list[i].sourceeventlog2id;
+                            temp.targetname = vm.ajaxData.list[i].targetname;
+                            temp.source1name = vm.ajaxData.list[i].source1name;
+                            temp.source2name = vm.ajaxData.list[i].source2name;
                             temp.creator = vm.ajaxData.list[i].creator;
                             temp.createDate = vm.ajaxData.list[i].createTime;
-                            temp.isShare = vm.ajaxData.list[i].isshared;
 
                             if(vm.ajaxData.list[i].creator == localStorage.getItem('ms_username')){
                                 temp.isMine = true;
@@ -435,7 +344,7 @@
             //make ajaxdata into tableData
             getTableData:function(){
                 var vm = this;
-                var addUrl = "?pageNum="+vm.currentPageNum;
+                var addUrl = "/listAllMEL?pageNum="+vm.currentPageNum;
                 vm.getData(addUrl);
             },
             searchBtn:function(){
@@ -447,24 +356,11 @@
                     });
                 }
                 else{
-                    var searchUrl = "?info="+vm.searchInput;
+                    var searchUrl = "/search?searchInfo="+vm.searchInput;
                     console.log("searchUrl: " + searchUrl);
                     vm.getData(searchUrl);
                 }
-            },
 
-            uploadBtn:function(){
-                var self= this;
-                self.clearKey();
-                const h = this.$createElement;
-                this.$msgbox({
-                    title:'上传',
-                    message:h(uploadEventBox,{key:self.myKey}),
-                    showConfirmButton:false,
-                    showCancelButton: false,
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                });
             },
             clearKey:function(){
                 var self = this;
@@ -482,12 +378,12 @@
                 }
                 else if(vm.selected.length == 1)
                 {
-                        var downloadId = vm.selected[0].id;
+                        var downloadId = vm.selected[0].targeteventlogid;
                         window.open(vm.hostUrl+"/eventLog/"+downloadId);
                 }
                 else{
                     for(let i =0;i<vm.selected.length;i++){
-                        postData.push(vm.selected[i].id);
+                        postData.push(vm.selected[i].targeteventlogid);
                     }
                     postSTR = postData.join(';');
                     window.open(vm.hostUrl+"/eventLog/downloadBatch?idList="+postSTR);
@@ -545,7 +441,7 @@
                     }).then(action=>{
                         if(action == "confirm"){
                             this.$axios({
-                                url: 'eventLog/',
+                                url: 'mergeLog/deleteBatch',
                                 method: 'delete',
                                 baseURL: vm.hostUrl,
                                 data:deleteId
@@ -589,91 +485,6 @@
                 }
 
             },
-            // 分享按钮
-            shareBtn:function(index,row){
-                var vm = this;
-                console.log("share click =")
-                console.log(index);
-                console.log(row);
-
-                // row.isShare = !row.isShare;
-                if(!row.isShare){
-                    this.$axios({
-                        url:'/eventLog/share/'+ row.id,
-                        method: 'get',
-                        baseURL:vm.hostUrl
-                    }).then((response) => {
-                        vm.getTableData();
-                        console.log("code =="+response.data.code);
-                        if(response.data.code =="200"){
-                            this.$message({
-                                type:"success",
-                                message:"分享成功！"
-                            });
-                            row.isShare = !row.isShare;
-                        }
-                        else{
-                            vm.codeParsing(response.data.code);
-                        }
-                    }).catch((error) => {
-                        this.$message({
-                            type:"error",
-                            message:"网络无连接"
-                        });
-                    });
-                }
-                else{
-                    this.$axios({
-                        url:'/eventLog/unshare/'+ row.id,
-                        method: 'get',
-                        baseURL:vm.hostUrl
-                    }).then((response) => {
-                        vm.getTableData();
-                        console.log("code =="+response.data.code);
-                        if(response.data.code =="200"){
-                            this.$message({
-                                type:"success",
-                                message:"取消分享成功！"
-                            });
-                            row.isShare = !row.isShare;
-                        }
-                        else{
-                             vm.codeParsing(response.data.code);
-                        }
-                    }).catch((error) => {
-                        this.$message({
-                            type:"error",
-                            message:"网络无连接"
-                        });
-                    });
-
-                }
-            },
-            checkBtn:function(index,obj){
-                console.log("CHECK");
-                console.log(index);
-                console.log(obj);
-                var self=this;
-                self.$axios({
-                    url:'/eventLog/getInfo/'+obj.id,
-                    // url:'./static/faker.json',
-                    method:'get',
-                    baseURL:self.hostUrl
-                }).then((response)=>{
-                    if(response.data.code == "200"){
-                        self.result = response.data.payload;
-                        self.eventVisible = true;
-                    }
-                    else{
-                        self.codeParsing(response.data.code);
-                    }
-                }).catch((error)=>{
-                    this.$message({
-                        type:"error",
-                        message:"网络无连接"
-                    });
-                });
-            },
             handleSelectionChange(val){
                 var vm = this;
                 vm.selected = val;
@@ -687,10 +498,10 @@
                 console.log(vm.currentPageNum);
                 vm.getTableData();
             },
-            handleClick:function(val){
-                // console.log("CLICK:");
-                // console.log(val);
-            }
+            // handleClick:function(val){
+            //     console.log("CLICK:");
+            //     console.log(val);
+            // }
 
         },
         mounted(){

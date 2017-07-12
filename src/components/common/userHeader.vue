@@ -5,7 +5,7 @@
             <el-dropdown trigger="hover" @command="handleCommand">
                 <span class="el-dropdown-link">
                     <!-- <img class="user-logo" src="../../../static/img/img.jpg"> -->
-                    {{ username }}
+                    {{ name }}
                 </span>
                 <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item command="loginout">注销</el-dropdown-item>
@@ -15,6 +15,7 @@
     </div>
 </template>
 <script>
+import bus from '../common/bus'
     export default {
         data() {
             return {
@@ -48,6 +49,16 @@
                     });  
                 }
             }
+        },
+        mounted(){
+            var self=this;
+            var username = localStorage.getItem('ms_username');
+            if(username){
+                this.name = username;
+            }
+            bus.$on('userEvent',(msg)=>{
+                this.name = localStorage.getItem('ms_username');
+            });
         }
     }
 </script>

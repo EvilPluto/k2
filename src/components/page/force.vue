@@ -32,7 +32,6 @@
                   async: false,
                   success: function(data) {
                       json = data.data;
-                      // console.log(data.data);
                   },
                   error: function(error) {
                       console.log(error);
@@ -47,7 +46,7 @@
               
               // 通过布局来转换数据，然后进行绘制
               var simulation = this.$d3.forceSimulation()
-                    .force("link", this.$d3.forceLink().id(function(d) { return d.name; }))
+                    .force("link", this.$d3.forceLink().id(function(d) { return d.name; }).distance(100))
                     .force("charge",this.$d3.forceManyBody())
                     .force("center",this.$d3.forceCenter(width/2, height/2));
               // console.log(simulation);
@@ -63,15 +62,17 @@
                   .append("line")
                   .attr("class", "lines")
                   .attr("stroke","#000")
-                  .attr("stroke-width",1/*, function(d) { return d.value / 5; }*/)
+                  .attr("stroke-width",function (d) {
+                    return Math.sqrt(d.value) > 10 ? 10 : Math.sqrt(d.value);
+                  })
                   .attr("stroke-opacity", 0.5);
-              // console.log('links', svg_links);
 
               var svg_nodes = svg.selectAll("circle")
                   .data(json.nodes)
                   .enter()
                   .append("circle")
-                  .attr("r",2)
+                  .attr("r",6)
+                  .attr("name", function(d) { return d.name; })
                   .attr("fill",function(d,i){
                       return color(i);
                   })    
@@ -86,14 +87,16 @@
                   .data(json.nodes)
                   .enter()
                   .append("text")
-                  .style("fill","#000")
+                  .style("fill","#EE6666")
+                  .attr("class", "slice")
                   .attr("dx",2)
                   .attr("dy",1)
-                  .text(function(d){return d.name;});
-
-              // console.log("转换后的nodes links数据:");
-              // console.log(json.nodes);
-              // console.log(json.links);
+                  .text(function (d) {
+                    if (d.name.length > 10)
+                      return d.name.slice(0, 10) + '...';
+                    else
+                      return d.name;
+                  });
               
               function draw(){
                   svg_nodes
@@ -110,7 +113,6 @@
                        .attr("x2",function(d){ return d.target.x; })
                        .attr("y2",function(d){ return d.target.y; });
               }
-              // simulation.on("tick",draw);
 
               function dragstarted(d) {
                 console.log("DragStarted");
@@ -142,11 +144,11 @@
 
 <style>
       line:hover {
-          stroke-width: 2;
+          stroke-width: 10;
           stroke-opacity: 0.8;
       }
       circle:hover {
-          r: 5;
+          r: 8;
       }
       text {
           font-family: sans-serif;

@@ -25,6 +25,8 @@ var app = express()
 // 自定义
 var forceData = require('../static/force.json');
 var sankeyData = require('../static/sankey.json');
+var practiceData = require('../static/practice.json');
+var practiceData1 = require('../static/practice1.json');
 var apiRoutes = express.Router();
 apiRoutes.get('/force', function(req, res) {
   res.json({
@@ -34,6 +36,16 @@ apiRoutes.get('/force', function(req, res) {
 apiRoutes.get('/sankey', function(req, res) {
   res.json({
     data: sankeyData
+  });
+});
+apiRoutes.get('/practice', function(req, res) {
+  res.json({
+    data: practiceData
+  });
+});
+apiRoutes.get('/practice1', function(req, res) {
+  res.json({
+    data: practiceData1
   });
 });
 app.use('/api', apiRoutes);

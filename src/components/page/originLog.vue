@@ -297,6 +297,7 @@
                         break;
                     case 400:
                         msg('权限问题', '用户未登录，请重新登录');
+                        window.location.replace("../processmining/index.html");
                         break;
                     case 401:
                         msg('权限问题', '用户无权访问，请联系管理员');
@@ -316,6 +317,12 @@
                     case 800:
                         msg('激活错误', '用户已被激活，请直接登录');
                         break;
+                    case 900:
+                        msg('事件化错误', '事件化失败');
+                        break;
+                    case 901:
+                        msg('上传错误', '文件大小为0');
+                        break;   
                     default:
                         break;
                 }
@@ -327,7 +334,7 @@
                 console.log("addurl= "+addUrl);
                 this.$axios({
                     url: '/rawLog/listAll'+addUrl,
-                    // url:'tableData.json',
+                    // url:'./static/tableData.json',
                     method: 'get',
                     baseURL: vm.hostUrl,
                 }).then((response) => {
@@ -351,6 +358,8 @@
                         vm.currentPageNum = vm.ajaxData.pageNum;
                         vm.pageSize = vm.ajaxData.pageSize;
                         vm.pageTotal = vm.ajaxData.total;
+                        console.log("============");
+                        console.log(vm.ajaxData.list[0]);
                         for(let i=0;i<vm.ajaxData.list.length;i++){
                             temp = {};
                             temp.id = vm.ajaxData.list[i].id;

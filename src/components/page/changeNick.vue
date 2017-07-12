@@ -20,7 +20,7 @@
 </template>
 
 <script>
-    
+import bus from '../common/bus';
     export default {
         data: function(){
             var checkNick = (rule,value,callback) => {
@@ -94,6 +94,7 @@
                         break;
                     case 400:
                         msg('权限问题', '用户未登录，请重新登录');
+                        window.location.replace("../processmining/index.html");
                         break;
                     case 401:
                         msg('权限问题', '用户无权访问，请联系管理员');
@@ -113,6 +114,12 @@
                     case 800:
                         msg('激活错误', '用户已被激活，请直接登录');
                         break;
+                    case 900:
+                        msg('事件化错误', '事件化失败');
+                        break;
+                    case 901:
+                        msg('上传错误', '文件大小为0');
+                        break;   
                     default:
                         break;
                 }
@@ -139,13 +146,12 @@
                                     message:'修改成功'
                                 });
                                 localStorage.setItem('ms_username', vm.ruleForm.nickName);
+                                bus.$emit("userEvent",vm.ruleForm.nickName);
                             }
                             else {
                                 console.log(response.data.code);
                                 vm.codeParsing(response.data.code);                                
                             }
-                            setTimeout(()=>{window.location.reload()},1000);
-
                         })
                         .catch((error) => {
                             console.log("Error:", error);
@@ -153,7 +159,6 @@
                                     type:'warning',
                                     message:'网络无连接'
                                 });
-                            localStorage.setItem('ms_username', vm.ruleForm.nickName);
 
                         });
                               

@@ -40,6 +40,14 @@ export default new Router({
                 {
                     path: '/user/fusion-op',
                     component: resolve => require(['../components/page/fusionOp.vue'],resolve)
+                },
+                {
+                    path: '/user/processmining',
+                    component: resolve => require(['../components/page/processMining.vue'],resolve)
+                },
+                {
+                    path: '/user/mergelist',
+                    component: resolve => require(['../components/page/MergeList.vue'],resolve)
                 }
             ]
         },
@@ -60,22 +68,22 @@ export default new Router({
                     path: '/admin/mining',
                     component: resolve => require(['../components/page/MiningAlgorithm.vue'], resolve)
                 },
-                {
-                    path: '/admin/upload-practice',
-                    component: resolve => require(['../components/page/uploadPractice.vue'], resolve)
-                },
-                {
-                    path: '/admin/sankey',
-                    component: resolve => require(['../components/page/sankey.vue'], resolve)
-                },
-                {
-                    path: '/admin/force',
-                    component: resolve => require(['../components/page/force.vue'], resolve)
-                },
-                {
-                    path: '/admin/testMining',
-                    component: resolve => require(['../components/page/testMining.vue'], resolve)                    
-                }
+                // {
+                //     path: '/admin/upload-practice',
+                //     component: resolve => require(['../components/page/uploadPractice.vue'], resolve)
+                // },
+                // {
+                //     path: '/admin/sankey',
+                //     component: resolve => require(['../components/page/sankey.vue'], resolve)
+                // },
+                // {
+                //     path: '/admin/force',
+                //     component: resolve => require(['../components/page/force.vue'], resolve)
+                // },
+                // {
+                //     path: '/admin/testMining',
+                //     component: resolve => require(['../components/page/testMining.vue'], resolve)                    
+                // }
             ]
         },
         {

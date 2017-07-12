@@ -43,22 +43,22 @@
                                 index: '/admin/mining',
                                 title: '挖掘算法管理'
                             },
-                            {
-                                index: '/admin/upload-practice',
-                                title: '上传测试'
-                            },
-                            {
-                                index: '/admin/sankey',
-                                title: '桑基图'
-                            },
-                            {
-                                index: '/admin/force',
-                                title: '力导向图'
-                            },
-                            {
-                                index: '/admin/testMining',
-                                title: '数据挖掘'
-                            }
+                            // {
+                            //     index: '/admin/upload-practice',
+                            //     title: '上传测试'
+                            // },
+                            // {
+                            //     index: '/admin/sankey',
+                            //     title: '桑基图'
+                            // },
+                            // {
+                            //     index: '/admin/force',
+                            //     title: '力导向图'
+                            // },
+                            // {
+                            //     index: '/admin/testMining',
+                            //     title: '数据挖掘'
+                            // }
                         ]
                     }
                 ]
@@ -66,7 +66,7 @@
         },
         computed:{
             onRoutes(){
-                // return this.$route.path.replace('/','');
+                return this.$route.path.replace('/','');
             }
         }
     }

@@ -60,22 +60,31 @@
                         ]
                     },
                     {
-                        icon: 'el-icon-menu',
+                        icon: 'el-icon-star-on',
                         index: '3',
                         title: '日志融合',
                         subs: [
+                            {
+                                index: '/user/mergelist',
+                                title: '融合日志列表'
+                            },
                             {
                                 index: '/user/fusion-op',
                                 title: '融合操作'
                             }
                         ]
+                    },
+                    {
+                        icon: 'el-icon-time',
+                        index: '/user/processmining',
+                        title: '流程挖掘'
                     }
                 ]
             }
         },
         computed:{
             onRoutes(){
-                // return this.$route.path.replace('/','');
+                return this.$route.path.replace('/','');
             }
         }
     }

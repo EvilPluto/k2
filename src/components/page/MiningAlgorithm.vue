@@ -155,20 +155,15 @@
                 } else if (value.match(reg)) {
                     callback(new Error('请不要输入特殊字符'));
                 } else if (value.gblen() > 44) {
-                    callback(new Error('请输入少于44位字符的名字'));
+                    callback(new Error('请输入少于44位字节的名字'));
                 } else {
                     callback();
                 }
             };
 
             var checkDesc = (rule, value, callback) => {
-                var reg = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？\\\\]");
-                if (value.indexOf(" ") >= 0) {
-                    callback(new Error('请不要包含空格'));
-                } else if (value.match(reg)) {
-                    callback(new Error('请不要输入特殊字符'));
-                } else if (value.gblen() > 255) {
-                    callback(new Error('请输入少于255位字符的描述'));
+                if (value.gblen() > 255) {
+                    callback(new Error('请输入少于255位字节的描述'));
                 } else {
                     callback();
                 }
@@ -218,6 +213,52 @@
                     case -1:
                         msg('系统错误', '未知错误，请上报管理员');
                         break;
+                    case 201:
+                        msg('输入域错误', '验证码错误');
+                        break;
+                    case 300:
+                        msg('输入域错误', '邮箱或密码错误');
+                        break;
+                    case 301:
+                        msg('权限问题', '用户已禁用，请联系管理员');
+                        break;
+                    case 302:
+                        msg('权限问题', '用户未激活，请去邮箱激活用户');
+                        break;
+                    case 303:
+                        msg('注册问题', '邮箱已占用，请更改邮箱');
+                        break;
+                    case 304:
+                        msg('注册问题', '昵称已占用，请更改昵称');
+                        break;
+                    case 400:
+                        msg('权限问题', '用户未登录，请重新登录');
+                        window.location.replace("../processmining/index.html");
+                        break;
+                    case 401:
+                        msg('权限问题', '用户无权访问，请联系管理员');
+                        break;
+                    case 402:
+                        msg('操作错误', '删除错误,请刷新重试');
+                        break;
+                    case 500:
+                        msg('系统错误', '未知错误，请上报管理员');
+                        break;
+                    case 600:
+                        msg('TIME_OUT', '访问超时，请检查网络连接');
+                        break;
+                    case 700:
+                        msg('激活错误', '非法激活链接，请联系管理员');
+                        break;
+                    case 800:
+                        msg('激活错误', '用户已被激活，请直接登录');
+                        break;
+                    case 900:
+                        msg('事件化错误', '事件化失败');
+                        break;
+                    case 901:
+                        msg('上传错误', '文件大小为0');
+                        break;   
                     default:
                         break;
                 }
@@ -343,6 +384,7 @@
             },
 
             submit(formName) {
+                // fixed: 上传地址问题！
                 var self = this;
 
                 self.$refs[formName].validate((valid) => {
@@ -364,14 +406,18 @@
                         let pac = this.$refs.package.files[0];
                         let con = this.$refs.conf.files[0];
                         let formData = new FormData();
-                        formData.append('pack', pac, pac.name);
-                        formData.append('conf', con, con.name);
-                        formData.append('name', this.fileUpload.name);
-                        formData.append('desc', this.fileUpload.desc);
+                        formData.append('package', pac, pac.name);
+                        formData.append('config', con, con.name);
+                        formData.append('algoName', this.fileUpload.name);
+                        formData.append('description', this.fileUpload.desc);
+                        formData.append('type', 1);
+
+                        // 屏蔽上传按钮
+                        self.submitOrNot = true;
 
                         this.$axios ({
                             method: 'post',
-                            url: '/manager/uploadJarAndConfig',
+                            url: '/manager/uploadAlgo',
                             baseURL: this.hostUrl,
                             headers: { 'Content-Type': 'multiple/form-data' },
                             data: formData,
@@ -389,14 +435,16 @@
                                 self.codeParsing(response.data.code);
                             }
                             self.cancel();
+                            self.submitOrNot = false;
                         })
                         .catch((error) => {
                             console.log("【Error】:" + error);
+                            self.submitOrNot = false;
                         });
                     } else {
                         this.$message({
                             title: '算法上传失败',
-                            message: '请确保填写所有配置信息',
+                            message: '请确保所有配置信息填写正确',
                             type: 'error'
                         });
                         return false;
