@@ -143,7 +143,7 @@
     </div>
 </template>
 
-<style>
+<style scoped>
 .resultDialog {
     text-align: center;
     font-family: "微软雅黑";
