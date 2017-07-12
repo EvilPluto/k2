@@ -196,7 +196,7 @@
                         if (response.data.type === 0) {
                             localStorage.setItem('ms_username', response.data.nickname);
                             sessionStorage.setItem('ms_type', response.data.type);
-                            self.$router.push('/user/');
+                            self.$router.push('/user/readme');
                         } else {
                         //admin ==1
                             localStorage.setItem('ms_username', response.data.nickname);
@@ -206,7 +206,7 @@
                     } else {
                         // console.log(response);
                         console.log('code', response.data.code);
-                        self.codeParsing(response.data.code);
+                        // self.codeParsing(response.data.code);
                     }
                 }).catch((error) => {
                     console.log("【Error】:", 'auto log fail');
@@ -315,7 +315,7 @@
                                 if (response.data.type === 0) {
                                     localStorage.setItem('ms_username', response.data.nickname);
                                     sessionStorage.setItem('ms_type', response.data.type);
-                                    self.$router.push('/user/');
+                                    self.$router.push('/user/readme');
                                 } else {
                                 //admin ==1
                                     localStorage.setItem('ms_username', response.data.nickname);

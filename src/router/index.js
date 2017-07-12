@@ -48,6 +48,10 @@ export default new Router({
                 {
                     path: '/user/mergelist',
                     component: resolve => require(['../components/page/MergeList.vue'],resolve)
+                },
+                {
+                    path: '/user/readme',
+                    component: resolve => require(['../components/page/Readme.vue'],resolve)
                 }
             ]
         },

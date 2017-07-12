@@ -26,6 +26,11 @@
                 hello:"hahahaha",
                 items: [
                     {
+                        icon: 'el-icon-information',
+                        index: '/user/readme',
+                        title: '系统介绍',
+                    },
+                    {
                         icon: 'el-icon-setting',
                         index: '1',
                         title: '个人信息管理',
