@@ -179,7 +179,40 @@
         created() {
             this.getVerCode();
         },
+        mounted(){
+            var self = this;
+            self.checkIfLogged();
+        },
         methods: {
+            checkIfLogged(){
+                var self = this;
+                self.$axios({
+                    url:'/user/checkIfLogged',
+                    method:'get',
+                    baseURL:self.hostUrl
+                }).then((response)=>{
+                    if (response.data.code === 200) {
+                        //user == 0 
+                        if (response.data.type === 0) {
+                            localStorage.setItem('ms_username', response.data.nickname);
+                            sessionStorage.setItem('ms_type', response.data.type);
+                            self.$router.push('/user/');
+                        } else {
+                        //admin ==1
+                            localStorage.setItem('ms_username', response.data.nickname);
+                            sessionStorage.setItem('ms_type', response.data.type);
+                            self.$router.push('/admin/');
+                        }
+                    } else {
+                        // console.log(response);
+                        console.log('code', response.data.code);
+                        self.codeParsing(response.data.code);
+                    }
+                }).catch((error) => {
+                    console.log("【Error】:", 'auto log fail');
+                    
+                });
+            },
             codeParsing(code) {
                 var msg = (Title, Message) => {
                     this.$message({
@@ -406,7 +439,8 @@
                 // .catch((error) => {
                 //     console.log("【Error】:", error);
                 // });
-            }
+            },
+
         }
     }
 </script>
