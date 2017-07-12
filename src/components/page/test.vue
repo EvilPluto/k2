@@ -1,16 +1,44 @@
 <template>
-  <div>
+  <div class="boxx">
    <div class="head">
-       <el-button @click="trigger">点击</el-button>
+       <el-button @click="showMak">点击</el-button>
    </div>
    <svg id="canvas" width="1000" height="450"></svg>
+   <div id="mask" class="mask"></div>
   </div>
 </template>
 <script>
 export default{
     methods:{
-        trigger(){
-  function renderDiagraph(data, selector) {
+    showMak(){
+        var mask=document.getElementById('mask');
+
+        var box=document.getElementsByClassName('boxx')[0];
+       // var para=this.getViewport();
+        console.log(mask);
+        var computedStyle=document.defaultView.getComputedStyle(box,null);
+        //console.log(document.documentElement.clientWidth);
+        mask.style.width=computedStyle.width;
+        mask.style.height=computedStyle.height;
+        mask.style.display='block';
+    },
+    getViewport(){
+       if(document.compatMode=='BackCompat'){               //IE7以下
+           return {
+               width:document.body.clientWidth,
+               height:document.body.clientHeight
+           }
+       }else{
+          // console.log(document.documentElement.clientHeight);
+          // var computedStyle=document.defaultView.getComputedStyle(document.documentElement,null);
+           return {
+             width:document.documentElement.clientWidth,
+             height:document.documentElement.clientHeight
+           }
+       }
+    },
+    trigger(){
+     function renderDiagraph(data, selector) {
     var params = {
       'radius': 10,
       'margin': 30
@@ -324,7 +352,7 @@ renderDiagraph(para,canvas);
     }
 }
 </script>
-<<style>
+<style scoped>
 .diagraph circle {
     fill: steelblue;
 }
@@ -355,5 +383,14 @@ renderDiagraph(para,canvas);
   display: inline-block;
   width: 60px;
 }
-
+.mask{
+    position:absolute;
+    top:0px;
+    left:0px;
+    filter:alpha(opacity=60);
+    background-color:#ccc;
+    z-index:1003;
+    opacity:0.2;
+    -moz-opacity:0.2;
+}
 </style>

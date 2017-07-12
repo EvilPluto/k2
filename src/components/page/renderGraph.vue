@@ -1,7 +1,7 @@
 <template>
     <div class="renderBox">
         <div class="top" style="margin-top:-50px; margin-bottom:30px;">
-          <el-select v-model="myImageType" placeholder="请选择流程表示模型" @change='reload'>
+          <el-select v-model="myImageType" placeholder="请选择流程表示模型" @change='reload'v-loading.fullscreen.lock="fullscreenLoading"element-loading-text="拼命加载中">
              <el-option
              v-for="item in options"
              :key="item.value"
@@ -10,8 +10,8 @@
              </el-option>
           </el-select>
         </div>
-        <div id="depict">
-          <svg width="960" height="500"></svg>
+        <div id="depict" v-loading.fullscreen.lock="fullscreenLoading2"element-loading-text="拼命加载中"> 
+             <svg width="960" height="500"></svg>
         </div>
     </div>
 </template>
@@ -42,6 +42,9 @@
                 myMethodId:'',
                 myParamList:'',
                 attrList:'',
+
+                fullscreenLoading: false,
+                fullscreenLoading2:false
             }
         },
         props:['payload','imageType','logId','methodId','paramList'],
@@ -55,10 +58,53 @@
               this.painting();
             },
             clearDrop(){
-                //var drop=document.getElementsByClassName('downList')[0];
-                //var draw=document.getElementsByClassName('renderBox')[0];
-                //draw.removeChild(drop);
+                var drop=document.getElementsByClassName('drop')[0];
+                var draw=document.getElementsByClassName('renderBox')[0];
+                if(drop!=null){
+                    draw.removeChild(drop);
+                    console.log(draw);
+                }
             },
+            codeParsing(code) {
+                var msg = (Title, Message) => {
+                    this.$message({
+                        title: Title,
+                        message: Message,
+                        type: 'error'
+                    });
+                };
+                switch(code) {
+                    case -1:
+                        msg('系统错误', '未知错误，请上报管理员');
+                        break;
+                    case 201:
+                        msg('输入域错误', '验证码错误');
+                        break;
+                    case 301:
+                        msg('权限问题', '用户已禁用，请联系管理员');
+                        break;
+                    case 302:
+                        msg('权限问题', '用户未激活，请去邮箱激活用户');
+                        break;
+                    case 400:
+                        msg('权限问题', '用户未登录，请重新登录');
+                        break;
+                    case 401:
+                        msg('权限问题', '用户无权访问，请联系管理员');
+                        break;
+                    case 402:
+                        msg('操作错误', '删除错误,请刷新重试');
+                        break;
+                    case 500:
+                        msg('系统错误', '未知错误，请上报管理员');
+                        break;
+                    case 600:
+                        msg('TIME_OUT', '访问超时，请检查网络连接');
+                        break;
+                    default:
+                        break;
+                }
+           },
             painting(){
               switch(this.myImageType){
                   case 1:
@@ -79,35 +125,38 @@
                   case 4:
                     this.attrList=this.myPayLoad.attrList;
                     if(this.attrList.length){
-                        var option='';
-                        option+='<option value=""selected></option>';
-                        for(let i=0;i<this.attrList.length;i++){
-                        //     this.choice[i]={};
-                        //     this.choice[i].value=this.attrList[i];
-                        //     this.choice[i].label=this.attrList[i];
-                        option+='<option value ='+this.attrList[i]+'>'+this.attrList[i]+'</option>';
-                        }
+                        this.paintDownList();
                     }
-                    //this.rrAttr=this.attrList[0];
-                    var draw=document.getElementsByClassName('renderBox')[0];
-                    var depict=document.getElementById('depict');
-                    var dick=document.createElement('div');
-                    dick.innerHTML="<select class='downList'>"+option+"</select>";
-                    draw.insertBefore(dick,depict);      
-                   // this.renderForce(this.myPayLoad);
-                    var drop=document.getElementsByClassName('downList')[0];
-                    var self=this;
-                    drop.onchange=function(event){
-                        var dot=drop.value;
-                        self.reloadForce(dot);
-                    }
+                    this.renderForce(this.myPayLoad);
                     break;
                   default:
                     break;
               }   
             },
+            paintDownList(){
+                var option='';
+                for(let i=0;i<this.attrList.length;i++){
+                    //     this.choice[i]={};
+                    //     this.choice[i].value=this.attrList[i];
+                    //     this.choice[i].label=this.attrList[i];
+                    option+='<option value ='+this.attrList[i]+'>'+this.attrList[i]+'</option>';
+                }
+                 //this.rrAttr=this.attrList[0];
+                var draw=document.getElementsByClassName('renderBox')[0];
+                var depict=document.getElementById('depict');
+                var dick=document.createElement('div');
+                dick.className='drop';
+                dick.innerHTML="<span>event属性： </span><select class='downList'>"+option+"</select>";
+                draw.insertBefore(dick,depict);    
+                var drop=document.getElementsByClassName('downList')[0];
+                var self=this;
+                drop.onchange=function(event){
+                    var dot=drop.value;
+                    self.reloadForce(dot);
+                }  
+            },
             reload(){
-                if(this.myImageType!=4){
+                   this.fullscreenLoading = true;
                     var self=this;
                     self.$axios({
                             url:'/logMining/mining',
@@ -118,6 +167,7 @@
                                 methodId:self.myMethodId,
                                 paramList:self.myParamList,
                                 imageType:self.myImageType,
+                                rrAttr:''
                             }
                     }).then((response)=>{
                         if(response.data.code==200){
@@ -125,38 +175,43 @@
                             var myDiv=document.getElementById('depict');
                             myDiv.innerHTML='<svg width="960" height="500"></svg>';
                             this.painting();
+                        }else{
+                            self.codeParsing(response.data.code);
                         }
+                        this.fullscreenLoading = false;
                     })
-                }else{
-                   this.reloadForce('');
-                }
             },
             reloadForce(attr){
                 var self=this;
-                if(attr!=''){
-                    self.$axios({
-                            url:'/logMining/mining',
-                            method:'post',
-                            baseURL: self.hostUrl,
-                            data:{
-                                logId:self.myLogId,
-                                methodId:self.myMethodId,
-                                paramList:self.myParamList,
-                                imageType:self.myImageType,
-                                rrAttr:attr
-                            }
-                    }).then((response)=>{
-                        if(response.data.code==200){
-                            this.myPayLoad=response.data.payload;
-                            var myDiv=document.getElementById('depict');
-                            myDiv.innerHTML='<svg width="960" height="500"></svg>';
-                        this.renderForce(this.myPayLoad);
+                this.fullscreenLoading2=true;
+                self.$axios({
+                        url:'/logMining/mining',
+                        method:'post',
+                        baseURL: self.hostUrl,
+                        data:{
+                            logId:self.myLogId,
+                            methodId:self.myMethodId,
+                            paramList:self.myParamList,
+                            imageType:self.myImageType,
+                            rrAttr:attr
                         }
-                    })
-                }
+                }).then((response)=>{
+                    if(response.data.code==200){
+                        this.myPayLoad=response.data.payload;
+                        var myDiv=document.getElementById('depict');
+                        myDiv.innerHTML='<svg width="960" height="500"></svg>';
+                        this.renderForce(this.myPayLoad);
+                    }else{
+                        self.codeParsing(response.data.code);
+                    }
+                    this.fullscreenLoading2=false;
+                })
             },
-            renderSankey(json) {
-                var self = this;           
+            renderSankey(json){
+                var self = this;
+                var canvas=document.getElementsByTagName('svg')[0];
+                 canvas.setAttribute('width',960) ;
+                 canvas.setAttribute('height',500 * (1 + parseInt(json.nodes.length/10))) ;
                 var svg = this.$d3.select("svg"),
                     width = +svg.attr("width"),
                     height = +svg.attr("height");
@@ -167,12 +222,13 @@
                 var ss = sankey()
                     .nodeWidth(15)
                     .nodePadding(10)
-                    .nodeId(function(d) { return d.name; })
-                    .extent([[1, 1], [width - 1, height - 6]]);     
+                    .extent([[1, 1], [width - 1, height - 6]]);
+                
                 var energy = json;
                 console.log(energy);
+                pre(energy);
                 var graph = ss(energy);
-                console.log(graph);
+
                 var link = svg.append("g")
                     .attr("class", "links")
                     .attr("fill", "none")
@@ -197,6 +253,68 @@
                     .call(this.$d3.drag()
                             .on("start", dragstarted)
                             .on("end", dragended));
+
+                // 对数据进行加工，将不能用的数据剔除
+                function pre(graph) {
+                    var kimap = {};
+                    var outEdgeCountMap = {};
+                    var inEdgeCountMap = {};
+                    var nGraph = {
+                        nodes: [],
+                        links: []
+                    }
+                    var ns = new Array();
+                    var ls = new Array();
+                    console.log('2333', nGraph);
+
+                    for (var i = 0; i !== graph.nodes.length; i++) {
+                        kimap[graph.nodes[i].name] = i;
+                        outEdgeCountMap[graph.nodes[i].name] = 1;
+                        inEdgeCountMap[graph.nodes[i].name] = 1;
+                    }
+
+                    var posMap = {};
+                    for (var j = 0; j !== graph.links.length; j++) {
+                        var s = graph.links[j].source;
+                        var t = graph.links[j].target;
+                        if (posMap[s] !== undefined) {
+                            posMap[t] = posMap[s] + outEdgeCountMap[s];
+                            outEdgeCountMap[s]++;
+                        } else if (posMap[t] !== undefined) {
+                            posMap[s] = posMap[t] - inEdgeCountMap[t];
+                            inEdgeCountMap[t]++;
+                        } else {
+                            posMap[s] = 0;
+                            posMap[t] = 1;
+                            outEdgeCountMap[s]++;
+                        }
+                    }
+
+                    ns = graph.nodes.sort(function (a, b) {
+                        return posMap[a.name] - posMap[b.name];
+                    });
+
+                    for (var i = 0; i !== ns.length; i++) {
+                        kimap[ns[i].name] = i;
+                    }
+
+                    for (var i = 0; i !== graph.links.length; i++) {
+                        var s = kimap[graph.links[i].source];
+                        var t = kimap[graph.links[i].target];
+                        if (s > t) {
+                            continue;
+                        }
+                        var tmp = {
+                            source: s,
+                            target: t,
+                            value: parseInt(graph.links[i].value),
+                        };
+                        ls.push(tmp);
+                    }
+
+                    graph.nodes = ns;
+                    graph.links = ls;
+                }
 
                 function clickStarted(d) {
                     var source = d.source.name;
@@ -381,7 +499,12 @@
               
               // 通过布局来转换数据，然后进行绘制
               var simulation = this.$d3.forceSimulation()
-                    .force("link", this.$d3.forceLink().id(function(d) { return d.name; }).distance(function(d){return 150;}))
+                    .force("link", this.$d3.forceLink().id(function(d) { return d.name; })
+                                                          .distance(function(d){ 
+                                                           console.log(d.value)
+                                                           if(d.value<50){return d.value+50;}
+                                                           if(d.value>180){return 180;}
+                                                           else{return d.value;}}))
                     .force("charge",this.$d3.forceManyBody())
                     .force("center",this.$d3.forceCenter(width/2, height/2));
               // console.log(simulation);
@@ -396,9 +519,9 @@
                   .enter()
                   .append("line")
                   .attr("class", "lines")
-                  .attr("stroke","#000")   //填充木棍颜色
+                  .attr("stroke","#91918d")   //填充木棍颜色
                   .attr("stroke-width",function (d) {
-                    return Math.sqrt(d.value) > 10 ? 10 : Math.sqrt(d.value);   //木棍宽度
+                    return Math.sqrt(d.value) > 5 ? 5 : Math.sqrt(d.value);   //木棍宽度
                   })
                   .attr("stroke-opacity", 0.5);     //木棍透明度
 
@@ -406,7 +529,7 @@
                   .data(json.nodes)
                   .enter()
                   .append("circle")
-                  .attr("r",6)                        //木棍头半径
+                  .attr("r",8)                        //木棍头半径
                   .attr("name", function(d) { return d.name; })
                   .attr("fill",function(d,i){
                       return color(i);               //木棍头颜色
@@ -417,18 +540,21 @@
                       .on("start", dragstarted)
                       .on("drag", dragged)
                       .on("end", dragended));
-              
+               svg_nodes.append('title')
+                       .text(function(d){
+                            return d.name;
+                       });
               var svg_text = svg.selectAll("text")
                   .data(json.nodes)
                   .enter()
                   .append("text")
-                  .style("fill","#EE6666")
+                  .style("fill","#666")
                   .attr("class", "slice")
                   .attr("dx",2)
                   .attr("dy",1)
                   .text(function (d) {
-                    if (d.name.length > 10)
-                      return d.name.slice(0, 10) + '...';
+                    if (d.name.length > 8)
+                      return d.name.slice(0, 8) + '...';
                     else
                       return d.name;
                   });
@@ -933,6 +1059,12 @@
     .renderBox{
         margin-top: 20px;
     }
+    #depict{
+        width: 970px;
+        height: 510px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
     path:hover {
         stroke-opacity: 0.5;
         /*stroke: red;*/
@@ -955,19 +1087,20 @@
 
     /*力导向图*/
     line:hover {
-          stroke-width: 12;
+          stroke-width: 6;
           stroke-opacity: 0.8;
+          stroke: #ff9900;
     }
     circle:hover {
-          r: 10;
+          r: 8;
     }
     text {
-          font-family: sans-serif;
-          font-weight: bold;
-          font-size: 10px;
+          font-family: "Comic Sans MS", serif;
+          font-weight: normal;
+          font-size: 14px;
     }
     .downList{
-         background-color: #fff;
+        background-color: #fff;
         background-image: none;
         border-radius: 4px;
         border: 1px solid #bfcbd9;
@@ -980,6 +1113,16 @@
         outline: 0;
         padding: 3px 10px;
         transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+        position: relative;
+        left: 91px;
+        top:-28px;
+    }
+    .downList option{
+        padding:10px;
+        min-height:36px;
+        line-height: 1;
+        font-size:14px;
+        margin:5px auto;
     }
     /*流程图*/
     .diagraph circle {
