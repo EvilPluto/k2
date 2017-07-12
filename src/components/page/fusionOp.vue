@@ -1,5 +1,9 @@
 <template>
   <div class="mix">
+  <el-button
+    type="primary"
+    v-loading.fullscreen.lock="fullscreenLoading">
+  </el-button>
    <el-dialog 
     class="resultDialog"
     title="日志融合结果" 
@@ -100,6 +104,7 @@ import fusionBox from './fusionbox.vue'
           return {
             hostUrl: '/processmining',
             // hostUrl: 'http://110.64.72.33:8888/processmining',
+            fullscreenLoading: false,
             boxShow:true,
             mergeResultVisible: false,
             submitJsonData: {
@@ -349,6 +354,7 @@ import fusionBox from './fusionbox.vue'
                     // log没选择
                     instance.confirmButtonLoading = true;
                     instance.confirmButtonText = '执行中...';
+                    this.fullscreenLoading = true;
                     console.log("merge");
                     this.$axios({
                       url: 'merge',
@@ -371,6 +377,7 @@ import fusionBox from './fusionbox.vue'
                       } else {
                         self.codeParsing(response.data.code);
                       }
+                      this.fullscreenLoading = false;
                     })
                     .catch((error) => {
                       console.log("【Error】:", error);
@@ -380,11 +387,14 @@ import fusionBox from './fusionbox.vue'
                           message: '日志融合失败！：请重试',
                           type: 'error'
                       });
+                      this.fullscreenLoading = false;
                     });
+                    // this.fullscreenLoading = false;
                 }
               } else {
                 instance.confirmButtonLoading = false;
                 instance.confirmButtonText = '确定';
+                this.fullscreenLoading = false;
                 done();
               }
             }
