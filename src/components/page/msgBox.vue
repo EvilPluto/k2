@@ -1,4 +1,3 @@
-
 <template>
 <div class="popBox">
  <el-tabs v-model="activeName">

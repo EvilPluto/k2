@@ -340,8 +340,9 @@
                         break;
                     case 400:
                         msg('权限问题', '用户未登录或被下线，请重新登录：3s后跳转');
-                        setTimeout(function() {
-                            window.location.replace("../processmining/index.html");
+                          setTimeout(function() {
+                              window.location.replace("../processmining/index.html")
+                          }, 3000);
                         break;
                     case 401:
                         msg('权限问题', '用户无权访问，请联系管理员');
