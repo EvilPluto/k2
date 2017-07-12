@@ -1,9 +1,5 @@
 <template>
-  <div class="mix">
-  <el-button
-    type="primary"
-    v-loading.fullscreen.lock="fullscreenLoading">
-  </el-button>
+  <div class="mix" v-loading.fullscreen.lock="fullscreenLoading" element-loading-text="拼命融合中...">
    <el-dialog 
     class="resultDialog"
     title="日志融合结果" 
