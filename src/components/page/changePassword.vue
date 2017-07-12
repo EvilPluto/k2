@@ -119,7 +119,8 @@
                         { validator: checkPassword, trigger:'change'},
                         { validator: checkPassword, trigger:'blur'}
                     ]
-                }
+                },
+                myKey:true
             }
         },
         methods:{
@@ -208,11 +209,73 @@
                     });  
                 }
                 else{
-                    this.$confirm('确定要修改密码？', '提示', {
-                      confirmButtonText: '确定',
-                      cancelButtonText: '取消',
-                      type: 'warning'
-                    }).then(() => {
+                    // this.$confirm('确定要修改密码？', '提示', {
+                    //   confirmButtonText: '确定',
+                    //   cancelButtonText: '取消',
+                    //   type: 'warning'
+                    // }).then(() => {
+                    //     var postData = {
+                    //         oldPassword:"",
+                    //         newPassword:""
+                    //     };
+                    //     postData.oldPassword = vm.ruleForm.oldPassword;
+                    //     postData.newPassword = vm.ruleForm.newPassword;
+                    //     this.$axios({
+                    //         url: '/user/changePassword',
+                    //         method: 'post',
+                    //         baseURL: vm.hostUrl,
+                    //         data:postData
+                    //     })
+                    //     .then((response) => {
+                    //         if(response.data.code == "200"){
+                    //             this.$message({
+                    //                 type:'success',
+                    //                 message:'修改成功'
+                    //             });
+                    //         } else {
+                    //             console.log(response.data.code);
+                    //             vm.codeParsing(response.data.code);
+                    //         }
+                    //     })
+                    //     .catch((error) => {
+                    //         console.log("Error:", error);
+                    //         this.$message({
+                    //                 type:'warning',
+                    //                 message:'AJAX FAIL'
+                    //             });
+                    //     });
+                              
+                    // }).catch(() => {
+                    //   this.$message({
+                    //     type: 'info',
+                    //     message: '已取消'
+                    //   });          
+                    // });
+                const h = vm.$createElement;
+                this.$msgbox({
+                    title:'警告',
+                    message:h('p',{key:vm.myKey},'你的密码将被修改，确定继续吗？'),
+                    showCancelButton:true,
+                    showConfirmButton:true,
+                    confirmButtonText:'确定',
+                    cancelButtonText:'取消',
+                    beforeClose: (action, instance, done) => {
+                        if (action === 'confirm') {
+                            instance.confirmButtonLoading = true;
+                            instance.confirmButtonText = '执行中...';
+                            setTimeout(() => {
+                                done();
+                                setTimeout(() => {
+                                    instance.confirmButtonLoading = false;
+                                }, 300);
+                            }, 1000);
+                        }
+                        else {
+                          done();
+                        }   
+                    }
+                 }).then((action)=>{
+                    if(action =="confirm"){
                         var postData = {
                             oldPassword:"",
                             newPassword:""
@@ -239,19 +302,29 @@
                         .catch((error) => {
                             console.log("Error:", error);
                             this.$message({
-                                    type:'warning',
-                                    message:'AJAX FAIL'
+                                    type:'error',
+                                    message:'网络无连接'
                                 });
                         });
-                              
-                    }).catch(() => {
-                      this.$message({
+                    }
+                    else{
+                        this.$message({
                         type: 'info',
                         message: '已取消'
-                      });          
-                    });
+                      });  
+                    }
+                 }).catch(()=>{
+                    this.$message({
+                        type: 'info',
+                        message: '已取消'
+                      });  
+                 });
 
                 }
+            },
+            clearKey:function(){
+                var self = this;
+                self.myKey = !self.myKey;
             }
         }
     }

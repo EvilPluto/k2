@@ -58,7 +58,8 @@ import bus from '../common/bus';
                     nickName:[
                         { validator: checkNick, trigger:'change'}
                     ]
-                }
+                },
+                myKey:true,
             }
         },
         methods:{
@@ -129,13 +130,32 @@ import bus from '../common/bus';
             submitForm:function(){
                 var vm = this;
                 console.log(vm.ruleForm);
-
-                 this.$confirm('确定要修改昵称？', '提示', {
-                      confirmButtonText: '确定',
-                      cancelButtonText: '取消',
-                      type: 'warning'
-                    }).then(() => {
-                        this.$axios({
+                const h = vm.$createElement;
+                 this.$msgbox({
+                    title:'警告',
+                    message:h('p',{key:vm.myKey},'你的昵称将被修改，确定继续吗？'),
+                    showCancelButton:true,
+                    showConfirmButton:true,
+                    confirmButtonText:'确定',
+                    cancelButtonText:'取消',
+                    beforeClose: (action, instance, done) => {
+                        if (action === 'confirm') {
+                            instance.confirmButtonLoading = true;
+                            instance.confirmButtonText = '执行中...';
+                            setTimeout(() => {
+                                done();
+                                setTimeout(() => {
+                                    instance.confirmButtonLoading = false;
+                                }, 300);
+                            }, 1000);
+                        }
+                        else {
+                          done();
+                        }   
+                    }
+                 }).then((action)=>{
+                    if(action =="confirm"){
+                         this.$axios({
                             url: '/user/changeNickName',
                             method: 'post',
                             baseURL: vm.hostUrl,
@@ -158,19 +178,28 @@ import bus from '../common/bus';
                         .catch((error) => {
                             console.log("Error:", error);
                             this.$message({
-                                    type:'warning',
+                                    type:'error',
                                     message:'网络无连接'
                                 });
 
                         });
-                              
-                    }).catch(() => {
-                      this.$message({
+                    }
+                    else{
+                        this.$message({
                         type: 'info',
                         message: '已取消'
-                      });          
-                    });
-
+                      });  
+                    }
+                 }).catch(()=>{
+                    this.$message({
+                        type: 'info',
+                        message: '已取消'
+                      });  
+                 });
+            },
+            clearKey:function(){
+                var self = this;
+                self.myKey = !self.myKey;
             }
         }
     }

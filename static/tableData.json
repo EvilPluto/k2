@@ -15,7 +15,7 @@
                 "name": "rawlog.txt",
                 "format": "txt",
                 "createTime": "2017年06月20日 16:28",
-                "creator": "何徐昊",
+                "creator": "11111",
                 "hdfsid": "befe7124-94c9-4cd6-b3ac-b7ae6c515369",
                 "isshared": false,
                 "toNormLogId": 1,
@@ -28,11 +28,11 @@
                 "name": "rawlog0.txt",
                 "format": "txt",
                 "createTime": "2017年06月20日 09:27",
-                "creator": "何徐昊",
+                "creator": "11111",
                 "hdfsid": "45a7ea57-d88b-4431-886e-adee27f0a3ed",
                 "isshared": true,
                 "toNormLogId": 0,
-                "toNormLogName": null,
+                "toNormLogName": "rawlog_norm.txt",
                 "toEventLogId": 0,
                 "toEventLogName": null
             }
