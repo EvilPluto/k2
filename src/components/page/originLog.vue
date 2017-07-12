@@ -99,7 +99,7 @@
     </div>
 </template>
 
-<style scoped>
+<style>
 #shareButton {
 }
 .page-box{

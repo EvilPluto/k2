@@ -1,4 +1,4 @@
-<template>
+d<template>
     <div>
         <div class="crumbs">
             <el-breadcrumb separator="/">
@@ -99,7 +99,7 @@
     </div>
 </template>
 
-<style scoped>
+<style>
 #shareButton {
 }
 .page-box{
