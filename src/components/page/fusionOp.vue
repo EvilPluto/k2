@@ -5,7 +5,7 @@
     title="日志融合结果" 
     :visible.sync="mergeResultVisible">
     <el-card>
-      <table border="10" width="100%" class="resultDialog">
+      <table border="2" width="100%" class="resultDialog">
       <tr>
         <th class="headerResult">名称</th>
         <th class="headerResult">项值</th>
@@ -108,12 +108,12 @@ import fusionBox from './fusionbox.vue'
             fusionData:[],
             paraListDesc: [],
             result: {
-              time: "",
-              totalinstancenum: "",
-              totaleventnum: "",
-              average: "",
-              processactivityevent: "",
-              controller: ""
+              time: "1000(ms)",
+              totalinstancenum: 3245,
+              totaleventnum: 4344,
+              average: 2,
+              processactivityevent: "asdjfiasdf isjdmfiaisjdfk aisjdnfiajsfdkia iajsdif jkasidjf ksaa] sdf[ asd f]asdf d]",
+              controller: "asdfadfas[dfp[as[]dfpa -df[pasdf[pokapds o[pas=fd 0oapsdf o-psad f=oks-[f "
             },
           }
       },
@@ -233,26 +233,22 @@ import fusionBox from './fusionbox.vue'
               baseURL: this.hostUrl
           })
           .then((response) => {
-            if (response.data.code === 200) {
-              var data = new Array();
-              for (var i=0; i<response.data.length; i++) {
-                var algo = response.data[i];
-                var algoJson = {
-                  id: algo.id,
-                  fusionType: algo.name,
-                  fusionDescription: algo.info,
-                  paraList: []
-                };
-                data.push(algoJson);
-              }
-              this.fusionData = data;
-              this.$message({
-                  message: '数据加载成功!',
-                  type: 'success'                        
-              });
-            } else {
-              this.codeParsing(response.data.code);
+            var data = new Array();
+            for (var i=0; i<response.data.length; i++) {
+              var algo = response.data[i];
+              var algoJson = {
+                id: algo.id,
+                fusionType: algo.name,
+                fusionDescription: algo.info,
+                paraList: []
+              };
+              data.push(algoJson);
             }
+            this.fusionData = data;
+            this.$message({
+                message: '数据加载成功!',
+                type: 'success'                        
+            });
           })
           .catch((error) => {
               this.$message({
@@ -287,7 +283,7 @@ import fusionBox from './fusionbox.vue'
           console.log(index);
           self.submitJsonData.algoId = row.id;
           $.ajax({
-              url: self.hostUrl + '/mergeLog/algoConfig/' + row.id,
+              url: self.hostUrl + '/algoConfig/' + row.id,
               // url: '/api/practice1',
               type: 'GET',
               async: false,
@@ -296,6 +292,7 @@ import fusionBox from './fusionbox.vue'
                   self.fusionData[index].paraList = data.config.params;
                   self.paraListDesc = data.config.params;
                 } else {
+                  console.log(data.code);
                   self.codeParsing(data.code);
                 }
               },
@@ -336,6 +333,7 @@ import fusionBox from './fusionbox.vue'
             customClass:'fusionPop',
             cancelButtonText: '取消',
             closeOnPressEscape: false,
+            closeOnClickModal: false,
             beforeClose: (action, instance, done) => {
               if (action === 'confirm') {
                 if (self.validSubmitJson(parTmp)) {
@@ -351,15 +349,19 @@ import fusionBox from './fusionbox.vue'
                       data: this.submitJsonData
                     })
                     .then((response) => {
-                      console.log(response.data);
-                      instance.confirmButtonLoading = false;
-                      instance.confirmButtonText = '确定';
-                      this.$message({
-                          message: '日志融合成功！',
-                          type: 'success'
-                      });
-                      done();
-                      self.showMsg(response.data.payload);
+                      if (response.data.code === 200) {
+                        console.log(response.data);
+                        instance.confirmButtonLoading = false;
+                        instance.confirmButtonText = '确定';
+                        this.$message({
+                            message: '日志融合成功！',
+                            type: 'success'
+                        });
+                        done();
+                        self.showMsg(response.data.payload);
+                      } else {
+                        self.codeParsing(response.data.code);
+                      }
                     })
                     .catch((error) => {
                       console.log("【Error】:", error);
@@ -393,11 +395,12 @@ import fusionBox from './fusionbox.vue'
   .resultDialog {
     text-align: center;
     font-family: "微软雅黑";
+    border-collapse: collapse;
+    border: #ccc;
   }
   .resultDialog th {
     width: 200px;
-    color: #bfcbd9;
-    font-weight: bold;
+    font-weight: normal;
   }
   .resultDialog td {
     padding: 5px;
@@ -406,7 +409,6 @@ import fusionBox from './fusionbox.vue'
     table-layout: fixed;
   }
   .resultDialog .headerResult {
-    color: black;
     font-weight: bolder;
   }
   .disableBtn {

@@ -5,7 +5,7 @@
         title="事件日志信息" 
         :visible.sync="eventVisible">
         <el-card>
-          <table border="10" width="100%" class="resultDialog">
+          <table border="2" width="100%" class="resultDialog">
           <tr>
             <th class="headerResult">名称</th>
             <th class="headerResult">项值</th>
@@ -144,6 +144,25 @@
 </template>
 
 <style>
+.resultDialog {
+    text-align: center;
+    font-family: "微软雅黑";
+    border-collapse: collapse;
+    border: #ccc;
+}
+.resultDialog th {
+    width: 200px;
+    font-weight: normal;
+}
+.resultDialog td {
+    padding: 5px;
+    word-break: break-all;
+    word-wrap: break-word;
+    table-layout: fixed;
+}
+.resultDialog .headerResult {
+    font-weight: bolder;
+}
 #shareButton {
 }
 .page-box{
