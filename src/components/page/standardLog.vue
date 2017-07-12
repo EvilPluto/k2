@@ -268,6 +268,7 @@
                         break;
                     case 400:
                         msg('权限问题', '用户未登录，请重新登录');
+                        window.location.replace("../index.html");
                         break;
                     case 401:
                         msg('权限问题', '用户无权访问，请联系管理员');
@@ -287,6 +288,12 @@
                     case 800:
                         msg('激活错误', '用户已被激活，请直接登录');
                         break;
+                    case 900:
+                        msg('事件化错误', '事件化失败');
+                        break;
+                    case 901:
+                        msg('上传错误', '文件大小为0');
+                        break;   
                     default:
                         break;
                 }

@@ -88,15 +88,11 @@
     export default {
         data: function(){
             var checkPwd = (rule, value, callback) => {
-                // console.log(value, this.register.password);
                 if (value === '') {
-                    // console.log(value, this.register.password);
                     callback(new Error('请再次输入密码!'));
                 } else if (value !== this.register.password) {
-                    // console.log(value, this.register.password);
                     callback(new Error('两次密码不相同!'));
                 } else {
-                    // console.log(value, this.register.password);
                     callback();
                 }
             };
@@ -111,7 +107,6 @@
             };
 
             var checkName = (rule, value, callback) => {
-                // console.log(value.gblen());
                 var reg = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？\\\\]");
                 if (value.indexOf(" ") >= 0) {
                     callback(new Error('请不要包含空格'));
@@ -217,6 +212,7 @@
                         break;
                     case 400:
                         msg('权限问题', '用户未登录，请重新登录');
+                        window.location.replace("../index.html");
                         break;
                     case 401:
                         msg('权限问题', '用户无权访问，请联系管理员');
@@ -236,6 +232,12 @@
                     case 800:
                         msg('激活错误', '用户已被激活，请直接登录');
                         break;
+                    case 900:
+                        msg('事件化错误', '事件化失败');
+                        break;
+                    case 901:
+                        msg('上传错误', '文件大小为0');
+                        break;   
                     default:
                         break;
                 }
