@@ -39,10 +39,12 @@
    </el-dialog>
    <div class="head" style="margin-bottom:30px;">
        <el-breadcrumb separator="/">
-        <el-breadcrumb-item> 日志融合</el-breadcrumb-item>
+        <el-breadcrumb-item> <i class="el-icon-date"></i>日志融合</el-breadcrumb-item>
         <el-breadcrumb-item>融合操作</el-breadcrumb-item>
        </el-breadcrumb>
    </div>
+   <div  class="form-box">
+   
    <div class="main">
        <el-table
          ref="fusionTypeTable"
@@ -86,6 +88,7 @@
          </el-table-column>
        </el-table>
    </div>
+  </div>
   </div>
 </template>
  
@@ -404,6 +407,16 @@ import fusionBox from './fusionbox.vue'
     border-collapse: collapse;
     border: #ccc;
   }
+  .form-box{
+    width:971px;
+    margin-left:0px;
+    box-shadow:0 0 8px 0
+        rgba(232,237,250,.9),0 2px 4px 0
+        rgba(232,237,250,.9);
+    padding:30px 50px 30px 50px;      
+    display: inline-block;
+    text-align: center;
+}
   .resultDialog th {
     width: 200px;
     font-weight: normal;

@@ -51,6 +51,7 @@
             </div>
             <div class="search-box">
                 <el-input v-model="searchInput" > 
+                <el-button @click="clearBtn" slot="prepend" icon="close"></el-button>
                     <el-button @click="searchBtn" slot="append" icon="search"></el-button>
                 </el-input>
 
@@ -454,7 +455,10 @@
                     vm.getData(searchUrl);
                 }
             },
-
+            clearBtn:function(){
+                this.searchInput = "";
+                this.getTableData();
+            },
             uploadBtn:function(){
                 var self= this;
                 self.clearKey();
