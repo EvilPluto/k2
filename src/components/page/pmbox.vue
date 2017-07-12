@@ -74,7 +74,30 @@
                 align="center"
                 width="164">
                 <template scope="scope">
-                 <input v-model="scope.row.val" @change='checkParaList' @blur='checkPara(scope.row.val,scope.row.type)'>
+                   <div v-if="scope.row.type == 1" class="wrap-style">
+                    <input type="number" v-model="scope.row.val" @change='checkParaList' @blur='checkPara(scope.row.val,scope.row.type)'>
+                   </div>
+                   <div v-if="scope.row.type == 2" class="wrap-style">
+                    <input v-model="scope.row.val" @change='checkParaList' @blur='checkPara(scope.row.val,scope.row.type)'>
+                   </div>
+                   <div v-if="scope.row.type == 3">
+                     <el-select v-model="scope.row.val" placeholder="请选择"@change='checkParaList' >
+                         <el-option v-for="item in arr[scope.$index]":key='item' :label='item' :value='item'>
+                         </el-option>
+                     </el-select>
+                   </div>
+                    <div v-if="scope.row.type == 4">
+                      <el-select v-model="scope.row.val" placeholder="请选择"@change='checkParaList' >
+                         <el-option v-for="item in arr[scope.$index]":key='item' :label='item' :value='item'>
+                         </el-option>
+                      </el-select>
+                   </div>
+                    <div v-if="scope.row.type == 5">
+                     <el-select v-model="scope.row.val" placeholder="请选择"@change='checkParaList' >
+                         <el-option v-for="item in arr[scope.$index]":key='item' :label='item' :value='item'>
+                         </el-option>
+                     </el-select>
+                   </div>
                 </template>   
               </el-table-column>
              </el-table>
@@ -96,6 +119,7 @@
     data() {
       return {
         miningData:[],                //算法参数
+        arr:[],                       //算法参数默认值列表
         hostUrl:"/processmining",
         list:[],
         curPage:1,
@@ -159,12 +183,12 @@
         this.getLog(this.curPage);
      },
      checkPara(val,type){                               //检测用户输入
-       if(type==1||type==3){
+       if(type==1){
          if(!this.testInteger(val)){
            this.$message({title:'提示',message:'请输入整数',type:'error'});
          }
        }
-       if(type==2||type==4){
+       if(type==2){
          if(!this.testFloat(val)){
            this.$message({title:'提示',message:'请输入浮点数',type:'error'});
          }
@@ -189,7 +213,7 @@
         }
         return true;
      },
-    codeParsing(code) {
+     codeParsing(code) {
         var msg = (Title, Message) => {
             this.$message({
                 title: Title,
@@ -204,23 +228,14 @@
             case 201:
                 msg('输入域错误', '验证码错误');
                 break;
-            case 300:
-                msg('输入域错误', '邮箱或密码错误');
-                break;
             case 301:
                 msg('权限问题', '用户已禁用，请联系管理员');
                 break;
             case 302:
                 msg('权限问题', '用户未激活，请去邮箱激活用户');
                 break;
-            case 303:
-                msg('注册问题', '邮箱已占用，请更改邮箱');
-                break;
-            case 304:
-                msg('注册问题', '昵称已占用，请更改昵称');
-                break;
             case 400:
-                msg('权限问题', '用户未登录，请重新登录');
+               msg('权限问题', '用户未登录或被下线，请重新登录：3s后跳转');
                 setTimeout(function() {
                     window.location.replace("../processmining/index.html")
                 }, 3000);
@@ -284,13 +299,28 @@
        })
      },
      Init(){                                   //初始化弹框
+       this.arr=new Array(this.paraList.length);
+       for(let i=0;i<this.arr.length;i++){
+         this.arr[i]=[];
+       }
        for(let i=0;i<this.paraList.length;i++){
            let obj={};
            obj.sub=i;
            obj.displayName=this.paraList[i].displayName;
            obj.name=this.paraList[i].name;
-           obj.type=this.paraList[i].type;
-           obj.val=this.paraList[i].defaultValue;
+           obj.type=parseInt(this.paraList[i].type);
+           switch(obj.type){
+             case 1:
+             case 2:
+                obj.val=this.paraList[i].defaultValue;
+                this.arr[i].push(obj.val);
+                break;
+            case 3:
+            case 4:
+            case 5:
+               this.arr[i]=this.paraList[i].defaultValue.split(';');
+                obj.val=this.arr[i][0];
+           };
            this.miningData.push(obj);
        }
     },
@@ -350,6 +380,21 @@
   width: 408px;
   height: 36px;
   border:solid #e4e4e4 1px;
+}
+.pmbox .wrap-style{
+    background-color: #fff;
+    background-image: none;
+    border-radius: 4px;
+    border: 1px solid #bfcbd9;
+    box-sizing: border-box;
+    color: #1f2d3d;
+    display: block;
+    font-size: inherit;
+    height: 36px;
+    line-height: 1;
+    outline: 0;
+    padding: 3px 8px;
+    transition: border-color .2s cubic-bezier(.645,.045,.355,1);
 }
 .pmbox .modifyPara input{
    position: relative;

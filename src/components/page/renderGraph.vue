@@ -107,6 +107,9 @@
                     case 402:
                         msg('操作错误', '删除错误,请刷新重试');
                         break;
+                    case 404:
+                        msg('资源错误', '该文件不存在，请关闭窗口');
+                        break;
                     case 500:
                         msg('系统错误', '未知错误，请上报管理员');
                         break;
@@ -249,8 +252,9 @@
                     .extent([[1, 1], [width - 1, height - 6]]);
                 
                 var energy = json;
-                console.log(energy);
+                console.log('↑', energy);
                 pre(energy);
+                console.log('↓', energy);
                 var graph = ss(energy);
 
                 var link = svg.append("g")
@@ -525,7 +529,7 @@
               var simulation = this.$d3.forceSimulation()
                     .force("link", this.$d3.forceLink().id(function(d) { return d.name; })
                                                           .distance(function(d){ 
-                                                           console.log(d.value)
+                                                           // console.log(d.value)
                                                            if(d.value<50){return d.value+50;}
                                                            if(d.value>180){return 180;}
                                                            else{return d.value;}}))
@@ -533,6 +537,7 @@
                     .force("center",this.$d3.forceCenter(width/2, height/2));
               // console.log(simulation);
 
+              console.log('Force', json);
               simulation.nodes(json.nodes).on('tick', draw);
               simulation.force('link').links(json.links);
 
@@ -545,6 +550,9 @@
                   .attr("class", "lines")
                   .attr("stroke","#91918d")   //填充木棍颜色
                   .attr("stroke-width",function (d) {
+                    if (d.value === 0) {
+                        return 1;
+                    }
                     return Math.sqrt(d.value) > 5 ? 5 : Math.sqrt(d.value);   //木棍宽度
                   })
                   .attr("stroke-opacity", 0.5);     //木棍透明度

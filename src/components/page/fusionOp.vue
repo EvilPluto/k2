@@ -1,5 +1,5 @@
 <template>
-  <div class="mix">
+  <div class="mix" v-loading.fullscreen.lock="fullscreenLoading" element-loading-text="拼命融合中...">
    <el-dialog 
     class="resultDialog"
     title="日志融合结果" 
@@ -43,7 +43,7 @@
         <el-breadcrumb-item>融合操作</el-breadcrumb-item>
        </el-breadcrumb>
    </div>
-   <div  class="form-box">
+   <div  class="formBox">
    
    <div class="main">
        <el-table
@@ -100,6 +100,7 @@ import fusionBox from './fusionbox.vue'
           return {
             hostUrl: '/processmining',
             // hostUrl: 'http://110.64.72.33:8888/processmining',
+            fullscreenLoading: false,
             boxShow:true,
             mergeResultVisible: false,
             submitJsonData: {
@@ -349,6 +350,7 @@ import fusionBox from './fusionbox.vue'
                     // log没选择
                     instance.confirmButtonLoading = true;
                     instance.confirmButtonText = '执行中...';
+                    this.fullscreenLoading = true;
                     console.log("merge");
                     this.$axios({
                       url: 'merge',
@@ -371,6 +373,7 @@ import fusionBox from './fusionbox.vue'
                       } else {
                         self.codeParsing(response.data.code);
                       }
+                      this.fullscreenLoading = false;
                     })
                     .catch((error) => {
                       console.log("【Error】:", error);
@@ -380,11 +383,14 @@ import fusionBox from './fusionbox.vue'
                           message: '日志融合失败！：请重试',
                           type: 'error'
                       });
+                      this.fullscreenLoading = false;
                     });
+                    // this.fullscreenLoading = false;
                 }
               } else {
                 instance.confirmButtonLoading = false;
                 instance.confirmButtonText = '确定';
+                this.fullscreenLoading = false;
                 done();
               }
             }
@@ -407,8 +413,8 @@ import fusionBox from './fusionbox.vue'
     border-collapse: collapse;
     border: #ccc;
   }
-  .form-box{
-    width:971px;
+  .formBox{
+    width:800px;
     margin-left:0px;
     box-shadow:0 0 8px 0
         rgba(232,237,250,.9),0 2px 4px 0
