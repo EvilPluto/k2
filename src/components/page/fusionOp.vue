@@ -43,7 +43,7 @@
         <el-breadcrumb-item>融合操作</el-breadcrumb-item>
        </el-breadcrumb>
    </div>
-   <div  class="form-box">
+   <div  class="formBox">
    
    <div class="main">
        <el-table
@@ -407,8 +407,8 @@ import fusionBox from './fusionbox.vue'
     border-collapse: collapse;
     border: #ccc;
   }
-  .form-box{
-    width:971px;
+  .formBox{
+    width:800px;
     margin-left:0px;
     box-shadow:0 0 8px 0
         rgba(232,237,250,.9),0 2px 4px 0
