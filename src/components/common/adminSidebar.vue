@@ -55,10 +55,10 @@
                             //     index: '/admin/force',
                             //     title: '力导向图'
                             // },
-                            {
-                                index: '/admin/testMining',
-                                title: '数据挖掘'
-                            }
+                            // {
+                            //     index: '/admin/testMining',
+                            //     title: '数据挖掘'
+                            // }
                         ]
                     }
                 ]

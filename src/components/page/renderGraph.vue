@@ -97,7 +97,7 @@
                         break;
                     case 400:
                         msg('权限问题', '用户未登录，请重新登录');
-                        window.location.replace("../index.html");
+                        window.location.replace("../processmining/index.html");
                         break;
                     case 401:
                         msg('权限问题', '用户无权访问，请联系管理员');
@@ -1114,7 +1114,7 @@
           stroke: #ff9900;
     }
     circle:hover {
-          r: 8;
+          r: 10;
     }
     text {
           font-family: "Comic Sans MS", serif;

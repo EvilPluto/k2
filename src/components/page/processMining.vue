@@ -125,7 +125,7 @@ import drawGraph from './renderGraph.vue'
                     break;
                 case 400:
                     msg('权限问题', '用户未登录，请重新登录');
-                    window.location.replace("../index.html");
+                    window.location.replace("../processmining/index.html");
                     break;
                 case 401:
                     msg('权限问题', '用户无权访问，请联系管理员');
@@ -189,6 +189,8 @@ import drawGraph from './renderGraph.vue'
         confirmButtonText: '确定',
         customClass:'pmPop',
         cancelButtonText: '取消',
+        closeOnPressEscape: false,
+        closeOnClickModal: false,
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
             if(self.valid()){
@@ -302,6 +304,8 @@ import drawGraph from './renderGraph.vue'
             message: h('drawGraph',{props:{payload:self.payload,imageType:self.imageType,logId:self.logId,methodId:self.methodId,paramList:self.configList}}),
             showConfirmButton:false,
             customClass:'showBox',
+            closeOnPressEscape: false,
+            closeOnClickModal: false,
             beforeClose: (action, instance, done) => {
             if (action === 'confirm') {
                 instance.confirmButtonLoading = true;
