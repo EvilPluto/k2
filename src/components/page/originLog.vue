@@ -608,7 +608,7 @@
                         }
                         else {
                             console.log(response.data.code);
-                            this.codeParsing(response.data.code);                                
+                            self.codeParsing(response.data.code);                                
                         }      
                     }).catch((error) => {
                         console.log(error);

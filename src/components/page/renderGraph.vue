@@ -236,9 +236,11 @@
             },
             renderSankey(json){
                 var self = this;
-                // var canvas=document.getElementsByTagName('svg')[0];
-                //  canvas.setAttribute('width',960) ;
-                //  canvas.setAttribute('height',500 * (1 + parseInt(json.nodes.length/10))) ;
+                if(json.nodes.length>=30){
+                     var canvas=document.getElementsByTagName('svg')[0];
+                     canvas.setAttribute('width',960) ;
+                     canvas.setAttribute('height',500 * (1 + parseInt(Math.sqrt(json.nodes.length/10)))) ;
+                }
                 var svg = this.$d3.select("svg"),
                     width = +svg.attr("width"),
                     height = +svg.attr("height");

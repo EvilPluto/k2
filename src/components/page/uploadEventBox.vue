@@ -183,7 +183,7 @@
                         	}
 	                        else {
 	                            console.log(data.code);
-	                            this.codeParsing(data.code);                                
+	                            vm.codeParsing(data.code);                                
 	                        }
 	                        setTimeout(()=>{window.location.reload()},1000);
 						},
