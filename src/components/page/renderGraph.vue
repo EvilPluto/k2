@@ -236,9 +236,9 @@
             },
             renderSankey(json){
                 var self = this;
-                var canvas=document.getElementsByTagName('svg')[0];
-                 canvas.setAttribute('width',960) ;
-                 canvas.setAttribute('height',500 * (1 + parseInt(json.nodes.length/10))) ;
+                // var canvas=document.getElementsByTagName('svg')[0];
+                //  canvas.setAttribute('width',960) ;
+                //  canvas.setAttribute('height',500 * (1 + parseInt(json.nodes.length/10))) ;
                 var svg = this.$d3.select("svg"),
                     width = +svg.attr("width"),
                     height = +svg.attr("height");
@@ -323,6 +323,7 @@
                     });
 
                     for (var i = 0; i !== ns.length; i++) {
+                        console.log('nodes[' + i + ']', ns[i]);
                         kimap[ns[i].name] = i;
                     }
 
@@ -332,11 +333,15 @@
                         if (s > t) {
                             continue;
                         }
+                        if (graph.links[i].value === 0) {
+                            graph.links[i].value = 1;
+                        }
                         var tmp = {
                             source: s,
                             target: t,
                             value: parseInt(graph.links[i].value),
                         };
+                        console.log('links[' + i + ']', tmp);
                         ls.push(tmp);
                     }
 
@@ -411,7 +416,7 @@
                         targetDomArr.push(name);
                         targetNodesArr.push(targetArr[i].source.name);
                     }
-                    console.log(sourceDomArr, targetDomArr, sourceNodesArr, targetNodesArr);
+                    // console.log(sourceDomArr, targetDomArr, sourceNodesArr, targetNodesArr);
                     
                     thisDom = this;
                     $(this).parent().children().each(function() {
@@ -428,7 +433,7 @@
                     });
 
                     $(this).parent().prev().children().each(function() {
-                        console.log($(this).find('title').text());
+                        // console.log($(this).find('title').text());
                         if (sourceDomArr.indexOf($(this).find('title').text()) !== -1) {
                             $(this).addClass('select');
                             return true;
@@ -463,7 +468,7 @@
                         targetDomArr.push(name);
                         targetNodesArr.push(targetArr[i].source.name);
                     }
-                    console.log(sourceDomArr, targetDomArr, sourceNodesArr, targetNodesArr);
+                    // console.log(sourceDomArr, targetDomArr, sourceNodesArr, targetNodesArr);
                     
                     thisDom = this;
                     $(this).parent().children().each(function() {
